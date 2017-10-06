@@ -1,20 +1,16 @@
-define([
-    'core/extend',
-    '../column-node',
-    '../order-num-service-column',
-    '../../header/node-view'], function(
-        extend,
-        ColumnNode,
-        OrderNumServiceColumn,
-        NodeView){
-    function OrderNumServiceColumnNode(){
-        var self = this;
-        var column = new OrderNumServiceColumn(this);
-        var header = new NodeView('\\', this);
-        ColumnNode.call(this, column, header);
-        
+import ColumnNode from '../column-node';
+import OrderNumServiceColumn from '../order-num-service-column';
+import NodeView from '../../header/node-view';
+
+class OrderNumServiceColumnNode extends ColumnNode {
+    constructor() {
+        const self = this;
+        const column = new OrderNumServiceColumn(this);
+        const header = new NodeView('\\', this);
+        super(column, header);
+
         function copy() {
-            var copied = new OrderNumServiceColumnNode();
+            const copied = new OrderNumServiceColumnNode();
             copied.column = column;
             copied.view.text = header.text;
             copied.leavesCount = self.leavesCount;
@@ -23,23 +19,23 @@ define([
         }
 
         Object.defineProperty(this, 'copy', {
-            get: function () {
+            get: function() {
                 return copy;
             }
         });
         Object.defineProperty(this, 'renderer', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
-        
+
         this.resizable = false;
     }
-    extend(OrderNumServiceColumnNode, ColumnNode);
-    return OrderNumServiceColumnNode;
-});
+}
+
+export default OrderNumServiceColumnNode;

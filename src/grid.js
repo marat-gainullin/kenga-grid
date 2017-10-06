@@ -1,106 +1,85 @@
 /* global Infinity */
-define([
-    'core/id',
-    'core/extend',
-    'core/invoke',
-    'ui/utils',
-    'ui/color',
-    'ui/bound',
-    'ui/widget',
-    'ui/key-codes',
-    'ui/events/key-event',
-    'ui/events/item-event',
-    'ui/events/blur-event',
-    'ui/events/focus-event',
-    './events/sort-event',
-    '../menu/menu',
-    '../menu/check-box-menu-item',
-    './section',
-    './header/analyzer',
-    './header/splitter',
-    './service-column'
-], function (
-        Id,
-        extend,
-        Invoke,
-        Ui,
-        Color,
-        Bound,
-        Widget,
-        KeyCodes,
-        KeyEvent,
-        ItemEvent,
-        BlurEvent,
-        FocusEvent,
-        SortEvent,
-        Menu,
-        CheckBoxMenuItem,
-        Section,
-        HeaderAnalyzer,
-        HeaderSplitter,
-        ServiceColumn
-        ) {
-    function Grid() {
-        var shell = document.createElement('div');
-        Widget.call(this, shell);
+import Id from 'core/id';
+import Invoke from 'core/invoke';
+import Ui from 'ui/utils';
+import Color from 'ui/color';
+import Bound from 'ui/bound';
+import Widget from 'ui/widget';
+import KeyCodes from 'ui/key-codes';
+import KeyEvent from 'ui/events/key-event';
+import ItemEvent from 'ui/events/item-event';
+import BlurEvent from 'ui/events/blur-event';
+import FocusEvent from 'ui/events/focus-event';
+import SortEvent from './events/sort-event';
+import Menu from '../menu/menu';
+import CheckBoxMenuItem from '../menu/check-box-menu-item';
+import Section from './section';
+import HeaderAnalyzer from './header/analyzer';
+import HeaderSplitter from './header/splitter';
+import ServiceColumn from './service-column';
+
+class Grid extends Widget {
+    constructor() {
+        const shell = document.createElement('div');
+        super(shell);
         this.focusable = true;
-        var self = this;
+        const self = this;
 
-        var cellsStyleElement = document.createElement('style');
-        var rowsStyleElement = document.createElement('style');
-        var headerCellsStyleElement = document.createElement('style');
-        var headerRowsStyleElement = document.createElement('style');
+        const cellsStyleElement = document.createElement('style');
+        const rowsStyleElement = document.createElement('style');
+        const headerCellsStyleElement = document.createElement('style');
+        const headerRowsStyleElement = document.createElement('style');
 
-        var oddRowsStyleElement = document.createElement('style');
-        var evenRowsStyleElement = document.createElement('style');
+        const oddRowsStyleElement = document.createElement('style');
+        const evenRowsStyleElement = document.createElement('style');
 
-        var dynamicCellsClassName = 'p-grid-cell-' + Id.generate();
-        var dynamicRowsClassName = 'p-grid-row-' + Id.generate();
-        var dynamicHeaderCellsClassName = 'p-grid-header-cell-' + Id.generate();
-        var dynamicHeaderRowsClassName = 'p-grid-header-row-' + Id.generate();
+        const dynamicCellsClassName = `p-grid-cell-${Id.generate()}`;
+        const dynamicRowsClassName = `p-grid-row-${Id.generate()}`;
+        const dynamicHeaderCellsClassName = `p-grid-header-cell-${Id.generate()}`;
+        const dynamicHeaderRowsClassName = `p-grid-header-row-${Id.generate()}`;
 
-        var dynamicOddRowsClassName = 'p-grid-odd-row-' + Id.generate();
-        var dynamicEvenRowsClassName = 'p-grid-even-row-' + Id.generate();
+        const dynamicOddRowsClassName = `p-grid-odd-row-${Id.generate()}`;
+        const dynamicEvenRowsClassName = `p-grid-even-row-${Id.generate()}`;
 
-        var headerContainer = document.createElement('div');
-        var headerLeftContainer = document.createElement('div');
-        var headerRightContainer = document.createElement('div');
+        const headerContainer = document.createElement('div');
+        const headerLeftContainer = document.createElement('div');
+        const headerRightContainer = document.createElement('div');
 
-        var headerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const headerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'headerLeft', {
-            get: function () {
+            get: function() {
                 return headerLeft;
             }
         });
         headerLeftContainer.appendChild(headerLeft.element);
-        var headerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const headerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'headerRight', {
-            get: function () {
+            get: function() {
                 return headerRight;
             }
         });
         headerRightContainer.appendChild(headerRight.element);
 
-        var columnsChevron = document.createElement('div');
+        const columnsChevron = document.createElement('div');
 
         headerContainer.appendChild(headerLeftContainer);
         headerContainer.appendChild(headerRightContainer);
         headerContainer.appendChild(columnsChevron);
 
-        var frozenContainer = document.createElement('div');
-        var frozenLeftContainer = document.createElement('div');
-        var frozenRightContainer = document.createElement('div');
+        const frozenContainer = document.createElement('div');
+        const frozenLeftContainer = document.createElement('div');
+        const frozenRightContainer = document.createElement('div');
 
-        var frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'frozenLeft', {
-            get: function () {
+            get: function() {
                 return frozenLeft;
             }
         });
         frozenLeftContainer.appendChild(frozenLeft.element);
-        var frozenRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const frozenRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'frozenRight', {
-            get: function () {
+            get: function() {
                 return frozenRight;
             }
         });
@@ -108,48 +87,48 @@ define([
         frozenContainer.appendChild(frozenLeftContainer);
         frozenContainer.appendChild(frozenRightContainer);
 
-        var bodyContainer = document.createElement('div');
-        var bodyLeftContainer = document.createElement('div');
-        var bodyRightContainer = document.createElement('div');
-        var bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const bodyContainer = document.createElement('div');
+        const bodyLeftContainer = document.createElement('div');
+        const bodyRightContainer = document.createElement('div');
+        const bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'bodyLeft', {
-            get: function () {
+            get: function() {
                 return bodyLeft;
             }
         });
         bodyLeftContainer.appendChild(bodyLeft.element);
-        var bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'bodyRight', {
-            get: function () {
+            get: function() {
                 return bodyRight;
             }
         });
         bodyRightContainer.appendChild(bodyRight.element);
         bodyContainer.appendChild(bodyLeftContainer);
         bodyContainer.appendChild(bodyRightContainer);
-        Ui.on(bodyRightContainer, Ui.Events.SCROLL, function (evt) {
+        Ui.on(bodyRightContainer, Ui.Events.SCROLL, evt => {
             [
                 headerRight,
                 frozenRight,
                 footerRight
-            ].forEach(function (section) {
-                section.element.style.marginLeft = -bodyRightContainer.scrollLeft + 'px';
+            ].forEach(section => {
+                section.element.style.marginLeft = `${-bodyRightContainer.scrollLeft}px`;
             });
         });
 
-        var footerContainer = document.createElement('div');
-        var footerLeftContainer = document.createElement('div');
-        var footerRightContainer = document.createElement('div');
-        var footerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const footerContainer = document.createElement('div');
+        const footerLeftContainer = document.createElement('div');
+        const footerRightContainer = document.createElement('div');
+        const footerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'footerLeft', {
-            get: function () {
+            get: function() {
                 return footerLeft;
             }
         });
         footerLeftContainer.appendChild(footerLeft.element);
         var footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'footerRight', {
-            get: function () {
+            get: function() {
                 return footerRight;
             }
         });
@@ -158,54 +137,55 @@ define([
         footerContainer.appendChild(footerRightContainer);
         footerContainer.style.display = 'none';
 
-        var columnNodes = [];
+        let columnNodes = [];
 
-        var columnsFacade = [];
+        let columnsFacade = [];
         Object.defineProperty(this, 'columns', {
-            get: function () {
+            get: function() {
                 return columnsFacade;
             }
         });
-        var sortedColumns = [];
-        var headerRowsHeight = 30;
-        var rowsHeight = 30;
-        var renderingThrottle = 0; // No throttling
-        var renderingPadding = 0; // No padding
-        var showHorizontalLines = true;
-        var showVerticalLines = true;
-        var showOddRowsInOtherColor = true;
-        var gridColor = null;
-        var oddRowsColor = null;
-        var evenRowsColor = new Color(241, 241, 241, 255);
+        let sortedColumns = [];
+        let headerRowsHeight = 30;
+        let rowsHeight = 30;
+        let renderingThrottle = 0; // No throttling
+        let renderingPadding = 0; // No padding
+        let showHorizontalLines = true;
+        let showVerticalLines = true;
+        let showOddRowsInOtherColor = true;
+        let gridColor = null;
+        let oddRowsColor = null;
+        let evenRowsColor = new Color(241, 241, 241, 255);
 
-        var selectedRows = new Set();
-        var selectionLead = null;
+        let selectedRows = new Set();
+        let selectionLead = null;
         Object.defineProperty(this, 'selected', {
-            get: function () {
+            get: function() {
                 return Array.from(selectedRows);
             }
         });
 
-        var frozenColumns = 0;
-        var frozenRows = 0;
-        var parentField = null;
-        var childrenField = null;
-        var indent = 20;
+        let frozenColumns = 0;
+        let frozenRows = 0;
+        let parentField = null;
+        let childrenField = null;
+        let indent = 20;
         //
-        var data = null; // bounded data. this is not rows source. rows source is data['field' property path]
-        var viewRows = []; // rows in view. subject of sorting. subject of collapse / expand in tree.
-        var expandedRows = new Set();
-        var depths = new Map();
-        var field = null;
-        var boundToData = null;
-        var boundToElements = null;
-        var boundToCursor = null;
-        var cursorProperty = 'cursor';
-        var onRender = null;
-        var editable = true;
-        var deletable = true;
-        var insertable = true;
-        var draggableRows = false;
+        let data = null; // bounded data. this is not rows source. rows source is data['field' property path]
+        let viewRows = []; // rows in view. subject of sorting. subject of collapse / expand in tree.
+        const expandedRows = new Set();
+        const depths = new Map();
+        let field = null;
+        let boundToData = null;
+        let boundToElements = null;
+        let boundToCursor = null;
+        let cursorProperty = 'cursor';
+        let onRender = null;
+        let editable = true;
+        let deletable = true;
+        let insertable = true;
+        let draggableRows = false;
+        let treeIndicatorColumn;
 
         shell.className = 'p-widget p-grid-shell p-scroll p-vertical-scroll-filler p-horizontal-scroll-filler';
 
@@ -237,44 +217,45 @@ define([
         shell.appendChild(bodyContainer);
         shell.appendChild(footerContainer);
 
-        Ui.on(shell, Ui.Events.DRAGSTART, function (event) {
+        Ui.on(shell, Ui.Events.DRAGSTART, event => {
             if (draggableRows) {
-                var targetElement = event.target;
+                const targetElement = event.target;
                 if ('tr' === targetElement.tagName.toLowerCase()) {
                     event.stopPropagation();
-                    var dragged = targetElement[Section.JS_ROW_NAME];
-                    var rows = discoverRows();
-                    var dataIndex = rows.indexOf(dragged);
+                    const dragged = targetElement[Section.JS_ROW_NAME];
+                    const rows = discoverRows();
+                    const dataIndex = rows.indexOf(dragged);
                     event.dataTransfer.setData('text/p-grid-row',
-                            '{"p-grid-name":"' + name + '", "data-row-index": ' + dataIndex + '}');
+                        `{"p-grid-name":"${name}", "data-row-index": ${dataIndex}}`);
                 }
             }
         });
 
-        var columnsMenu = null;
-        (function () {
+        let columnsMenu = null;
+        ((() => {
             function fillColumnsMenu(section, target) {
-                for (var i = 0; i < section.columnsCount; i++) {
-                    (function () {
-                        var column = section.getColumn(i);
-                        var miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
-                        miCheck.addValueChangeHandler(function (event) {
+                for (let i = 0; i < section.columnsCount; i++) {
+                    ((() => {
+                        const column = section.getColumn(i);
+                        const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
+                        miCheck.addValueChangeHandler(event => {
                             column.visible = !!event.newValue;
                         });
                         target.add(miCheck);
-                    }());
+                    })());
                 }
             }
+
             function showColumnsMenu(event) {
                 columnsMenu = new Menu();
                 fillColumnsMenu(headerLeft, columnsMenu);
                 fillColumnsMenu(headerRight, columnsMenu);
                 Ui.startMenuSession(columnsMenu);
-                var pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                var pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                const pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
                 columnsMenu.showAt(pageX, pageY);
             }
-            Ui.on(columnsChevron, Ui.Events.CLICK, function (event) {
+            Ui.on(columnsChevron, Ui.Events.CLICK, event => {
                 if (columnsMenu) {
                     columnsMenu.close();
                     columnsMenu = null;
@@ -282,12 +263,12 @@ define([
                     showColumnsMenu(event);
                 }
             });
-            Ui.on(columnsChevron, Ui.Events.CONTEXTMENU, function (event) {
+            Ui.on(columnsChevron, Ui.Events.CONTEXTMENU, event => {
                 event.preventDefault();
                 event.stopPropagation();
                 showColumnsMenu(event);
             });
-        }());
+        })());
 
         regenerateDynamicHeaderCellsStyles();
         regenerateDynamicHeaderRowsStyles();
@@ -297,11 +278,11 @@ define([
         regenerateDynamicOddRowsStyles();
         regenerateDynamicEvenRowsStyles();
 
-        Ui.on(shell, Ui.Events.KEYDOWN, function (event) {
+        Ui.on(shell, Ui.Events.KEYDOWN, event => {
             if (event.keyCode === KeyCodes.KEY_UP) {
                 event.preventDefault();
                 if (self.focusedRow > 0) {
-                    var wasFocused = self.focusedRow;
+                    let wasFocused = self.focusedRow;
                     focusCell(focusedCell.row - 1, focusedCell.column, false);
                     if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                         if (event.shiftKey) {
@@ -319,7 +300,7 @@ define([
             } else if (event.keyCode === KeyCodes.KEY_DOWN) {
                 event.preventDefault();
                 if (self.focusedRow < viewRows.length - 1) {
-                    var wasFocused = self.focusedRow;
+                    let wasFocused = self.focusedRow;
                     focusCell(focusedCell.row + 1, focusedCell.column, false);
                     if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                         if (event.shiftKey) {
@@ -336,6 +317,7 @@ define([
                 }
             } else if (event.keyCode === KeyCodes.KEY_LEFT) {
                 event.preventDefault();
+
                 function goLeftCell() {
                     if (self.focusedColumn > 0 || self.focusedRow > 0) {
                         do {
@@ -345,17 +327,17 @@ define([
                                 self.focusedColumn--;
                             }
                         } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
-                                !columnsFacade[self.focusedColumn].visible);
+                            !columnsFacade[self.focusedColumn].visible);
                     }
                 }
                 if (isTreeConfigured() &&
-                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                    self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                    columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                    self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                     if (hasRowChildren(viewRows[self.focusedRow]) && isExpanded(viewRows[self.focusedRow])) {
                         collapse(viewRows[self.focusedRow]);
                     } else {
-                        var parent = getParentOf(viewRows[self.focusedRow]);
+                        const parent = getParentOf(viewRows[self.focusedRow]);
                         if (parent) {
                             goTo(parent);
                         } else {
@@ -368,11 +350,11 @@ define([
             } else if (event.keyCode === KeyCodes.KEY_RIGHT) {
                 event.preventDefault();
                 if (isTreeConfigured() &&
-                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                        self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
-                        hasRowChildren(viewRows[self.focusedRow]) &&
-                        !isExpanded(viewRows[self.focusedRow])) {
+                    self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                    columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                    self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
+                    hasRowChildren(viewRows[self.focusedRow]) &&
+                    !isExpanded(viewRows[self.focusedRow])) {
                     expand(viewRows[self.focusedRow]);
                 } else {
                     if (self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) {
@@ -383,7 +365,7 @@ define([
                                 self.focusedColumn++;
                             }
                         } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
-                                !columnsFacade[self.focusedColumn].visible);
+                            !columnsFacade[self.focusedColumn].visible);
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_HOME) {
@@ -422,7 +404,7 @@ define([
                 }
             } else if (event.keyCode === KeyCodes.KEY_F2) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (focusedCell.editor) {
                         abortEditing();
                     } else {
@@ -432,23 +414,23 @@ define([
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
             } else if (event.keyCode === KeyCodes.KEY_F2 ||
-                    event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
-                    event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
-                    ) {
+                event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
+                event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
+                event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
+            ) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (!focusedCell.editor) {
                         editCell(self.focusedRow, self.focusedColumn);
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_SPACE) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
-                    var dataRow = viewRows[self.focusedRow];
-                    var column = columnsFacade[self.focusedColumn];
-                    var value = column.getValue(dataRow);
-                    if (typeof (value) === 'boolean') {
+                    self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                    const dataRow = viewRows[self.focusedRow];
+                    const column = columnsFacade[self.focusedColumn];
+                    const value = column.getValue(dataRow);
+                    if (typeof(value) === 'boolean') {
                         column.setValue(dataRow, !value);
                         redrawFrozen();
                         redrawBody();
@@ -456,22 +438,22 @@ define([
                 }
             } else if (event.keyCode === KeyCodes.KEY_DELETE) {
                 if (deletable && !focusedCell.editor) {
-                    var rows = discoverRows();
+                    let rows = discoverRows();
                     if (viewRows.length > 0) {
                         // calculate some view sugar
-                        var lastSelectedViewIndex = -1;
-                        for (var i = viewRows.length - 1; i >= 0; i--) {
-                            var element = viewRows[i];
+                        let lastSelectedViewIndex = -1;
+                        for (let i = viewRows.length - 1; i >= 0; i--) {
+                            const element = viewRows[i];
                             if (isSelected(element)) {
                                 lastSelectedViewIndex = i;
                                 break;
                             }
                         }
                         // actually delete selected elements
-                        var deletedAt = -1;
-                        var deleted = [];
-                        for (var i = rows.length - 1; i >= 0; i--) {
-                            var item = rows[i];
+                        let deletedAt = -1;
+                        const deleted = [];
+                        for (let i = rows.length - 1; i >= 0; i--) {
+                            const item = rows[i];
                             if (isSelected(item)) {
                                 deleted.push(item);
                                 rows.splice(i, 1);
@@ -479,14 +461,14 @@ define([
                             }
                         }
                         itemsRemoved(deleted);
-                        var viewIndexToSelect = lastSelectedViewIndex;
+                        const viewIndexToSelect = lastSelectedViewIndex;
                         if (deletedAt > -1) {
-                            var vIndex = viewIndexToSelect;
+                            let vIndex = viewIndexToSelect;
                             if (vIndex >= 0 && viewRows.length > 0) {
                                 if (vIndex >= viewRows.length) {
                                     vIndex = viewRows.length - 1;
                                 }
-                                var toSelect = viewRows[vIndex];
+                                const toSelect = viewRows[vIndex];
                                 goTo(toSelect, true);
                             } else {
                                 self.focus();
@@ -497,12 +479,12 @@ define([
             } else if (event.keyCode === KeyCodes.KEY_INSERT) {
                 if (insertable && !focusedCell.editor) {
                     var rows = discoverRows();
-                    var insertAt = -1;
-                    var lead = selectionLead;
+                    let insertAt = -1;
+                    const lead = selectionLead;
                     insertAt = rows.indexOf(lead);
                     insertAt++;
-                    var elementClass = rows['elementClass'];
-                    var inserted = elementClass ? new elementClass() : {};
+                    const elementClass = rows['elementClass'];
+                    const inserted = elementClass ? new elementClass() : {};
                     rows.splice(insertAt, 0, inserted);
                     itemsAdded([inserted]);
                     goTo(inserted, true);
@@ -511,14 +493,14 @@ define([
         });
 
         function discoverRows() {
-            var rows = data && field ? Bound.getPathData(data, field) : data;
+            const rows = data && field ? Bound.getPathData(data, field) : data;
             return rows ? rows : [];
         }
 
         function itemsRemoved(items) {
             if (!Array.isArray(items))
                 items = [items];
-            items.forEach(function (item) {
+            items.forEach(item => {
                 expandedRows.delete(item);
             });
             rebindElements();
@@ -527,7 +509,7 @@ define([
         }
 
         Object.defineProperty(this, 'removed', {
-            get: function () {
+            get: function() {
                 return itemsRemoved;
             }
         });
@@ -541,7 +523,7 @@ define([
         }
 
         Object.defineProperty(this, 'added', {
-            get: function () {
+            get: function() {
                 return itemsAdded;
             }
         });
@@ -554,7 +536,7 @@ define([
         }
 
         Object.defineProperty(this, 'changed', {
-            get: function () {
+            get: function() {
                 return itemsChanged;
             }
         });
@@ -563,7 +545,7 @@ define([
             return selectedRows.has(item);
         }
         Object.defineProperty(this, 'isSelected', {
-            get: function () {
+            get: function() {
                 return isSelected;
             }
         });
@@ -572,7 +554,7 @@ define([
             if (cursorProperty) {
                 if (arguments.length < 2)
                     needRedraw = true;
-                var rows = discoverRows();
+                const rows = discoverRows();
                 rows[cursorProperty] = item;
                 if (needRedraw) {
                     redrawFrozen();
@@ -581,7 +563,7 @@ define([
             }
         }
         Object.defineProperty(this, 'setCursorOn', {
-            get: function () {
+            get: function() {
                 return setCursorOn;
             }
         });
@@ -591,7 +573,7 @@ define([
                 items = [items];
             if (arguments.length < 2)
                 needRedraw = true;
-            items.forEach(function (item) {
+            items.forEach(item => {
                 selectedRows.add(item);
                 selectionLead = item;
                 fireSelected(item);
@@ -603,7 +585,7 @@ define([
             }
         }
         Object.defineProperty(this, 'select', {
-            get: function () {
+            get: function() {
                 return select;
             }
         });
@@ -611,7 +593,7 @@ define([
         function selectAll(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
-            var rows = discoverRows();
+            const rows = discoverRows();
             selectedRows = new Set(rows);
             selectionLead = rows.length > 0 ? rows[0] : null;
             setCursorOn(selectionLead, false);
@@ -622,7 +604,7 @@ define([
             }
         }
         Object.defineProperty(this, 'selectAll', {
-            get: function () {
+            get: function() {
                 return selectAll;
             }
         });
@@ -632,8 +614,8 @@ define([
                 items = [items];
             if (arguments.length < 2)
                 needRedraw = true;
-            var res = false;
-            items.forEach(function (item) {
+            let res = false;
+            items.forEach(item => {
                 if (selectionLead === item) {
                     selectionLead = null;
                 }
@@ -647,7 +629,7 @@ define([
             return res;
         }
         Object.defineProperty(this, 'unselect', {
-            get: function () {
+            get: function() {
                 return unselect;
             }
         });
@@ -666,22 +648,22 @@ define([
             }
         }
         Object.defineProperty(this, 'unselectAll', {
-            get: function () {
+            get: function() {
                 return unselectAll;
             }
         });
 
         Object.defineProperty(this, 'dynamicCellClassName', {
-            get: function () {
+            get: function() {
                 return dynamicCellsClassName;
             }
         });
 
         Object.defineProperty(this, 'showHorizontalLines', {
-            get: function () {
+            get: function() {
                 return showHorizontalLines;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (showHorizontalLines !== aValue) {
                     showHorizontalLines = !!aValue;
                     regenerateDynamicCellsStyles();
@@ -690,10 +672,10 @@ define([
         });
 
         Object.defineProperty(this, 'showVerticalLines', {
-            get: function () {
+            get: function() {
                 return showVerticalLines;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (showVerticalLines !== aValue) {
                     showVerticalLines = !!aValue;
                     regenerateDynamicCellsStyles();
@@ -703,20 +685,14 @@ define([
 
         function regenerateDynamicCellsStyles() {
             cellsStyleElement.innerHTML =
-                    '.' + dynamicCellsClassName + '{' +
-                    (showHorizontalLines ? '' : 'border-top-style: none;') +
-                    (showHorizontalLines ? '' : 'border-bottom-style: none;') +
-                    (showVerticalLines ? '' : 'border-left-style: none;') +
-                    (showVerticalLines ? '' : 'border-right-style: none;') +
-                    (gridColor ? 'border-color: ' + gridColor.toStyled() + ';' : '') +
-                    '}';
+                `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${gridColor ? `border-color: ${gridColor.toStyled()};` : ''}}`;
         }
 
         Object.defineProperty(this, 'gridColor', {
-            get: function () {
+            get: function() {
                 return gridColor;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (gridColor !== aValue) {
                     gridColor = aValue;
                     regenerateDynamicCellsStyles();
@@ -727,41 +703,38 @@ define([
         function regenerateDynamicOddRowsStyles() {
             if (showOddRowsInOtherColor && oddRowsColor) {
                 oddRowsStyleElement.innerHTML =
-                        '.' + dynamicOddRowsClassName + '{' +
-                        (oddRowsColor ? 'background-color: ' + oddRowsColor.toStyled() + ';' : '') +
-                        '}';
+                    `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled()};` : ''}}`;
             } else {
                 oddRowsStyleElement.innerHTML = '';
             }
         }
 
         Object.defineProperty(this, 'oddRowsColor', {
-            get: function () {
+            get: function() {
                 return oddRowsColor;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (oddRowsColor !== aValue) {
                     oddRowsColor = aValue;
                     regenerateDynamicOddRowsStyles();
                 }
             }
         });
+
         function regenerateDynamicEvenRowsStyles() {
             if (showOddRowsInOtherColor && evenRowsColor) {
                 evenRowsStyleElement.innerHTML =
-                        '.' + dynamicEvenRowsClassName + '{' +
-                        (evenRowsColor ? 'background-color: ' + evenRowsColor.toStyled() + ';' : '') +
-                        '}';
+                    `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled()};` : ''}}`;
             } else {
                 evenRowsStyleElement.innerHTML = '';
             }
         }
 
         Object.defineProperty(this, 'evenRowsColor', {
-            get: function () {
+            get: function() {
                 return evenRowsColor;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (evenRowsColor !== aValue) {
                     evenRowsColor = aValue;
                     regenerateDynamicEvenRowsStyles();
@@ -771,16 +744,14 @@ define([
 
         function regenerateDynamicRowsStyles() {
             rowsStyleElement.innerHTML =
-                    '.' + dynamicRowsClassName + '{' +
-                    ' height: ' + rowsHeight + 'px;' +
-                    '}';
+                `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'rowsHeight', {
-            get: function () {
+            get: function() {
                 return rowsHeight;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (rowsHeight !== aValue && aValue >= 10) {
                     rowsHeight = aValue;
                     regenerateDynamicRowsStyles();
@@ -790,29 +761,29 @@ define([
             }
         });
         Object.defineProperty(this, 'renderingThrottle', {
-            get: function () {
+            get: function() {
                 return renderingThrottle;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 renderingThrottle = aValue;
                 [
                     frozenLeft, frozenRight,
                     bodyLeft, bodyRight
-                ].forEach(function (section) {
+                ].forEach(section => {
                     section.renderingThrottle = renderingThrottle;
                 });
             }
         });
         Object.defineProperty(this, 'renderingPadding', {
-            get: function () {
+            get: function() {
                 return renderingPadding;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 renderingPadding = aValue;
                 [
                     frozenLeft, frozenRight,
                     bodyLeft, bodyRight
-                ].forEach(function (section) {
+                ].forEach(section => {
                     section.renderingPadding = renderingPadding;
                 });
             }
@@ -820,22 +791,19 @@ define([
 
         function regenerateDynamicHeaderCellsStyles() {
             headerCellsStyleElement.innerHTML =
-                    '.' + dynamicHeaderCellsClassName + '{' +
-                    '}';
+                `.${dynamicHeaderCellsClassName}{}`;
         }
 
         function regenerateDynamicHeaderRowsStyles() {
             headerCellsStyleElement.innerHTML =
-                    '.' + dynamicHeaderRowsClassName + '{' +
-                    ' height: ' + headerRowsHeight + 'px;' +
-                    '}';
+                `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'headerRowsHeight', {
-            get: function () {
+            get: function() {
                 return headerRowsHeight;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (headerRowsHeight !== aValue && aValue >= 10) {
                     headerRowsHeight = aValue;
                     regenerateDynamicHeaderRowsStyles();
@@ -844,11 +812,10 @@ define([
         });
 
         Object.defineProperty(this, 'headerVisible', {
-            get: function () {
-                return 'none' !== headerLeft.element.style.display
-                        && 'none' !== headerRight.element.style.display;
+            get: function() {
+                return 'none' !== headerLeft.element.style.display && 'none' !== headerRight.element.style.display;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue) {
                     headerContainer.style.display = '';
                 } else {
@@ -858,10 +825,10 @@ define([
         });
 
         Object.defineProperty(this, 'frozenColumns', {
-            get: function () {
+            get: function() {
                 return frozenColumns;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue >= 0 && aValue <= getColumnsCount() && frozenColumns !== aValue) {
                     frozenColumns = aValue;
                     applyColumnsNodes();
@@ -870,10 +837,10 @@ define([
         });
 
         Object.defineProperty(this, 'frozenRows', {
-            get: function () {
+            get: function() {
                 return frozenRows;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue >= 0 && frozenRows !== aValue) {
                     frozenRows = aValue;
                     setupRanges();
@@ -882,10 +849,10 @@ define([
         });
 
         Object.defineProperty(this, 'showOddRowsInOtherColor', {
-            get: function () {
+            get: function() {
                 return showOddRowsInOtherColor;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (showOddRowsInOtherColor !== aValue) {
                     showOddRowsInOtherColor = aValue;
                     regenerateDynamicOddRowsStyles();
@@ -895,13 +862,13 @@ define([
         });
 
         Object.defineProperty(this, 'draggableRows', {
-            get: function () {
+            get: function() {
                 return draggableRows;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (draggableRows !== aValue) {
                     draggableRows = aValue;
-                    [frozenLeft, frozenRight, bodyLeft, bodyRight].forEach(function (section) {
+                    [frozenLeft, frozenRight, bodyLeft, bodyRight].forEach(section => {
                         section.draggableRows = aValue;
                     });
                     redrawFrozen();
@@ -911,35 +878,35 @@ define([
         });
 
         Object.defineProperty(this, 'activeEditor', {
-            get: function () {
+            get: function() {
                 return focusedCell.editor;
             }
         });
 
         Object.defineProperty(this, 'onRender', {
-            get: function () {
+            get: function() {
                 return onRender;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 onRender = aValue;
             }
         });
 
         Object.defineProperty(this, 'rows', {
-            get: function () {
+            get: function() {
                 return discoverRows();
             }
         });
         Object.defineProperty(this, 'viewRows', {
-            get: function () {
+            get: function() {
                 return viewRows;
             }
         });
         Object.defineProperty(this, 'cursorProperty', {
-            get: function () {
+            get: function() {
                 return cursorProperty;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue && cursorProperty !== aValue) {
                     unbind();
                     cursorProperty = aValue;
@@ -949,28 +916,28 @@ define([
         });
 
         Object.defineProperty(this, 'editable', {
-            get: function () {
+            get: function() {
                 return editable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 editable = aValue;
             }
         });
 
         Object.defineProperty(this, 'deletable', {
-            get: function () {
+            get: function() {
                 return deletable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 deletable = aValue;
             }
         });
 
         Object.defineProperty(this, 'insertable', {
-            get: function () {
+            get: function() {
                 return insertable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 insertable = aValue;
             }
         });
@@ -979,7 +946,7 @@ define([
             return isTreeConfigured() ? depths.get(item) : 0;
         }
         Object.defineProperty(this, 'depthOf', {
-            get: function () {
+            get: function() {
                 return depthOf;
             }
         });
@@ -989,7 +956,7 @@ define([
         }
 
         Object.defineProperty(this, 'expanded', {
-            get: function () {
+            get: function() {
                 return isExpanded;
             }
         });
@@ -997,7 +964,7 @@ define([
         function expand(anElement) {
             if (isTreeConfigured()) {
                 if (!expandedRows.has(anElement)) {
-                    var children = getChildrenOf(anElement);
+                    const children = getChildrenOf(anElement);
                     if (children && children.length > 0) {
                         expandedRows.add(anElement);
                         rowsToViewRows(false);
@@ -1009,7 +976,7 @@ define([
         }
 
         Object.defineProperty(this, 'expand', {
-            get: function () {
+            get: function() {
                 return expand;
             }
         });
@@ -1026,7 +993,7 @@ define([
         }
 
         Object.defineProperty(this, 'collapse', {
-            get: function () {
+            get: function() {
                 return collapse;
             }
         });
@@ -1042,7 +1009,7 @@ define([
         }
 
         Object.defineProperty(this, 'toggle', {
-            get: function () {
+            get: function() {
                 return toggle;
             }
         });
@@ -1051,13 +1018,13 @@ define([
             return !hasRowChildren(anElement);
         }
         Object.defineProperty(this, 'isLeaf', {
-            get: function () {
+            get: function() {
                 return isLeaf;
             }
         });
 
         function hasRowChildren(parent) {
-            var children = findChildren(parent);
+            const children = findChildren(parent);
             return children && children.length > 0;
         }
 
@@ -1065,10 +1032,10 @@ define([
             if (aParent) {
                 return aParent[childrenField];
             } else {
-                var rows = discoverRows();
-                var roots = [];
-                for (var i = 0; i < rows.length; i++) {
-                    var item = rows[i];
+                const rows = discoverRows();
+                const roots = [];
+                for (let i = 0; i < rows.length; i++) {
+                    const item = rows[i];
                     if (item && !item[parentField]) {
                         roots.push(item);
                     }
@@ -1078,12 +1045,12 @@ define([
         }
 
         function getParentOf(anElement) {
-            var parent = anElement[parentField];
+            const parent = anElement[parentField];
             return parent == null ? null : parent; // undefined -> null
         }
 
         function getChildrenOf(anElement) {
-            var found = findChildren(anElement);
+            const found = findChildren(anElement);
             return found ? found : [];
         }
 
@@ -1096,10 +1063,10 @@ define([
          * element.
          */
         function pathTo(anItem) {
-            var path = [];
+            const path = [];
             if (anItem) {
-                var currentParent = anItem;
-                var added = new Set();
+                let currentParent = anItem;
+                const added = new Set();
                 path.push(currentParent);
                 added.add(currentParent);
                 while (currentParent) {
@@ -1115,16 +1082,16 @@ define([
             return path;
         }
         Object.defineProperty(this, 'pathTo', {
-            get: function () {
+            get: function() {
                 return pathTo;
             }
         });
 
         function goTo(anItem, aNeedToSelect) {
-            var expanded = false;
+            let expanded = false;
             if (isTreeConfigured()) {
-                var path = pathTo(anItem);
-                for (var p = 0; p < path.length - 1/* exclude last element*/; p++) {
+                const path = pathTo(anItem);
+                for (let p = 0; p < path.length - 1 /* exclude last element*/ ; p++) {
                     if (!expandedRows.has(path[p])) {
                         expandedRows.add(path[p]);
                         fireRowsSort();
@@ -1133,7 +1100,7 @@ define([
                     }
                 }
             }
-            var index;
+            let index;
             if (expanded) {
                 lookupDataColumn();
                 index = generateViewRows(anItem);
@@ -1150,12 +1117,12 @@ define([
                 focusCell(index, focusedCell.column !== -1 ? focusedCell.column : 0);
                 return true;
             } else {
-                return  false;
+                return false;
             }
         }
 
         Object.defineProperty(this, 'goTo', {
-            get: function () {
+            get: function() {
                 return goTo;
             }
         });
@@ -1168,7 +1135,7 @@ define([
         function bind() {
             if (data) {
                 if (field) {
-                    boundToData = Bound.observePath(data, field, function (anEvent) {
+                    boundToData = Bound.observePath(data, field, anEvent => {
                         rebind();
                         redrawFrozen();
                         redrawBody();
@@ -1182,8 +1149,8 @@ define([
         }
 
         function bindElements() {
-            var rows = discoverRows();
-            boundToElements = Bound.observeElements(rows, function (anEvent) {
+            const rows = discoverRows();
+            boundToElements = Bound.observeElements(rows, anEvent => {
                 redrawFrozen();
                 redrawBody();
             });
@@ -1216,9 +1183,9 @@ define([
 
         function bindCursor() {
             if (data) {
-                var rows = discoverRows();
+                const rows = discoverRows();
                 if (cursorProperty) {
-                    boundToCursor = Bound.observePath(rows, cursorProperty, function (anEvent) {
+                    boundToCursor = Bound.observePath(rows, cursorProperty, anEvent => {
                         redrawFrozen();
                         redrawBody();
                     });
@@ -1234,10 +1201,10 @@ define([
         }
 
         Object.defineProperty(this, 'data', {
-            get: function () {
+            get: function() {
                 return data;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (data !== aValue) {
                     unbind();
                     data = aValue;
@@ -1247,10 +1214,10 @@ define([
         });
 
         Object.defineProperty(this, 'field', {
-            get: function () {
+            get: function() {
                 return field;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (field !== aValue) {
                     unbind();
                     field = aValue;
@@ -1260,14 +1227,14 @@ define([
         });
 
         Object.defineProperty(this, 'parentField', {
-            get: function () {
+            get: function() {
                 return parentField;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (parentField !== aValue) {
-                    var wasTree = isTreeConfigured();
+                    const wasTree = isTreeConfigured();
                     parentField = aValue;
-                    var isTree = isTreeConfigured();
+                    const isTree = isTreeConfigured();
                     if (wasTree !== isTree) {
                         expandedRows.clear();
                         rowsToViewRows(false);
@@ -1278,10 +1245,10 @@ define([
         });
 
         Object.defineProperty(this, 'indent', {
-            get: function () {
+            get: function() {
                 return indent;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (indent !== aValue) {
                     indent = aValue;
                     rowsToViewRows(true);
@@ -1290,14 +1257,14 @@ define([
         });
 
         Object.defineProperty(this, 'childrenField', {
-            get: function () {
+            get: function() {
                 return childrenField;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (childrenField !== aValue) {
-                    var wasTree = isTreeConfigured();
+                    const wasTree = isTreeConfigured();
                     childrenField = aValue;
-                    var isTree = isTreeConfigured();
+                    const isTree = isTreeConfigured();
                     if (wasTree !== isTree) {
                         expandedRows.clear();
                         rowsToViewRows(false);
@@ -1315,7 +1282,7 @@ define([
             if (arguments.length < 1)
                 needRedraw = true;
             frozenContainer.style.display = frozenRows > 0 ? '' : 'none';
-            var frozenRangeEnd = viewRows.length >= frozenRows ? frozenRows : viewRows.length;
+            const frozenRangeEnd = viewRows.length >= frozenRows ? frozenRows : viewRows.length;
             frozenLeft.setDataRange(0, frozenRangeEnd, needRedraw);
             frozenRight.setDataRange(0, frozenRangeEnd, needRedraw);
 
@@ -1323,7 +1290,7 @@ define([
             bodyLeft.setDataRange(frozenRows, viewRows.length, needRedraw);
             bodyRight.setDataRange(frozenRows, viewRows.length, needRedraw);
 
-            bodyRight.onDrawBody = function () {
+            bodyRight.onDrawBody = () => {
                 bodyLeft.viewportBias = bodyRightContainer.offsetHeight - bodyRightContainer.clientHeight;
                 bodyLeftContainer.scrollTop = bodyRightContainer.scrollTop;
                 // bodyLeft.redrawBody();
@@ -1331,9 +1298,9 @@ define([
         }
 
         function updateSectionsWidth() {
-            var leftColumnsWidth = 0;
-            for (var c = 0; c < headerLeft.columnsCount; c++) {
-                var lcolumn = headerLeft.getColumn(c);
+            let leftColumnsWidth = 0;
+            for (let c = 0; c < headerLeft.columnsCount; c++) {
+                const lcolumn = headerLeft.getColumn(c);
                 if (lcolumn.visible) {
                     leftColumnsWidth += lcolumn.width + lcolumn.padding;
                 }
@@ -1343,12 +1310,12 @@ define([
                 frozenLeft,
                 bodyLeft,
                 footerLeft
-            ].forEach(function (section) {
-                section.element.style.width = leftColumnsWidth + 'px';
+            ].forEach(section => {
+                section.element.style.width = `${leftColumnsWidth}px`;
             });
-            var rightColumnsWidth = 0;
+            let rightColumnsWidth = 0;
             for (var c = 0; c < headerRight.columnsCount; c++) {
-                var rcolumn = headerRight.getColumn(c);
+                const rcolumn = headerRight.getColumn(c);
                 if (rcolumn.visible) {
                     rightColumnsWidth += rcolumn.width + rcolumn.padding;
                 }
@@ -1358,23 +1325,22 @@ define([
                 frozenRight,
                 bodyRight,
                 footerRight
-            ].forEach(function (section) {
-                section.element.style.width = rightColumnsWidth + 'px';
+            ].forEach(section => {
+                section.element.style.width = `${rightColumnsWidth}px`;
             });
         }
         Object.defineProperty(this, 'updateSectionsWidth', {
-            get: function () {
+            get: function() {
                 return updateSectionsWidth;
             }
         });
 
-        var treeIndicatorColumn;
         function lookupDataColumn(treeWidthPadding) {
-            var found = null;
+            let found = null;
             if (isTreeConfigured()) {
-                var c = 0;
+                let c = 0;
                 while (c < getColumnsCount()) {
-                    var column = getColumn(c);
+                    const column = getColumn(c);
                     if (column instanceof ServiceColumn) {
                         c++;
                     } else {
@@ -1395,7 +1361,7 @@ define([
             }
         }
         Object.defineProperty(this, 'treeIndicatorColumn', {
-            get: function () {
+            get: function() {
                 return treeIndicatorColumn;
             }
         });
@@ -1404,8 +1370,9 @@ define([
         function clearColumnsNodes(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
+
             function clearHeaders(forest) {
-                forest.forEach(function (node) {
+                forest.forEach(node => {
                     node.column.grid = null;
                     node.column.headers.splice(0, node.column.headers.length);
                     clearHeaders(node.children);
@@ -1414,9 +1381,9 @@ define([
             clearHeaders(columnNodes);
             columnsFacade = [];
             sortedColumns = [];
-            for (var i = getColumnsCount() - 1; i >= 0; i--) {
-                var toDel = getColumn(i);
-                var column = toDel;
+            for (let i = getColumnsCount() - 1; i >= 0; i--) {
+                const toDel = getColumn(i);
+                const column = toDel;
                 if (column === treeIndicatorColumn) {
                     treeIndicatorColumn.padding = 0;
                     treeIndicatorColumn = null;
@@ -1433,39 +1400,39 @@ define([
             footerRight.clearColumnsAndHeader(needRedraw);
         }
         Object.defineProperty(this, 'clearColumnsNodes', {
-            get: function () {
+            get: function() {
                 return clearColumnsNodes;
             }
         });
 
         function applyColumnsNodes() {
-            var treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
+            const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
             clearColumnsNodes(false);
 
             function injectHeaders(forest) {
-                forest.forEach(function (node) {
+                forest.forEach(node => {
                     node.column.grid = self;
                     node.column.headers.push(node.view);
                     injectHeaders(node.children);
                 });
             }
 
-            var maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
+            const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
             leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
             injectHeaders(leftHeader);
             HeaderAnalyzer.analyzeLeaves(leftHeader);
             headerLeft.setHeaderNodes(leftHeader, maxDepth, false);
-            var rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
+            const rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
             injectHeaders(rightHeader);
             HeaderAnalyzer.analyzeLeaves(rightHeader);
             headerRight.setHeaderNodes(rightHeader, maxDepth, false);
 
-            var leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
-            var rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
-            leftLeaves.forEach(function (leaf) { // linear list of column header nodes
+            const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
+            const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
+            leftLeaves.forEach(leaf => { // linear list of column header nodes
                 addColumnToSections(leaf.column);
             });
-            rightLeaves.forEach(function (leaf) { // linear list of column header nodes
+            rightLeaves.forEach(leaf => { // linear list of column header nodes
                 addColumnToSections(leaf.column);
             });
             [
@@ -1473,7 +1440,7 @@ define([
                 frozenLeftContainer,
                 bodyLeftContainer,
                 footerLeftContainer
-            ].forEach(function (section) {
+            ].forEach(section => {
                 section.style.display = frozenColumns > 0 ? '' : 'none';
             });
             lookupDataColumn(treeWidthPadding);
@@ -1482,10 +1449,10 @@ define([
         }
 
         Object.defineProperty(this, 'header', {
-            get: function () {
+            get: function() {
                 return columnNodes;
             },
-            set: function (aHeader) {
+            set: function(aHeader) {
                 if (columnNodes !== aHeader) {
                     columnNodes = aHeader;
                     applyColumnsNodes();
@@ -1494,7 +1461,7 @@ define([
         });
 
         Object.defineProperty(this, 'applyColumnsNodes', {
-            get: function () {
+            get: function() {
                 return applyColumnsNodes;
             }
         });
@@ -1508,7 +1475,7 @@ define([
 
         function removeColumnNode(aNode) {
             closeColumnMenu();
-            var nodeIndex = columnNodes.indexOf(aNode);
+            const nodeIndex = columnNodes.indexOf(aNode);
             if (nodeIndex !== -1) {
                 removeColumnNodeAt(nodeIndex);
             } else {
@@ -1516,7 +1483,7 @@ define([
             }
         }
         Object.defineProperty(this, 'removeColumnNode', {
-            get: function () {
+            get: function() {
                 return removeColumnNode;
             }
         });
@@ -1524,7 +1491,7 @@ define([
         function removeColumnNodeAt(nodeIndex) {
             closeColumnMenu();
             if (nodeIndex >= 0 && nodeIndex < columnNodes.length) {
-                var node = columnNodes[nodeIndex];
+                const node = columnNodes[nodeIndex];
                 columnNodes.splice(nodeIndex, 1);
                 if (treeIndicatorColumn === node.column) {
                     treeIndicatorColumn.padding = 0;
@@ -1537,7 +1504,7 @@ define([
             }
         }
         Object.defineProperty(this, 'removeColumnNodeAt', {
-            get: function () {
+            get: function() {
                 return removeColumnNodeAt;
             }
         });
@@ -1550,7 +1517,7 @@ define([
         }
 
         Object.defineProperty(this, 'addColumnNode', {
-            get: function () {
+            get: function() {
                 return addColumnNode;
             }
         });
@@ -1562,13 +1529,13 @@ define([
         }
 
         Object.defineProperty(this, 'insertColumnNode', {
-            get: function () {
+            get: function() {
                 return insertColumnNode;
             }
         });
 
         Object.defineProperty(this, 'columnNodesCount', {
-            get: function () {
+            get: function() {
                 return columnNodes.length;
             }
         });
@@ -1580,7 +1547,7 @@ define([
         }
 
         Object.defineProperty(this, 'getColumnNode', {
-            get: function () {
+            get: function() {
                 return getColumnNode;
             }
         });
@@ -1588,16 +1555,16 @@ define([
         function insertBeforeColumnNode(subject, insertBefore) {
             closeColumnMenu();
             if (subject && insertBefore && subject.parent === insertBefore.parent) {
-                var neighbours = subject.parent ? subject.parent.children : columnNodes;
-                var neighbourIndex = neighbours.indexOf(subject);
+                const neighbours = subject.parent ? subject.parent.children : columnNodes;
+                const neighbourIndex = neighbours.indexOf(subject);
                 neighbours.splice(neighbourIndex, 1);
-                var insertAt = neighbours.indexOf(insertBefore);
+                const insertAt = neighbours.indexOf(insertBefore);
                 neighbours.splice(insertAt, 0, subject);
                 applyColumnsNodes();
             }
         }
         Object.defineProperty(this, 'insertBeforeColumnNode', {
-            get: function () {
+            get: function() {
                 return insertBeforeColumnNode;
             }
         });
@@ -1605,16 +1572,16 @@ define([
         function insertAfterColumnNode(subject, insertAfter) {
             closeColumnMenu();
             if (subject && insertAfter && subject.parent === insertAfter.parent) {
-                var neighbours = subject.parent ? subject.parent.children : columnNodes;
-                var neighbourIndex = neighbours.indexOf(subject);
+                const neighbours = subject.parent ? subject.parent.children : columnNodes;
+                const neighbourIndex = neighbours.indexOf(subject);
                 neighbours.splice(neighbourIndex, 1);
-                var insertAt = neighbours.indexOf(insertAfter);
+                const insertAt = neighbours.indexOf(insertAfter);
                 neighbours.splice(insertAt + 1, 0, subject);
                 applyColumnsNodes();
             }
         }
         Object.defineProperty(this, 'insertAfterColumnNode', {
-            get: function () {
+            get: function() {
                 return insertAfterColumnNode;
             }
         });
@@ -1645,7 +1612,7 @@ define([
             footerRight.redraw();
         }
         Object.defineProperty(this, 'redraw', {
-            get: function () {
+            get: function() {
                 return redraw;
             }
         });
@@ -1655,7 +1622,7 @@ define([
             frozenRight.redraw();
         }
         Object.defineProperty(this, 'redrawFrozen', {
-            get: function () {
+            get: function() {
                 return redrawFrozen;
             }
         });
@@ -1665,7 +1632,7 @@ define([
             bodyRight.redraw();
         }
         Object.defineProperty(this, 'redrawBody', {
-            get: function () {
+            get: function() {
                 return redrawBody;
             }
         });
@@ -1675,7 +1642,7 @@ define([
             headerRight.redrawHeaders();
         }
         Object.defineProperty(this, 'redrawHeaders', {
-            get: function () {
+            get: function() {
                 return redrawHeaders;
             }
         });
@@ -1685,37 +1652,35 @@ define([
             footerRight.redrawFooters();
         }
         Object.defineProperty(this, 'redrawFooters', {
-            get: function () {
+            get: function() {
                 return redrawFooters;
             }
         });
 
         function getColumnsCount() {
-            return (headerLeft ? headerLeft.columnsCount : 0)
-                    + (headerRight ? headerRight.columnsCount : 0);
+            return (headerLeft ? headerLeft.columnsCount : 0) + (headerRight ? headerRight.columnsCount : 0);
         }
         Object.defineProperty(this, 'columnsCount', {
-            get: function () {
+            get: function() {
                 return getColumnsCount();
             }
         });
 
         function getColumn(aIndex) {
             if (aIndex >= 0 && aIndex < getColumnsCount()) {
-                return aIndex >= 0 && aIndex < headerLeft.columnsCount ? headerLeft.getColumn(aIndex)
-                        : headerRight.getColumn(aIndex - headerLeft.columnsCount);
+                return aIndex >= 0 && aIndex < headerLeft.columnsCount ? headerLeft.getColumn(aIndex) : headerRight.getColumn(aIndex - headerLeft.columnsCount);
             } else {
                 return null;
             }
         }
         Object.defineProperty(this, 'getColumn', {
-            get: function () {
+            get: function() {
                 return getColumn;
             }
         });
 
         function getCell(aRow, aCol) {
-            var targetSection;
+            let targetSection;
             if (aRow < frozenRows) {
                 if (aCol < frozenColumns) {
                     targetSection = frozenLeft;
@@ -1732,7 +1697,7 @@ define([
             return targetSection.getViewCell(aRow, aCol);
         }
         Object.defineProperty(this, 'getCell', {
-            get: function () {
+            get: function() {
                 return getCell;
             }
         });
@@ -1741,11 +1706,12 @@ define([
             row: 0,
             column: 0
         };
+
         function focusCell(row, column, needRedraw) {
             if (arguments.length < 3)
                 needRedraw = true;
             if (row >= 0 && row < viewRows.length ||
-                    column >= 0 && column < columnsFacade.length) {
+                column >= 0 && column < columnsFacade.length) {
                 if (row >= 0 && row < viewRows.length) {
                     focusedCell.row = row;
                 }
@@ -1753,21 +1719,21 @@ define([
                     focusedCell.column = column;
                 }
                 if (focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
-                        focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
-                    var cell = frozenLeft.getViewCell(row, column);
+                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                    let cell = frozenLeft.getViewCell(row, column);
                     if (cell) {
                         cell.scrollIntoView();
                     } else {
                         cell = frozenRight.getViewCell(row, column);
                         if (cell) {
-                            var bodyCell = bodyRight.getViewCell(frozenRows, column);
+                            const bodyCell = bodyRight.getViewCell(frozenRows, column);
                             if (bodyCell)
                                 bodyCell.scrollIntoView();
                             else
                                 cell.scrollIntoView();
                         } else {
                             if (row >= frozenRows) {
-                                var rowCenter = (row - frozenRows) * rowsHeight + rowsHeight / 2;
+                                const rowCenter = (row - frozenRows) * rowsHeight + rowsHeight / 2;
                                 if (bodyRightContainer.scrollTop > rowCenter || rowCenter > bodyRightContainer.scrollTop + bodyRightContainer.clientHeight) {
                                     bodyRightContainer.scrollTop = (row - frozenRows) * rowsHeight - bodyRightContainer.clientHeight / 2 + rowsHeight / 2;
                                 }
@@ -1787,54 +1753,53 @@ define([
             return false;
         }
         Object.defineProperty(this, 'focusCell', {
-            get: function () {
+            get: function() {
                 return focusCell;
             }
         });
         Object.defineProperty(this, 'focusedRow', {
-            get: function () {
+            get: function() {
                 return focusedCell.row;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue >= 0 && aValue < viewRows.length && aValue !== focusedCell.row) {
                     focusCell(aValue, focusedCell.column);
                 }
             }
         });
         Object.defineProperty(this, 'focusedColumn', {
-            get: function () {
+            get: function() {
                 return focusedCell.column;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue >= 0 && aValue < columnsFacade.length && aValue !== focusedCell.column) {
                     focusCell(focusedCell.row, aValue);
                 }
             }
         });
+
         function startEditing() {
             if (!focusedCell.editor && focusedCell.row >= 0 && focusedCell.row < viewRows.length ||
-                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
-                var edited = viewRows[focusedCell.row];
-                var column = columnsFacade[focusedCell.column];
+                focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                const edited = viewRows[focusedCell.row];
+                const column = columnsFacade[focusedCell.column];
                 if (column.editor) {
-                    var editor = column.editor;
-                    var value = column.getValue(edited);
+                    const editor = column.editor;
+                    const value = column.getValue(edited);
                     editor.value = value === undefined ? null : value;
                     focusedCell.editor = editor;
-                    focusedCell.commit = function () {
+                    focusedCell.commit = () => {
                         column.setValue(edited, editor.value);
                     };
-                    var valueChangeReg = editor.addValueChangeHandler ?
-                            editor.addValueChangeHandler(function (event) {
-                                column.setValue(edited, event.newValue);
-                            })
-                            : null;
-                    var blurReg = editor.addBlurHandler ?
-                            editor.addBlurHandler(function (event) {
-                                completeEditing();
-                            })
-                            : null;
-                    focusedCell.clean = function () {
+                    let valueChangeReg = editor.addValueChangeHandler ?
+                        editor.addValueChangeHandler(event => {
+                            column.setValue(edited, event.newValue);
+                        }) : null;
+                    let blurReg = editor.addBlurHandler ?
+                        editor.addBlurHandler(event => {
+                            completeEditing();
+                        }) : null;
+                    focusedCell.clean = () => {
                         if (blurReg) {
                             blurReg.removeHandler();
                             blurReg = null;
@@ -1857,15 +1822,17 @@ define([
             return false;
         }
         Object.defineProperty(this, 'startEditing', {
-            get: function () {
+            get: function() {
                 return startEditing;
             }
         });
+
         function editCell(row, column) {
             if (focusCell(row, column)) {
                 startEditing();
             }
         }
+
         function abortEditing() {
             if (focusedCell.clean) {
                 focusedCell.clean();
@@ -1882,10 +1849,11 @@ define([
             }
         }
         Object.defineProperty(this, 'abortEditing', {
-            get: function () {
+            get: function() {
                 return abortEditing;
             }
         });
+
         function completeEditing() {
             if (focusedCell.commit) {
                 focusedCell.commit();
@@ -1894,42 +1862,43 @@ define([
             abortEditing();
         }
         Object.defineProperty(this, 'completeEditing', {
-            get: function () {
+            get: function() {
                 return completeEditing;
             }
         });
+
         function sort() {
             rowsToViewRows(true);
             redrawHeaders();
         }
         Object.defineProperty(this, 'sort', {
-            get: function () {
+            get: function() {
                 return sort;
             }
         });
 
         function addSortedColumn(column) {
-            var idx = sortedColumns.indexOf(column);
+            const idx = sortedColumns.indexOf(column);
             if (idx === -1) {
                 sortedColumns.push(column);
             }
             sort();
         }
         Object.defineProperty(this, 'addSortedColumn', {
-            get: function () {
+            get: function() {
                 return addSortedColumn;
             }
         });
 
         function removeSortedColumn(column) {
-            var idx = sortedColumns.indexOf(column);
+            const idx = sortedColumns.indexOf(column);
             if (idx !== -1) {
                 sortedColumns.splice(idx, 1);
             }
             sort();
         }
         Object.defineProperty(this, 'removeSortedColumn', {
-            get: function () {
+            get: function() {
                 return removeSortedColumn;
             }
         });
@@ -1938,7 +1907,7 @@ define([
             if (arguments.length < 1)
                 apply = true;
             sortedColumns = [];
-            columnsFacade.forEach(function (column) {
+            columnsFacade.forEach(column => {
                 column.unsort(false);
             });
             if (apply) {
@@ -1947,24 +1916,24 @@ define([
             }
         }
         Object.defineProperty(this, 'unsort', {
-            get: function () {
+            get: function() {
                 return unsort;
             }
         });
 
         function generateViewRows(anItemToLookup) {
-            var itemToLookupIndex = -1;
+            let itemToLookupIndex = -1;
             depths.clear();
-            var rows = discoverRows();
+            const rows = discoverRows();
             if (isTreeConfigured()) {
                 viewRows = [];
-                var roots = getChildrenOf(null);
-                var stack = [];
-                var parents = [null];
-                var maxPathLength = 1;
+                const roots = getChildrenOf(null);
+                const stack = [];
+                const parents = [null];
+                let maxPathLength = 1;
                 Array.prototype.unshift.apply(stack, roots);
                 while (stack.length > 0) {
-                    var item = stack.shift();
+                    const item = stack.shift();
                     if (parents[parents.length - 1] !== getParentOf(item)) {
                         parents.pop();
                     }
@@ -1974,7 +1943,7 @@ define([
                     }
                     viewRows.push(item);
                     if (expandedRows.has(item)) {
-                        var children = getChildrenOf(item);
+                        const children = getChildrenOf(item);
                         if (children.length > 0) {
                             parents.push(item);
                             if (maxPathLength < parents.length) {
@@ -1994,19 +1963,19 @@ define([
 
         function sortViewRows() {
             if (sortedColumns.length > 0) {
-                viewRows.sort(function (o1, o2) {
+                viewRows.sort((o1, o2) => {
                     if (isTreeConfigured() && getParentOf(o1) !== getParentOf(o2)) {
-                        var path1 = pathTo(o1);
-                        var path2 = pathTo(o2);
-                        if (path2.indexOf(o1) !== -1) {
+                        const path1 = pathTo(o1);
+                        const path2 = pathTo(o2);
+                        if (path2.includes(o1)) {
                             // o1 is parent of o2
                             return -1;
                         }
-                        if (path1.indexOf(o2) !== -1) {
+                        if (path1.includes(o2)) {
                             // o2 is parent of o1
                             return 1;
                         }
-                        for (var p = 0; p < Math.min(path1.length, path2.length); p++) {
+                        for (let p = 0; p < Math.min(path1.length, path2.length); p++) {
                             if (path1[p] !== path2[p]) {
                                 o1 = path1[p];
                                 o2 = path2[p];
@@ -2014,10 +1983,10 @@ define([
                             }
                         }
                     }
-                    var res = 0;
-                    var index = 0;
+                    let res = 0;
+                    let index = 0;
                     while (res === 0 && index < sortedColumns.length) {
-                        var column = sortedColumns[index++];
+                        const column = sortedColumns[index++];
                         if (column.comparator) {
                             res = column.comparator.compare(o1, o2);
                         }
@@ -2041,37 +2010,38 @@ define([
             }
         }
 
-        var expandListeners = new Set();
+        const expandListeners = new Set();
+
         function addExpandHandler(h) {
             expandListeners.add(h);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     expandListeners.delete(h);
                 }
             };
         }
         Object.defineProperty(this, 'addExpandHandler', {
-            get: function () {
+            get: function() {
                 return addExpandHandler;
             }
         });
 
         function fireExpanded(anElement) {
-            var event = new ItemEvent(self, anElement);
-            expandListeners.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new ItemEvent(self, anElement);
+            expandListeners.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onExpand;
-        var expandedReg;
+        let onExpand;
+        let expandedReg;
         Object.defineProperty(this, 'onExpand', {
-            get: function () {
+            get: function() {
                 return onExpand;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (onExpand !== aValue) {
                     if (expandedReg) {
                         expandedReg.removeHandler();
@@ -2079,7 +2049,7 @@ define([
                     }
                     onExpand = aValue;
                     if (onExpand) {
-                        expandedReg = addExpandHandler(function (event) {
+                        expandedReg = addExpandHandler(event => {
                             if (onExpand) {
                                 onExpand(event);
                             }
@@ -2089,37 +2059,38 @@ define([
             }
         });
 
-        var collapseHandlers = new Set();
+        const collapseHandlers = new Set();
+
         function addCollapseHandler(h) {
             collapseHandlers.add(h);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     collapseHandlers.delete(h);
                 }
             };
         }
         Object.defineProperty(this, 'addCollapseHandler', {
-            get: function () {
+            get: function() {
                 return addCollapseHandler;
             }
         });
 
         function fireCollapsed(anElement) {
-            var event = new ItemEvent(self, anElement);
-            collapseHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new ItemEvent(self, anElement);
+            collapseHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onCollapse;
-        var collapseReg;
+        let onCollapse;
+        let collapseReg;
         Object.defineProperty(this, 'onCollapse', {
-            get: function () {
+            get: function() {
                 return onCollapse;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (onCollapse !== aValue) {
                     if (collapseReg) {
                         collapseReg.removeHandler();
@@ -2127,7 +2098,7 @@ define([
                     }
                     onCollapse = aValue;
                     if (onCollapse) {
-                        collapseReg = addCollapseHandler(function (event) {
+                        collapseReg = addCollapseHandler(event => {
                             if (onCollapse) {
                                 onCollapse(event);
                             }
@@ -2137,17 +2108,18 @@ define([
             }
         });
 
-        var sortHandlers = new Set();
+        const sortHandlers = new Set();
+
         function addSortHandler(handler) {
             sortHandlers.add(handler);
-            return  {
-                removeHandler: function () {
+            return {
+                removeHandler: function() {
                     sortHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addSortHandler', {
-            get: function () {
+            get: function() {
                 return addSortHandler;
             }
         });
@@ -2156,27 +2128,27 @@ define([
             [
                 frozenLeft, frozenRight,
                 bodyLeft, bodyRight
-            ].forEach(function (section) {
+            ].forEach(section => {
                 section.data = viewRows;
             });
         }
 
         function fireRowsSort() {
-            var event = new SortEvent(this);
-            sortHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new SortEvent(this);
+            sortHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onSort;
-        var sortedReg;
+        let onSort;
+        let sortedReg;
         Object.defineProperty(this, 'onSort', {
-            get: function () {
+            get: function() {
                 return onSort;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (onSort !== aValue) {
                     if (sortedReg) {
                         sortedReg.removeHandler();
@@ -2184,7 +2156,7 @@ define([
                     }
                     onSort = aValue;
                     if (onSort) {
-                        sortedReg = addSortHandler(function (event) {
+                        sortedReg = addSortHandler(event => {
                             if (onSort) {
                                 onSort(event);
                             }
@@ -2194,155 +2166,166 @@ define([
             }
         });
 
-        var selectionHandlers = new Set();
+        const selectionHandlers = new Set();
+
         function addSelectionHandler(handler) {
             selectionHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     selectionHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addSelectionHandler', {
-            get: function () {
+            get: function() {
                 return addSelectionHandler;
             }
         });
 
         function fireSelected(item) {
-            var event = new ItemEvent(self, item);
-            selectionHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new ItemEvent(self, item);
+            selectionHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var focusHandlers = new Set();
+        const focusHandlers = new Set();
+
         function addFocusHandler(handler) {
             focusHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     focusHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addFocusHandler', {
-            get: function () {
+            get: function() {
                 return addFocusHandler;
             }
         });
 
         Ui.on(shell, Ui.Events.FOCUS, fireFocus);
+
         function fireFocus() {
-            var event = new FocusEvent(self);
-            focusHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new FocusEvent(self);
+            focusHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var blurHandlers = new Set();
+        const blurHandlers = new Set();
+
         function addBlurHandler(handler) {
             blurHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     blurHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addBlurHandler', {
-            get: function () {
+            get: function() {
                 return addBlurHandler;
             }
         });
 
         Ui.on(shell, Ui.Events.BLUR, fireBlur);
+
         function fireBlur() {
-            var event = new BlurEvent(self);
-            blurHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new BlurEvent(self);
+            blurHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var keyUpHandlers = new Set();
+        const keyUpHandlers = new Set();
+
         function addKeyUpHandler(handler) {
             keyUpHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     keyUpHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyUpHandler', {
-            get: function () {
+            get: function() {
                 return addKeyUpHandler;
             }
         });
 
         Ui.on(shell, Ui.Events.KEYUP, fireKeyUp);
+
         function fireKeyUp(nevent) {
-            var event = new KeyEvent(self, nevent);
-            keyUpHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new KeyEvent(self, nevent);
+            keyUpHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var keyDownHandlers = new Set();
+        const keyDownHandlers = new Set();
+
         function addKeyDownHandler(handler) {
             keyDownHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     keyDownHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyDownHandler', {
-            get: function () {
+            get: function() {
                 return addKeyDownHandler;
             }
         });
 
         Ui.on(shell, Ui.Events.KEYDOWN, fireKeyDown);
+
         function fireKeyDown(nevent) {
-            var event = new KeyEvent(self, nevent);
-            keyDownHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new KeyEvent(self, nevent);
+            keyDownHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var keyPressHandlers = new Set();
+        const keyPressHandlers = new Set();
+
         function addKeyPressHandler(handler) {
             keyPressHandlers.add(handler);
             return {
-                removeHandler: function () {
+                removeHandler: function() {
                     keyPressHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyPressHandler', {
-            get: function () {
+            get: function() {
                 return addKeyPressHandler;
             }
         });
 
         Ui.on(shell, Ui.Events.KEYPRESS, fireKeyPress);
+
         function fireKeyPress(nevent) {
-            var event = new KeyEvent(this, nevent);
-            keyPressHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new KeyEvent(this, nevent);
+            keyPressHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
     }
-    extend(Grid, Widget);
-    return Grid;
-});
+}
+
+export default Grid;

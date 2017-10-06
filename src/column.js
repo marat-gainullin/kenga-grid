@@ -1,66 +1,57 @@
 /* global Infinity */
-define([
-    'core/id',
-    'ui/utils',
-    'ui/bound'
-], function (
-        Id,
-        Ui,
-        Bound
-        ) {
-    function Column(node) {
-        var self = this;
-        var cols = []; // dom 'col' elements for header,frozen,body and footer sections of the grid
-        var columnRule = document.createElement('style');
-        var columnStyleName = 'p-grid-column-' + Id.generate();
-        var field = null;
-        var sortField = null;
-        var renderer = null;
-        var editor = null;
+import Id from 'core/id';
+import Ui from 'ui/utils';
+import Bound from 'ui/bound';
+
+class Column {
+    constructor(node) {
+        const self = this;
+        const cols = []; // dom 'col' elements for header,frozen,body and footer sections of the grid
+        const columnRule = document.createElement('style');
+        const columnStyleName = `p-grid-column-${Id.generate()}`;
+        let field = null;
+        let sortField = null;
+        let renderer = null;
+        let editor = null;
         /**
          * Minimum column width while resizing by a user.
          */
-        var minWidth = 15;
+        let minWidth = 15;
         /**
          * Maximum column width while resizing by a user.
          */
-        var maxWidth = Infinity;
-        var width = 75;
-        var padding = 0;
-        var readonly = false;
-        var visible = true;
-        var sortable = true;
-        var comparator; // PathComparator
-        var headers = []; // multiple instances of NodeView
-        var onRender;
-        var onSelect;
-        var grid;
+        let maxWidth = Infinity;
+        let width = 75;
+        let padding = 0;
+        let readonly = false;
+        let visible = true;
+        let sortable = true;
+        let comparator; // PathComparator
+        const headers = []; // multiple instances of NodeView
+        let onRender;
+        let onSelect;
+        let grid;
 
         function regenerateColStyle() {
-            columnRule.innerHTML = '.' + columnStyleName + '{' +
-                    (visible ? '' : 'display: none;') +
-                    (width == null || width == Infinity ? '' : 'width: ' + (width + padding) + 'px;') +
-                    (minWidth == null || minWidth == Infinity ? '' : 'min-width: ' + minWidth + 'px;') +
-                    (maxWidth == null || maxWidth == Infinity ? '' : 'max-width: ' + maxWidth + 'px;') +
-                    '}';
+            columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${width == null || width == Infinity ? '' : `width: ${width + padding}px;`}${minWidth == null || minWidth == Infinity ? '' : `min-width: ${minWidth}px;`}${maxWidth == null || maxWidth == Infinity ? '' : `max-width: ${maxWidth}px;`}}`;
         }
         regenerateColStyle();
 
         Object.defineProperty(this, 'styleName', {
-            get: function () {
+            get: function() {
                 return columnStyleName;
             }
         });
 
         function addCol() {
-            var col = document.createElement('col');
+            const col = document.createElement('col');
             cols.push(col);
             col.className = columnStyleName;
             return col;
         }
 
         Object.defineProperty(this, 'addCol', {
-            get: function () {
+            get: function() {
                 return addCol;
             }
         });
@@ -68,7 +59,7 @@ define([
          * Multiple 'col' elements for the single column, because of grid sections.
          */
         Object.defineProperty(this, 'elements', {
-            get: function () {
+            get: function() {
                 return cols;
             }
         });
@@ -77,7 +68,7 @@ define([
          * Multiple 'headers' for the single column, because of splitted column nodes.
          */
         Object.defineProperty(this, 'headers', {
-            get: function () {
+            get: function() {
                 return headers;
             }
         });
@@ -86,36 +77,36 @@ define([
          * Leaf nodes' columns can have only single header, by nature.
          */
         Object.defineProperty(this, 'header', {
-            get: function () {
+            get: function() {
                 return headers.length === 1 ? headers[0] : null;
             }
         });
         Object.defineProperty(this, 'grcore/id', {
-            get: function () {
+            get: function() {
                 return grid;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 grid = aValue;
             }
         });
 
         Object.defineProperty(this, 'node', {
-            get: function () {
+            get: function() {
                 return node;
             }
         });
 
         Object.defineProperty(this, 'columnRule', {
-            get: function () {
+            get: function() {
                 return columnRule;
             }
         });
 
         Object.defineProperty(this, 'comparator', {
-            get: function () {
+            get: function() {
                 return comparator;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 comparator = aValue;
             }
         });
@@ -129,7 +120,7 @@ define([
             }
         }
         Object.defineProperty(this, 'sort', {
-            get: function () {
+            get: function() {
                 return sort;
             }
         });
@@ -143,7 +134,7 @@ define([
             }
         }
         Object.defineProperty(this, 'sortDesc', {
-            get: function () {
+            get: function() {
                 return sortDesc;
             }
         });
@@ -157,16 +148,16 @@ define([
             }
         }
         Object.defineProperty(this, 'unsort', {
-            get: function () {
+            get: function() {
                 return unsort;
             }
         });
 
         Object.defineProperty(this, 'field', {
-            get: function () {
+            get: function() {
                 return field;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (field !== aValue) {
                     field = aValue;
                 }
@@ -174,10 +165,10 @@ define([
         });
 
         Object.defineProperty(this, 'sortField', {
-            get: function () {
+            get: function() {
                 return sortField;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (sortField !== aValue) {
                     sortField = aValue;
                 }
@@ -185,10 +176,10 @@ define([
         });
 
         Object.defineProperty(this, 'width', {
-            get: function () {
+            get: function() {
                 return width;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (width !== aValue) {
                     width = aValue;
                     regenerateColStyle();
@@ -200,10 +191,10 @@ define([
         });
 
         Object.defineProperty(this, 'padding', {
-            get: function () {
+            get: function() {
                 return padding;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (aValue != null && padding !== aValue) {
                     padding = aValue;
                     regenerateColStyle();
@@ -216,10 +207,10 @@ define([
 
         Object.defineProperty(this, 'minWidth', {
             configurable: true,
-            get: function () {
+            get: function() {
                 return minWidth;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (minWidth !== aValue) {
                     minWidth = aValue;
                     regenerateColStyle();
@@ -229,10 +220,10 @@ define([
 
         Object.defineProperty(this, 'maxWidth', {
             configurable: true,
-            get: function () {
+            get: function() {
                 return maxWidth;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (maxWidth !== aValue) {
                     maxWidth = aValue;
                     regenerateColStyle();
@@ -249,7 +240,7 @@ define([
         }
         Object.defineProperty(this, 'getValue', {
             configurable: true,
-            get: function () {
+            get: function() {
                 return getValue;
             }
         });
@@ -261,13 +252,15 @@ define([
         }
         Object.defineProperty(this, 'setValue', {
             configurable: true,
-            get: function () {
+            get: function() {
                 return setValue;
             }
         });
 
         function render(viewRowIndex, viewColumnIndex, dataRow, viewCell) {
-            var checkbox = null;
+            let checkbox = null;
+            let html;
+
             function handleSelection(event) {
                 if (checkbox && !readonly) {
                     setValue(dataRow, !getValue(dataRow));
@@ -279,16 +272,17 @@ define([
                 self.grid.focusCell(viewRowIndex, viewColumnIndex, true);
             }
             if (grid.treeIndicatorColumn === self) {
-                var padding = grid.indent * grid.depthOf(dataRow);
-                viewCell.style.paddingLeft = padding > 0 ? padding + 'px' : '';
+                const padding = grid.indent * grid.depthOf(dataRow);
+                viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
                 if (!grid.isLeaf(dataRow)) {
                     viewCell.classList.add(grid.expanded(dataRow) ? 'p-grid-cell-expanded' : 'p-grid-cell-collapsed');
                 }
+
                 function onClick(event) {
                     if (event.button === 0) {
-                        var rect = viewCell.getBoundingClientRect();
+                        const rect = viewCell.getBoundingClientRect();
                         if (event.clientX > rect.left + padding - grid.indent &&
-                                event.clientX <= rect.left + padding) {
+                            event.clientX <= rect.left + padding) {
                             event.stopPropagation();
                             if (checkbox && !readonly) {
                                 setValue(dataRow, !getValue(dataRow));
@@ -301,10 +295,10 @@ define([
                     }
                 }
                 Ui.on(viewCell, Ui.Events.CLICK, onClick);
-                if(checkbox){
+                if (checkbox) {
                     Ui.on(checkbox, Ui.Events.CLICK, onClick);
                 }
-                Ui.on(viewCell, Ui.Events.DBLCLICK, function (event) {
+                Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                     if (event.button === 0) {
                         handleSelection(event);
                         self.grid.startEditing();
@@ -312,49 +306,48 @@ define([
                 });
             } else {
                 Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
-                if(checkbox){
+                if (checkbox) {
                     Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
                 }
             }
-            var value = getValue(dataRow);
+            const value = getValue(dataRow);
             if (value == null) { // null == undefined, null !== undefined
                 viewCell.innerTHML = ''; // No native rendering for null values
-            } else if (typeof (value) === 'boolean') {
+            } else if (typeof(value) === 'boolean') {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = !!value;
                 viewCell.appendChild(checkbox);
                 viewCell.classList.add('p-grid-cell-check-box');
             } else {
-                var html;
                 if (renderer) {
                     renderer.value = value;
                     html = renderer.text;
                 } else if (value instanceof Date) {
                     html = value.toJSON();
                 } else {
-                    html = value + '';
+                    html = `${value}`;
                 }
                 viewCell.innerHTML = html;
             }
             // User's rendering for all values, including null
             if (onRender || grid.onRender) {
-                var handler = onRender ? onRender : grid.onRender;
+                const handler = onRender ? onRender : grid.onRender;
                 handler.call(self, dataRow, viewCell, viewRowIndex, html);
             }
         }
 
         Object.defineProperty(this, 'render', {
             configurable: true,
-            get: function () {
+            get: function() {
                 return render;
             }
         });
         Object.defineProperty(this, 'visible', {
-            get: function () {
+            get: function() {
                 return visible;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (visible !== aValue) {
                     visible = aValue;
                     regenerateColStyle();
@@ -366,28 +359,28 @@ define([
         });
 
         Object.defineProperty(this, 'readonly', {
-            get: function () {
+            get: function() {
                 return readonly;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 readonly = aValue;
             }
         });
 
         Object.defineProperty(this, 'sortable', {
-            get: function () {
+            get: function() {
                 return sortable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 sortable = aValue;
             }
         });
 
         Object.defineProperty(this, 'onRender', {
-            get: function () {
+            get: function() {
                 return onRender;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (onRender !== aValue) {
                     onRender = aValue;
                 }
@@ -395,10 +388,10 @@ define([
         });
 
         Object.defineProperty(this, 'onSelect', {
-            get: function () {
+            get: function() {
                 return editor ? editor.onSelect : null;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (onSelect !== aValue && editor) {
                     editor.onSelect = aValue;
                 }
@@ -406,20 +399,20 @@ define([
         });
 
         Object.defineProperty(this, 'renderer', {
-            get: function () {
+            get: function() {
                 return renderer;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (renderer !== aValue) {
                     renderer = aValue;
                 }
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function () {
+            get: function() {
                 return editor;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (editor !== aValue) {
                     if (editor && editor.element) {
                         editor.element.classList.remove('p-grid-cell-editor');
@@ -432,5 +425,6 @@ define([
             }
         });
     }
-    return Column;
-});
+}
+
+export default Column;

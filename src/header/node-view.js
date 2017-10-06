@@ -1,26 +1,23 @@
-define([
-    'ui/utils'
-], function (
-        Ui
-        ) {
+import Ui from 'ui/utils';
 
-    var HEADER_VIEW = 'header-view';
-    var columnDrag = null;
+const HEADER_VIEW = 'header-view';
+let columnDrag = null;
 
-    function NodeView(text, viewColumnNode) {
-        var self = this;
-        var th = document.createElement('th');
-        var thResizer = document.createElement('div');
+class NodeView {
+    constructor(text, viewColumnNode) {
+        const self = this;
+        const th = document.createElement('th');
+        const thResizer = document.createElement('div');
         thResizer.className = 'p-grid-column-resizer';
-        var thMover = document.createElement('div');
+        const thMover = document.createElement('div');
         thMover.className = 'p-grid-column-mover';
-        var thTitle = document.createElement('div');
+        const thTitle = document.createElement('div');
         thTitle.className = 'p-grid-column-title';
-        var background = null;
-        var foreground = null;
-        var font = null;
-        var moveable = true;
-        var resizable = true;
+        let background = null;
+        let foreground = null;
+        let font = null;
+        let moveable = true;
+        let resizable = true;
         thMover.draggable = moveable;
 
         th[HEADER_VIEW] = this;
@@ -28,12 +25,12 @@ define([
         th.appendChild(thTitle);
         th.appendChild(thResizer);
         th.appendChild(thMover);
-        var moveHintLeft = document.createElement('div');
+        const moveHintLeft = document.createElement('div');
         moveHintLeft.className = 'p-grid-column-move-hint-left';
-        var moveHintRight = document.createElement('div');
+        const moveHintRight = document.createElement('div');
         moveHintRight.className = 'p-grid-column-move-hint-right';
 
-        Ui.on(th, Ui.Events.CLICK, function (event) {
+        Ui.on(th, Ui.Events.CLICK, event => {
             function checkOthers() {
                 if (!event.ctrlKey && !event.metaKey) {
                     column.grid.unsort(false);
@@ -56,18 +53,18 @@ define([
             }
         });
 
-        (function () {
-            Ui.on(thResizer, Ui.Events.CLICK, function (event) {
+        ((() => {
+            Ui.on(thResizer, Ui.Events.CLICK, event => {
                 if (resizable && event.button === 0) {
                     event.stopPropagation();
                 }
             });
-            var mouseDownAtX = null;
-            var mouseDownWidth = null;
-            var onMouseUp = null;
-            var onMouseMove = null;
-            var columnToResize = null;
-            Ui.on(thResizer, Ui.Events.MOUSEDOWN, function (event) {
+            let mouseDownAtX = null;
+            let mouseDownWidth = null;
+            let onMouseUp = null;
+            let onMouseMove = null;
+            let columnToResize = null;
+            Ui.on(thResizer, Ui.Events.MOUSEDOWN, event => {
                 if (resizable && event.button === 0) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -78,7 +75,7 @@ define([
                     mouseDownAtX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
                     mouseDownWidth = viewColumnNode.width;
                     if (!onMouseUp) {
-                        onMouseUp = Ui.on(document, Ui.Events.MOUSEUP, function (event) {
+                        onMouseUp = Ui.on(document, Ui.Events.MOUSEUP, event => {
                             event.stopPropagation();
                             columnDrag = null;
                             columnToResize = null;
@@ -93,12 +90,12 @@ define([
                         });
                     }
                     if (!onMouseMove) {
-                        onMouseMove = Ui.on(document, Ui.Events.MOUSEMOVE, function (event) {
+                        onMouseMove = Ui.on(document, Ui.Events.MOUSEMOVE, event => {
                             event.preventDefault();
                             event.stopPropagation();
-                            var newPageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                            var dx = newPageX - mouseDownAtX;
-                            var newWidth = mouseDownWidth + dx;
+                            const newPageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                            const dx = newPageX - mouseDownAtX;
+                            const newWidth = mouseDownWidth + dx;
                             if (columnToResize.minWidth <= newWidth && newWidth <= columnToResize.maxWidth) {
                                 columnToResize.width = newWidth;
                             }
@@ -106,9 +103,9 @@ define([
                     }
                 }
             });
-        }());
+        })());
 
-        Ui.on(thMover, Ui.Events.DRAGSTART, function (event) {
+        Ui.on(thMover, Ui.Events.DRAGSTART, event => {
             if (columnDrag && columnDrag.resize) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -119,11 +116,11 @@ define([
                 };
                 event.dataTransfer.effectAllowed = 'move';
                 event.dataTransfer.setData('text/plain', 'p-grid-column-move');
-                var onDragEnd = Ui.on(thMover, Ui.Events.DRAGEND, function (event) {
+                let onDragEnd = Ui.on(thMover, Ui.Events.DRAGEND, event => {
                     onDragEnd.removeHandler();
                     onDragEnd = null;
                     if (columnDrag &&
-                            columnDrag.move) {
+                        columnDrag.move) {
                         if (columnDrag.clear) {
                             columnDrag.clear();
                             columnDrag.clear = null;
@@ -136,13 +133,13 @@ define([
 
         function onDragOver(event) {
             if (columnDrag &&
-                    columnDrag.move &&
-                    columnDrag.column !== viewColumnNode.column &&
-                    columnDrag.column.node.parent === viewColumnNode.column.node.parent) {
+                columnDrag.move &&
+                columnDrag.column !== viewColumnNode.column &&
+                columnDrag.column.node.parent === viewColumnNode.column.node.parent) {
                 event.preventDefault();
                 event.dataTransfer.dropEffect = 'move';
                 if (inThRect(event) && columnDrag.enteredTh === th) {
-                    var rect = th.getBoundingClientRect();
+                    const rect = th.getBoundingClientRect();
                     if (event.clientX < rect.left + rect.width / 2) {
                         if (!moveHintLeft.parentElement) {
                             th.appendChild(moveHintLeft);
@@ -164,34 +161,36 @@ define([
             }
         }
         Ui.on(th, Ui.Events.DRAGOVER, onDragOver);
+
         function inThRect(event) {
-            var rect = th.getBoundingClientRect();
+            const rect = th.getBoundingClientRect();
             return event.clientX >= rect.left &&
-                    event.clientY >= rect.top &&
-                    event.clientX < rect.right &&
-                    event.clientY < rect.bottom;
+                event.clientY >= rect.top &&
+                event.clientX < rect.right &&
+                event.clientY < rect.bottom;
         }
+
         function onDragEnter(event) {
             if (inThRect(event) && columnDrag &&
-                    columnDrag.move &&
-                    columnDrag.column !== viewColumnNode.column &&
-                    columnDrag.column.node.parent === viewColumnNode.column.node.parent) {
+                columnDrag.move &&
+                columnDrag.column !== viewColumnNode.column &&
+                columnDrag.column.node.parent === viewColumnNode.column.node.parent) {
                 columnDrag.enteredTh = th;
                 event.dataTransfer.dropEffect = 'move';
                 if (columnDrag.clear) {
                     columnDrag.clear();
                     columnDrag.clear = null;
                 }
-                if (th.className.indexOf('p-grid-column-move-target') === -1) {
+                if (!th.className.includes('p-grid-column-move-target')) {
                     th.classList.add('p-grid-column-move-target');
 
-                    var rect = th.getBoundingClientRect();
+                    const rect = th.getBoundingClientRect();
                     if (event.clientX < rect.left + rect.width / 2) {
                         th.appendChild(moveHintLeft);
                     } else {
                         th.appendChild(moveHintRight);
                     }
-                    columnDrag.clear = function () {
+                    columnDrag.clear = () => {
                         th.classList.remove('p-grid-column-move-target');
                         if (moveHintLeft.parentElement) {
                             th.removeChild(moveHintLeft);
@@ -206,10 +205,11 @@ define([
             }
         }
         Ui.on(th, Ui.Events.DRAGENTER, onDragEnter);
+
         function onDragLeave(event) {
             if (!inThRect(event) && columnDrag &&
-                    columnDrag.move &&
-                    columnDrag.enteredTh === th) {
+                columnDrag.move &&
+                columnDrag.enteredTh === th) {
                 if (columnDrag.clear) {
                     columnDrag.clear();
                     columnDrag.clear = null;
@@ -217,19 +217,20 @@ define([
             }
         }
         Ui.on(th, Ui.Events.DRAGLEAVE, onDragLeave);
+
         function onDrop(event) {
             if (inThRect(event) && columnDrag &&
-                    columnDrag.move &&
-                    columnDrag.enteredTh === th) {
-                var droppedNode = columnDrag.column.node;
-                var targetNode = viewColumnNode.column.node;
-                var grid = viewColumnNode.column.grid;
+                columnDrag.move &&
+                columnDrag.enteredTh === th) {
+                const droppedNode = columnDrag.column.node;
+                const targetNode = viewColumnNode.column.node;
+                const grid = viewColumnNode.column.grid;
                 if (columnDrag.clear) {
                     columnDrag.clear();
                     columnDrag.clear = null;
                 }
                 columnDrag = null;
-                var rect = th.getBoundingClientRect();
+                const rect = th.getBoundingClientRect();
                 if (event.clientX < rect.left + rect.width / 2) {
                     grid.insertBeforeColumnNode(droppedNode, targetNode);
                 } else {
@@ -240,64 +241,64 @@ define([
         Ui.on(th, Ui.Events.DROP, onDrop);
 
         Object.defineProperty(this, 'element', {
-            get: function () {
+            get: function() {
                 return th;
             }
         });
 
         Object.defineProperty(this, 'text', {
-            get: function () {
+            get: function() {
                 return th.innerText;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 thTitle.innerText = aValue;
             }
         });
 
         Object.defineProperty(this, 'column', {
-            get: function () {
+            get: function() {
                 return findRightMostLeafColumn();
             }
         });
 
         Object.defineProperty(this, 'columnNode', {
-            get: function () {
+            get: function() {
                 return viewColumnNode;
             }
         });
 
         Object.defineProperty(this, 'background', {
-            get: function () {
+            get: function() {
                 return background;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 background = aValue;
             }
         });
 
         Object.defineProperty(this, 'foreground', {
-            get: function () {
+            get: function() {
                 return foreground;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 foreground = aValue;
             }
         });
 
         Object.defineProperty(this, 'font', {
-            get: function () {
+            get: function() {
                 return font;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 font = aValue;
             }
         });
 
         Object.defineProperty(this, 'resizable', {
-            get: function () {
+            get: function() {
                 return resizable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (resizable !== aValue) {
                     resizable = aValue;
                     if (resizable) {
@@ -312,10 +313,10 @@ define([
         });
 
         Object.defineProperty(this, 'moveable', {
-            get: function () {
+            get: function() {
                 return moveable;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (moveable !== aValue) {
                     moveable = aValue;
                     thMover.draggable = moveable;
@@ -324,17 +325,19 @@ define([
         });
 
         function findRightMostLeafColumn() {
-            var node = viewColumnNode;
+            let node = viewColumnNode;
             while (!node.leaf) {
                 node = node.children[node.children.length - 1];
             }
             return node.column;
         }
     }
-    Object.defineProperty(NodeView, 'HEADER_VIEW', {
-        get: function () {
-            return HEADER_VIEW;
-        }
-    });
-    return NodeView;
+}
+
+Object.defineProperty(NodeView, 'HEADER_VIEW', {
+    get: function() {
+        return HEADER_VIEW;
+    }
 });
+
+export default NodeView;

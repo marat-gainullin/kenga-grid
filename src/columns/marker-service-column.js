@@ -1,17 +1,13 @@
-define([
-    'core/extend',
-    'ui/utils',
-    '../service-column'
-], function (
-        extend,
-        Ui,
-        ServiceColumn) {
-    function MarkerServiceColumn(node) {
-        ServiceColumn.call(this, node);
-        var self = this;
+import Ui from 'ui/utils';
+import ServiceColumn from '../service-column';
+
+class MarkerServiceColumn extends ServiceColumn {
+    constructor(node) {
+        super(node);
+        const self = this;
 
         function render(viewRowIndex, viewColumnIndex, dataRow, viewCell) {
-            Ui.on(viewCell, Ui.Events.CLICK, function (event) {
+            Ui.on(viewCell, Ui.Events.CLICK, event => {
                 self.grid.setCursorOn(dataRow);
                 self.grid.focusCell(viewRowIndex, viewColumnIndex);
             });
@@ -27,19 +23,20 @@ define([
              */
         }
         Object.defineProperty(this, 'render', {
-            get: function () {
+            get: function() {
                 return render;
             }
         });
+
         function getValue(dataRow) {
             return dataRow;
         }
         Object.defineProperty(this, 'getValue', {
-            get: function () {
+            get: function() {
                 return getValue;
             }
         });
     }
-    extend(MarkerServiceColumn, ServiceColumn);
-    return MarkerServiceColumn;
-});
+}
+
+export default MarkerServiceColumn;

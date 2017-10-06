@@ -1,14 +1,14 @@
-define([], function () {
-    function HeaderSplitter(minLeave, maxLeave) {
-        var splittedLeaves = [];
-        var leaveIndex = -1;
+class HeaderSplitter {
+    constructor(minLeave, maxLeave) {
+        const splittedLeaves = [];
+        let leaveIndex = -1;
 
         function toRoots() {
-            var res = [];
-            var met = new Set();
-            for (var i = 0; i < splittedLeaves.length; i++) {
-                var leaf = splittedLeaves[i];
-                var parent = leaf;
+            const res = [];
+            const met = new Set();
+            for (let i = 0; i < splittedLeaves.length; i++) {
+                const leaf = splittedLeaves[i];
+                let parent = leaf;
                 while (parent.parent) {
                     parent = parent.parent;
                 }
@@ -20,16 +20,16 @@ define([], function () {
             return res;
         }
         Object.defineProperty(this, 'toRoots', {
-            get: function(){
+            get: function() {
                 return toRoots;
             }
         });
 
         function process(toBeSplitted, aClonedParent) {
-            var res = false;
-            for (var i = 0; i < toBeSplitted.length; i++) {
-                var n = toBeSplitted[i];
-                var nc = n.copy();
+            let res = false;
+            for (let i = 0; i < toBeSplitted.length; i++) {
+                const n = toBeSplitted[i];
+                const nc = n.copy();
                 if (n.children.length === 0) {
                     leaveIndex++;
                     if (leaveIndex >= minLeave && leaveIndex <= maxLeave) {
@@ -40,7 +40,7 @@ define([], function () {
                         }
                     }
                 } else {
-                    var isGoodLeaveIndex = process(n.children, nc);
+                    const isGoodLeaveIndex = process(n.children, nc);
                     if (isGoodLeaveIndex) {
                         res = true;
                         if (aClonedParent) {
@@ -52,22 +52,24 @@ define([], function () {
             return res;
         }
         Object.defineProperty(this, 'process', {
-            get: function(){
+            get: function() {
                 return process;
             }
         });
     }
-    var module = {};
-    
-    function split(toBeSplitted, aMinLeave, aMaxLeave) {
-        var splitter = new HeaderSplitter(aMinLeave, aMaxLeave);
-        splitter.process(toBeSplitted, null);
-        return splitter.toRoots();
+}
+
+const module = {};
+
+function split(toBeSplitted, aMinLeave, aMaxLeave) {
+    const splitter = new HeaderSplitter(aMinLeave, aMaxLeave);
+    splitter.process(toBeSplitted, null);
+    return splitter.toRoots();
+}
+Object.defineProperty(module, 'split', {
+    get: function() {
+        return split;
     }
-    Object.defineProperty(module, 'split', {
-        get: function () {
-            return split;
-        }
-    });
-    return module;
 });
+
+export default module;

@@ -1,21 +1,17 @@
-define([
-    'core/extend',
-    '../column-node',
-    '../radio-button-service-column',
-    '../../header/node-view'], function(
-        extend,
-        HeaderNode,
-        RadioServiceColumn,
-        NodeView){
-    function RadioServiceColumnNode(){
-        var self = this;
-        var column = new RadioServiceColumn(this);
-        var header = new NodeView('\\', this);
-        HeaderNode.call(this, column, header);
+import HeaderNode from '../column-node';
+import RadioServiceColumn from '../radio-button-service-column';
+import NodeView from '../../header/node-view';
+
+class RadioServiceColumnNode extends HeaderNode {
+    constructor() {
+        const self = this;
+        const column = new RadioServiceColumn(this);
+        const header = new NodeView('\\', this);
+        super(column, header);
         column.editor = null; // TODO: Add radio button default editor
-        
+
         function copy() {
-            var copied = new RadioServiceColumnNode();
+            const copied = new RadioServiceColumnNode();
             copied.column = column;
             copied.view.text = header.text;
             copied.leavesCount = self.leavesCount;
@@ -24,23 +20,23 @@ define([
         }
 
         Object.defineProperty(this, 'copy', {
-            get: function () {
+            get: function() {
                 return copy;
             }
         });
         Object.defineProperty(this, 'renderer', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
-        
+
         this.resizable = false;
     }
-    extend(RadioServiceColumnNode, HeaderNode);
-    return RadioServiceColumnNode;
-});
+}
+
+export default RadioServiceColumnNode;

@@ -1,20 +1,16 @@
-define([
-    'core/extend',
-    '../column-node',
-    '../marker-service-column',
-    '../../header/node-view'], function(
-        extend,
-        HeaderNode,
-        MarkerServiceColumn,
-        NodeView){
-    function MarkerServiceColumnNode(){
-        var self = this;
-        var column = new MarkerServiceColumn(this);
-        var header = new NodeView('\\', this);
-        HeaderNode.call(this, column, header);
-        
+import HeaderNode from '../column-node';
+import MarkerServiceColumn from '../marker-service-column';
+import NodeView from '../../header/node-view';
+
+class MarkerServiceColumnNode extends HeaderNode {
+    constructor() {
+        const self = this;
+        const column = new MarkerServiceColumn(this);
+        const header = new NodeView('\\', this);
+        super(column, header);
+
         function copy() {
-            var copied = new MarkerServiceColumnNode();
+            const copied = new MarkerServiceColumnNode();
             copied.column = column;
             copied.view.text = header.text;
             copied.leavesCount = self.leavesCount;
@@ -23,23 +19,23 @@ define([
         }
 
         Object.defineProperty(this, 'copy', {
-            get: function () {
+            get: function() {
                 return copy;
             }
         });
         Object.defineProperty(this, 'renderer', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
-        
+
         this.resizable = false;
     }
-    extend(MarkerServiceColumnNode, HeaderNode);
-    return MarkerServiceColumnNode;
-});
+}
+
+export default MarkerServiceColumnNode;

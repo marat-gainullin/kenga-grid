@@ -1,25 +1,22 @@
-define([
-    'core/id',
-    'core/extend',
-    '../service-column'
-], function (
-        Id,
-        extend,
-        ServiceColumn) {
-    function RadioButtonServiceColumn(node) {
-        ServiceColumn.call(this, node);
-        var self = this;
-        var radioGroup = 'p-grid-group-' + Id.generate();
+import Id from 'core/id';
+import ServiceColumn from '../service-column';
+
+class RadioButtonServiceColumn extends ServiceColumn {
+    constructor(node) {
+        super(node);
+        const self = this;
+        const radioGroup = `p-grid-group-${Id.generate()}`;
 
         function getValue(dataRow) {
             return self.grid.isSelected(dataRow);
         }
+
         function render(viewRowIndex, viewColumnIndex, dataRow, viewCell) {
-            var radio = document.createElement('input');
+            const radio = document.createElement('input');
             radio.type = 'radio';
             radio.name = radioGroup;
             radio.checked = self.grid.isSelected(dataRow);
-            radio.onchange = function (event) {
+            radio.onchange = event => {
                 if (radio.checked) {
                     self.grid.unselectAll();
                     self.grid.select(dataRow);
@@ -30,16 +27,16 @@ define([
             viewCell.classList.add('p-grid-cell-check-box');
         }
         Object.defineProperty(this, 'render', {
-            get: function () {
+            get: function() {
                 return render;
             }
         });
         Object.defineProperty(this, 'getValue', {
-            get: function () {
+            get: function() {
                 return getValue;
             }
         });
     }
-    extend(RadioButtonServiceColumn, ServiceColumn);
-    return RadioButtonServiceColumn;
-});
+}
+
+export default RadioButtonServiceColumn;

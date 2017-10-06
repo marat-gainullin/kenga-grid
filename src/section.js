@@ -1,66 +1,67 @@
-define([
-    'ui/utils'
-], function (
-        Ui
-        ) {
+import Ui from 'ui/utils';
+import Invoke from 'septima-utils/invoke';
 
-    var JS_ROW_NAME = 'js-row';
+const JS_ROW_NAME = 'js-row';
 
-    function Section(grid, dynamicCellsClassName,
-            dynamicRowsClassName,
-            dynamicHeaderCellsClassName,
-            dynamicHeaderRowsClassName,
-            dynamicOddRowsClassName,
-            dynamicEvenRowsClassName) {
-        var self = this;
+class Section {
+    constructor(
+        grid,
+        dynamicCellsClassName,
+        dynamicRowsClassName,
+        dynamicHeaderCellsClassName,
+        dynamicHeaderRowsClassName,
+        dynamicOddRowsClassName,
+        dynamicEvenRowsClassName
+    ) {
+        const self = this;
 
-        var table = document.createElement('table');
+        const table = document.createElement('table');
         table.className = 'p-grid-section';
-        var colgroup = document.createElement('colgroup');
-        var rowsHeight = 30;
-        var headerNodes = [];
-        var headerMaxDepth = 0;
-        var draggableRows = false;
-        var columns = [];
-        var data = []; // Already sorted data
-        var dataRangeStart = 0; // Inclusive
-        var dataRangeEnd = 0; // Exclusive
-        var renderedRangeStart = 0; // Inclusive
-        var renderedRangeEnd = 0; // Exclusive
-        var renderingThrottle = 0; // No throttling
-        var renderingPadding = 0; // No padding
-        var viewportBias = 0;
-        var onDrawBody = null;
+        const colgroup = document.createElement('colgroup');
+        let rowsHeight = 30;
+        let headerNodes = [];
+        let headerMaxDepth = 0;
+        let draggableRows = false;
+        let columns = [];
+        let data = []; // Already sorted data
+        let dataRangeStart = 0; // Inclusive
+        let dataRangeEnd = 0; // Exclusive
+        let renderedRangeStart = 0; // Inclusive
+        let renderedRangeEnd = 0; // Exclusive
+        let renderingThrottle = 0; // No throttling
+        let renderingPadding = 0; // No padding
+        let viewportBias = 0;
+        let onDrawBody = null;
 
-        var thead;
+        let thead;
         recreateHead();
-        var tbody;
+        let tbody;
         recreateBody();
-        var tfoot;
+        let tfoot;
         recreateFoot();
-        var bodyFiller = document.createElement('div');
+        const bodyFiller = document.createElement('div');
         bodyFiller.className = 'p-grid-body-filler';
 
         Object.defineProperty(this, 'element', {
-            get: function () {
+            get: function() {
                 return table;
             }
         });
         Object.defineProperty(this, 'data', {
-            get: function () {
+            get: function() {
                 return data;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (data !== aValue) {
                     data = aValue;
                 }
             }
         });
         Object.defineProperty(this, 'rowsHeight', {
-            get: function () {
+            get: function() {
                 return rowsHeight;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (rowsHeight !== aValue) {
                     rowsHeight = aValue;
                     redrawBody();
@@ -68,42 +69,42 @@ define([
             }
         });
         Object.defineProperty(this, 'renderingThrottle', {
-            get: function () {
+            get: function() {
                 return renderingThrottle;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 renderingThrottle = aValue;
             }
         });
         Object.defineProperty(this, 'viewportBias', {
-            get: function () {
+            get: function() {
                 return viewportBias;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 viewportBias = aValue;
             }
         });
         Object.defineProperty(this, 'renderingPadding', {
-            get: function () {
+            get: function() {
                 return renderingPadding;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 renderingPadding = aValue;
             }
         });
         Object.defineProperty(this, 'onDrawBody', {
-            get: function () {
+            get: function() {
                 return onDrawBody;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 onDrawBody = aValue;
             }
         });
         Object.defineProperty(this, 'draggableRows', {
-            get: function () {
+            get: function() {
                 return draggableRows;
             },
-            set: function (aValue) {
+            set: function(aValue) {
                 if (draggableRows !== aValue) {
                     draggableRows = aValue;
                 }
@@ -116,7 +117,7 @@ define([
             if (index >= 0 && index <= columns.length) { // It is all about insertBefore
                 if (index < columns.length) { // It is all about insertBefore
                     columns.splice(index, 0, aColumn);
-                    var col = colgroup.getChild(index);
+                    const col = colgroup.getChild(index);
                     colgroup.insertBefore(aColumn.addCol(), col);
                 } else {
                     columns.push(aColumn);
@@ -129,17 +130,18 @@ define([
             }
         }
         Object.defineProperty(this, 'insertColumn', {
-            get: function () {
+            get: function() {
                 return insertColumn;
             }
         });
+
         function addColumn(aColumn, needRedraw) {
             if (arguments.length < 2)
                 needRedraw = true;
             insertColumn(columns.length, aColumn, needRedraw);
         }
         Object.defineProperty(this, 'addColumn', {
-            get: function () {
+            get: function() {
                 return addColumn;
             }
         });
@@ -148,8 +150,8 @@ define([
             if (arguments.length < 2)
                 needRedraw = true;
             if (index >= 0 && index < columns.length) {
-                var removed = columns.splice(index, 1)[0];
-                removed.elements.forEach(function (col) {
+                const removed = columns.splice(index, 1)[0];
+                removed.elements.forEach(col => {
                     col.parentElement.removeChild(col);
                 });
                 removed.elements.splice(0, removed.elements.length);
@@ -164,13 +166,13 @@ define([
             }
         }
         Object.defineProperty(this, 'removeColumn', {
-            get: function () {
+            get: function() {
                 return removeColumn;
             }
         });
 
         Object.defineProperty(this, 'columnsCount', {
-            get: function () {
+            get: function() {
                 return columns.length;
             }
         });
@@ -179,7 +181,7 @@ define([
             return index >= 0 && index < columns.length ? columns[index] : null;
         }
         Object.defineProperty(this, 'getColumn', {
-            get: function () {
+            get: function() {
                 return getColumn;
             }
         });
@@ -189,25 +191,25 @@ define([
         }
 
         Object.defineProperty(this, 'getColumnIndex', {
-            get: function () {
+            get: function() {
                 return getColumnIndex;
             }
         });
 
         Object.defineProperty(this, 'rowsCount', {
-            get: function () {
+            get: function() {
                 return tbody.rows.length;
             }
         });
 
         function getViewCell(row, col) {
             if (columns.length > 0) {
-                var grid = columns[0].grid;
-                var viewRows = tbody.rows;
-                var columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
+                const grid = columns[0].grid;
+                const viewRows = tbody.rows;
+                const columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
                 if (row - renderedRangeStart >= 0 && row - renderedRangeStart < viewRows.length) {
-                    var viewRow = viewRows[row - renderedRangeStart];
-                    var cells = viewRow.cells;
+                    const viewRow = viewRows[row - renderedRangeStart];
+                    const cells = viewRow.cells;
                     if (col - columnsBias >= 0 && col - columnsBias < cells.length) {
                         return cells[col - columnsBias];
                     }
@@ -216,7 +218,7 @@ define([
             return null;
         }
         Object.defineProperty(this, 'getViewCell', {
-            get: function () {
+            get: function() {
                 return getViewCell;
             }
         });
@@ -231,7 +233,7 @@ define([
             }
         }
         Object.defineProperty(this, 'setHeaderNodes', {
-            get: function () {
+            get: function() {
                 return setHeaderNodes;
             }
         });
@@ -239,8 +241,8 @@ define([
         function clearColumnsAndHeader(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
-            columns.forEach(function (removed) {
-                removed.elements.forEach(function (col) {
+            columns.forEach(removed => {
+                removed.elements.forEach(col => {
                     col.parentElement.removeChild(col);
                 });
                 removed.elements.splice(0, removed.elements.length);
@@ -254,17 +256,18 @@ define([
             }
         }
         Object.defineProperty(this, 'clearColumnsAndHeader', {
-            get: function () {
+            get: function() {
                 return clearColumnsAndHeader;
             }
         });
+
         function redraw() {
             redrawHeaders();
             redrawBody();
             redrawFooters();
         }
         Object.defineProperty(this, 'redraw', {
-            get: function () {
+            get: function() {
                 return redraw;
             }
         });
@@ -284,15 +287,15 @@ define([
             drawHeaders();
         }
         Object.defineProperty(this, 'redrawHeaders', {
-            get: function () {
+            get: function() {
                 return redrawHeaders;
             }
         });
 
         function drawHeaders() {
             if (columns.length > 0) {
-                var r = 0;
-                var nextLayer = headerNodes;
+                let r = 0;
+                let nextLayer = headerNodes;
                 while (nextLayer.length > 0) {
                     nextLayer = drawHeaderRow(nextLayer);
                     r++;
@@ -305,17 +308,17 @@ define([
         }
 
         function drawHeaderRow(layer) {
-            var children = [];
-            var tr = document.createElement('tr');
-            tr.className = 'p-grid-header-row ' + dynamicHeaderRowsClassName;
-            layer.forEach(function (node) {
+            const children = [];
+            const tr = document.createElement('tr');
+            tr.className = `p-grid-header-row ${dynamicHeaderRowsClassName}`;
+            layer.forEach(node => {
                 tr.appendChild(node.view.element);
                 if (node.column.comparator) {
                     node.view.element.className = node.column.comparator.ascending ? 'p-grid-header-sorted-asc ' : 'p-grid-header-sorted-desc ';
                 } else {
                     node.view.element.className = '';
                 }
-                node.view.element.className += 'p-grid-header-cell ' + dynamicHeaderCellsClassName; // reassign classes
+                node.view.element.className += `p-grid-header-cell ${dynamicHeaderCellsClassName}`; // reassign classes
                 node.view.element.classList.add(node.column.styleName);
                 Array.prototype.push.apply(children, node.children);
             });
@@ -331,36 +334,37 @@ define([
         }
 
         function drawBody() {
-            var startRenderedRow;
-            var endRenderedRow;
-            var viewportHeight;
+            let startRenderedRow;
+            let endRenderedRow;
+            let viewportHeight;
+
             function calc() {
-                var rowsCount = dataRangeEnd - dataRangeStart;
+                const rowsCount = dataRangeEnd - dataRangeStart;
 
                 viewportHeight = table.parentElement.clientHeight - viewportBias;
-                var contentHeight = rowsCount * rowsHeight;
-                var topPadding = Math.floor(viewportHeight * renderingPadding);
+                const contentHeight = rowsCount * rowsHeight;
+                let topPadding = Math.floor(viewportHeight * renderingPadding);
                 topPadding = Math.max(topPadding, 0);
-                var bottomPadding = Math.floor(viewportHeight * renderingPadding);
+                let bottomPadding = Math.floor(viewportHeight * renderingPadding);
                 bottomPadding = Math.max(bottomPadding, 0);
 
-                var startY = table.parentElement.scrollTop - topPadding;
+                let startY = table.parentElement.scrollTop - topPadding;
                 startY = Math.max(startY, 0);
                 startRenderedRow = Math.floor(startY / rowsHeight);
 
-                var endY = table.parentElement.scrollTop + viewportHeight + bottomPadding;
+                let endY = table.parentElement.scrollTop + viewportHeight + bottomPadding;
                 endY = Math.min(endY, contentHeight - 1);
                 endRenderedRow = Math.ceil(endY / rowsHeight);
                 endRenderedRow = Math.min(endRenderedRow, rowsCount);
 
-                var renderedRowsCount = endRenderedRow - startRenderedRow;
-                var fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
-                bodyFiller.style.height = fillerHeight + 'px';
+                const renderedRowsCount = endRenderedRow - startRenderedRow;
+                const fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
+                bodyFiller.style.height = `${fillerHeight}px`;
                 bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
 
                 renderRange(startRenderedRow + dataRangeStart, endRenderedRow + dataRangeStart);
 
-                table.style.top = (startRenderedRow * rowsHeight) + 'px';
+                table.style.top = `${startRenderedRow * rowsHeight}px`;
             }
             calc();
             if (viewportHeight !== table.parentElement.clientHeight) {
@@ -373,20 +377,20 @@ define([
 
         function redrawBody() {
             renderedRangeStart = renderedRangeEnd = -1;
-            Ui.throttle(drawBody, renderingThrottle);
+            Invoke.throttle(renderingThrottle, drawBody);
         }
         Object.defineProperty(this, 'redrawBody', {
-            get: function () {
+            get: function() {
                 return redrawBody;
             }
         });
 
         function inTrRect(viewRow, event) {
-            var rect = viewRow.getBoundingClientRect();
+            const rect = viewRow.getBoundingClientRect();
             return event.clientX >= rect.left &&
-                    event.clientY >= rect.top &&
-                    event.clientX < rect.right &&
-                    event.clientY < rect.bottom;
+                event.clientY >= rect.top &&
+                event.clientX < rect.right &&
+                event.clientY < rect.bottom;
         }
 
         function checkRegion(viewRow, event) {
@@ -395,14 +399,15 @@ define([
                     rowDrag.clear();
                     rowDrag.clear = null;
                 }
-                rowDrag.clear = function () {
+                rowDrag.clear = () => {
                     viewRow.classList.remove('p-grid-row-drop-before');
                     viewRow.classList.remove('p-grid-row-drop-into');
                     viewRow.classList.remove('p-grid-row-drop-after');
                 };
             }
+
             function check(className) {
-                if (viewRow.className.indexOf(className) === -1) {
+                if (!viewRow.className.includes(className)) {
                     clear();
                     viewRow.classList.add(className);
                     return true;
@@ -410,43 +415,43 @@ define([
                     return false;
                 }
             }
-            var rect = viewRow.getBoundingClientRect();
-            var heightPortion = (event.clientY - rect.top) / rect.height;
+            const rect = viewRow.getBoundingClientRect();
+            const heightPortion = (event.clientY - rect.top) / rect.height;
             if (heightPortion <= 0.2) {
                 var modified = check('p-grid-row-drop-before');
                 return {
                     onDrag: grid.onDragBefore,
                     onDrop: grid.onDropBefore,
-                    modified: modified
+                    modified
                 };
             } else if (heightPortion > 0.2 && heightPortion <= 0.8) {
                 var modified = check('p-grid-row-drop-into');
                 return {
                     onDrag: grid.onDragInto,
                     onDrop: grid.onDropInto,
-                    modified: modified
+                    modified
                 };
             } else {
                 var modified = check('p-grid-row-drop-after');
                 return {
                     onDrag: grid.onDragAfter,
                     onDrop: grid.onDropAfter,
-                    modified: modified
+                    modified
                 };
             }
         }
 
         function drawBodyPortion(start, end) {
             if (end - start > 0 && columns.length > 0) {
-                var grid = columns[0].grid;
-                for (var i = start; i < end; i++) {
-                    (function () {
-                        var dataRow = data[i];
-                        var viewRow = document.createElement('tr');
+                const grid = columns[0].grid;
+                for (let i = start; i < end; i++) {
+                    ((() => {
+                        const dataRow = data[i];
+                        const viewRow = document.createElement('tr');
                         if (draggableRows) {
                             viewRow.draggable = draggableRows;
                         }
-                        viewRow.className = 'p-grid-row ' + dynamicRowsClassName;
+                        viewRow.className = `p-grid-row ${dynamicRowsClassName}`;
                         if ((i + 1) % 2 === 0) {
                             viewRow.classList.add(dynamicEvenRowsClassName);
                         } else {
@@ -465,13 +470,13 @@ define([
                         } else {
                             tbody.appendChild(viewRow);
                         }
-                        var columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
-                        for (var c = 0; c < columns.length; c++) {
-                            var column = columns[c];
-                            var viewCell = document.createElement('td');
+                        const columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
+                        for (let c = 0; c < columns.length; c++) {
+                            const column = columns[c];
+                            const viewCell = document.createElement('td');
                             // TODO: Check alignment of the cell
                             // TODO: Check image decoration of the cell and decoration styles
-                            viewCell.className = 'p-grid-cell ' + dynamicCellsClassName + ' ' + column.styleName;
+                            viewCell.className = `p-grid-cell ${dynamicCellsClassName} ${column.styleName}`;
                             if (i === grid.focusedRow && columnsBias + c === grid.focusedColumn) {
                                 viewCell.classList.add('p-grid-cell-focused');
                             }
@@ -485,14 +490,14 @@ define([
                             }
                         }
                         if (draggableRows) {
-                            Ui.on(viewRow, Ui.Events.DRAGSTART, function (event) {
+                            Ui.on(viewRow, Ui.Events.DRAGSTART, event => {
                                 event.stopPropagation();
                                 rowDrag = {
                                     row: dataRow
                                 };
                                 event.dataTransfer.effectAllowed = 'move';
                                 event.dataTransfer.setData('text/plain', 'p-grid-row-move');
-                                var onDragEnd = Ui.on(viewRow, Ui.Events.DRAGEND, function (event) {
+                                let onDragEnd = Ui.on(viewRow, Ui.Events.DRAGEND, event => {
                                     event.stopPropagation();
                                     if (onDragEnd) {
                                         onDragEnd.removeHandler();
@@ -506,11 +511,12 @@ define([
                                     }
                                 });
                             });
+
                             function onDragEnterOver(event) {
                                 if (rowDrag && rowDrag.row !== dataRow && inTrRect(viewRow, event)) {
                                     event.preventDefault();
                                     event.stopPropagation();
-                                    var region = checkRegion(viewRow, event);
+                                    const region = checkRegion(viewRow, event);
                                     if (region.onDrag) {
                                         event.dropEffect = 'move';
                                         if (region.modified) {
@@ -523,7 +529,7 @@ define([
                             }
                             Ui.on(viewRow, Ui.Events.DRAGENTER, onDragEnterOver);
                             Ui.on(viewRow, Ui.Events.DRAGOVER, onDragEnterOver);
-                            Ui.on(viewRow, Ui.Events.DROP, function (event) {
+                            Ui.on(viewRow, Ui.Events.DROP, event => {
                                 if (rowDrag && rowDrag.row !== dataRow) {
                                     if (rowDrag.clear) {
                                         rowDrag.clear();
@@ -531,7 +537,7 @@ define([
                                     }
                                     event.preventDefault();
                                     event.stopPropagation();
-                                    var region = checkRegion(viewRow, event);
+                                    const region = checkRegion(viewRow, event);
                                     if (region.onDrop) {
                                         event.dropEffect = 'move';
                                         region.onDrop(rowDrag.row, dataRow, event);
@@ -540,7 +546,7 @@ define([
                                     }
                                 }
                             });
-                            Ui.on(viewRow, Ui.Events.DRAGLEAVE, function (event) {
+                            Ui.on(viewRow, Ui.Events.DRAGLEAVE, event => {
                                 if (rowDrag && !inTrRect(viewRow, event)) {
                                     event.preventDefault();
                                     event.stopPropagation();
@@ -551,7 +557,7 @@ define([
                                 }
                             });
                         }
-                    }());
+                    })());
                 }
             }
         }
@@ -561,8 +567,8 @@ define([
                 needRedraw = true;
             if (!bodyFiller.parentElement) {
                 table.parentElement.appendChild(bodyFiller);
-                Ui.on(table.parentElement, Ui.Events.SCROLL, function (event) {
-                    Ui.throttle(drawBody, renderingThrottle);
+                Ui.on(table.parentElement, Ui.Events.SCROLL, event => {
+                    Invoke.throttle(renderingThrottle, drawBody);
                 });
             }
             dataRangeStart = start;
@@ -572,7 +578,7 @@ define([
             }
         }
         Object.defineProperty(this, 'setDataRange', {
-            get: function () {
+            get: function() {
                 return setDataRange;
             }
         });
@@ -588,13 +594,13 @@ define([
                     if (start < renderedRangeStart) {
                         drawBodyPortion(start, renderedRangeStart);
                     } else if (start > renderedRangeStart) {
-                        for (var i1 = renderedRangeStart; i1 < start && tbody.rows.length > 0; i1++) {
+                        for (let i1 = renderedRangeStart; i1 < start && tbody.rows.length > 0; i1++) {
                             tbody.removeChild(tbody.rows[0]);
                         }
                     }
                     renderedRangeStart = start;
                     if (end < renderedRangeEnd) {
-                        for (var i2 = renderedRangeEnd - 1; i2 >= end && tbody.rows.length > 0; i2--) {
+                        for (let i2 = renderedRangeEnd - 1; i2 >= end && tbody.rows.length > 0; i2--) {
                             tbody.removeChild(tbody.rows[tbody.rows.length - 1]);
                         }
                     } else if (end > renderedRangeEnd) {
@@ -617,15 +623,15 @@ define([
             drawFooters();
         }
         Object.defineProperty(this, 'redrawFooters', {
-            get: function () {
+            get: function() {
                 return redrawFooters;
             }
         });
 
         function drawFooters() {
-            if (columns.length > 0) {
-            }
+            if (columns.length > 0) {}
         }
     }
-    return Section;
-});
+}
+
+export default Section;

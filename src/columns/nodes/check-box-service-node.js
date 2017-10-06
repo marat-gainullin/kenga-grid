@@ -1,21 +1,17 @@
-define([
-    'core/extend',
-    '../column-node',
-    '../../columns/check-box-service-column',
-    '../../header/node-view'], function(
-        extend,
-        HeaderNode,
-        CheckServiceColumn,
-        NodeView){
-    function CheckServiceColumnNode(){
-        var self = this;
-        var column = new CheckServiceColumn(this);
-        var header = new NodeView('\\', this);
-        HeaderNode.call(this, column, header);
+import HeaderNode from '../column-node';
+import CheckServiceColumn from '../../columns/check-box-service-column';
+import NodeView from '../../header/node-view';
+
+class CheckServiceColumnNode extends HeaderNode {
+    constructor() {
+        const self = this;
+        const column = new CheckServiceColumn(this);
+        const header = new NodeView('\\', this);
+        super(column, header);
         column.editor = null;
-        
+
         function copy() {
-            var copied = new CheckServiceColumnNode();
+            const copied = new CheckServiceColumnNode();
             copied.column = column;
             copied.view.text = header.text;
             copied.leavesCount = self.leavesCount;
@@ -24,23 +20,23 @@ define([
         }
 
         Object.defineProperty(this, 'copy', {
-            get: function () {
+            get: function() {
                 return copy;
             }
         });
         Object.defineProperty(this, 'renderer', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function () {
+            get: function() {
                 return null;
             }
         });
-        
+
         this.resizable = false;
     }
-    extend(CheckServiceColumnNode, HeaderNode);
-    return CheckServiceColumnNode;
-});
+}
+
+export default CheckServiceColumnNode;

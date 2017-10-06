@@ -1,27 +1,29 @@
-define(['../event'], function (Event) {
-    function CellRenderEvent(aSource, viewIndex, element, aRendered, aCell) {
-        Event.call(this, aSource, aSource);
+import Event from '../event';
+
+class CellRenderEvent extends Event {
+    constructor(aSource, viewIndex, element, aRendered, aCell) {
+        super(aSource, aSource);
         Object.defineProperty(this, "viewIndex", {
-            get: function () {
+            get: function() {
                 return viewIndex;
             }
         });
         Object.defineProperty(this, "element", {
-            get: function () {
+            get: function() {
                 return element;
             }
         });
         Object.defineProperty(this, "object", {
-            get: function () {
+            get: function() {
                 return aRendered;
             }
         });
         Object.defineProperty(this, "cell", {
-            get: function () {
+            get: function() {
                 return aCell;
             }
         });
     }
-    extend(CellRenderEvent, Event);
-    return CellRenderEvent;
-});
+}
+
+export default CellRenderEvent;
