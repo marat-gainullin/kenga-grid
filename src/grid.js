@@ -1795,14 +1795,14 @@ class Grid extends Widget {
                         editor.addValueChangeHandler(event => {
                             column.setValue(edited, event.newValue);
                         }) : null;
-                    let blurReg = editor.addBlurHandler ?
-                        editor.addBlurHandler(event => {
+                    let focusLostReg = editor.addFocusLostHandler ?
+                        editor.addFocusLostHandler(event => {
                             completeEditing();
                         }) : null;
                     focusedCell.clean = () => {
-                        if (blurReg) {
-                            blurReg.removeHandler();
-                            blurReg = null;
+                        if (focusLostReg) {
+                            focusLostReg.removeHandler();
+                            focusLostReg = null;
                         }
                         if (valueChangeReg) {
                             valueChangeReg.removeHandler();
@@ -2166,25 +2166,25 @@ class Grid extends Widget {
             }
         });
 
-        const selectionHandlers = new Set();
+        const selectHandlers = new Set();
 
-        function addSelectionHandler(handler) {
-            selectionHandlers.add(handler);
+        function addSelectHandler(handler) {
+            selectHandlers.add(handler);
             return {
                 removeHandler: function() {
-                    selectionHandlers.delete(handler);
+                    selectHandlers.delete(handler);
                 }
             };
         }
-        Object.defineProperty(this, 'addSelectionHandler', {
+        Object.defineProperty(this, 'addSelectHandler', {
             get: function() {
-                return addSelectionHandler;
+                return addSelectHandler;
             }
         });
 
         function fireSelected(item) {
             const event = new ItemEvent(self, item);
-            selectionHandlers.forEach(h => {
+            selectHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);
                 });
@@ -2218,81 +2218,54 @@ class Grid extends Widget {
             });
         }
 
-        const blurHandlers = new Set();
+        const focusLostHandlers = new Set();
 
-        function addBlurHandler(handler) {
-            blurHandlers.add(handler);
+        function addFocusLostHandler(handler) {
+            focusLostHandlers.add(handler);
             return {
                 removeHandler: function() {
-                    blurHandlers.delete(handler);
+                    focusLostHandlers.delete(handler);
                 }
             };
         }
-        Object.defineProperty(this, 'addBlurHandler', {
+        Object.defineProperty(this, 'addFocusLostHandler', {
             get: function() {
-                return addBlurHandler;
+                return addFocusLostHandler;
             }
         });
 
-        Ui.on(shell, Ui.Events.BLUR, fireBlur);
+        Ui.on(shell, Ui.Events.BLUR, fireFocusLost);
 
-        function fireBlur() {
+        function fireFocusLost() {
             const event = new BlurEvent(self);
-            blurHandlers.forEach(h => {
+            focusLostHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        const keyUpHandlers = new Set();
+        const keyReleaseHandlers = new Set();
 
-        function addKeyUpHandler(handler) {
-            keyUpHandlers.add(handler);
+        function addKeyReleaseHandler(handler) {
+            keyReleaseHandlers.add(handler);
             return {
                 removeHandler: function() {
-                    keyUpHandlers.delete(handler);
+                    keyReleaseHandlers.delete(handler);
                 }
             };
         }
-        Object.defineProperty(this, 'addKeyUpHandler', {
+        Object.defineProperty(this, 'addKeyReleaseHandler', {
             get: function() {
-                return addKeyUpHandler;
+                return addKeyReleaseHandler;
             }
         });
 
-        Ui.on(shell, Ui.Events.KEYUP, fireKeyUp);
+        Ui.on(shell, Ui.Events.KEYUP, fireKeyRelease);
 
-        function fireKeyUp(nevent) {
+        function fireKeyRelease(nevent) {
             const event = new KeyEvent(self, nevent);
-            keyUpHandlers.forEach(h => {
-                Invoke.later(() => {
-                    h(event);
-                });
-            });
-        }
-
-        const keyDownHandlers = new Set();
-
-        function addKeyDownHandler(handler) {
-            keyDownHandlers.add(handler);
-            return {
-                removeHandler: function() {
-                    keyDownHandlers.delete(handler);
-                }
-            };
-        }
-        Object.defineProperty(this, 'addKeyDownHandler', {
-            get: function() {
-                return addKeyDownHandler;
-            }
-        });
-
-        Ui.on(shell, Ui.Events.KEYDOWN, fireKeyDown);
-
-        function fireKeyDown(nevent) {
-            const event = new KeyEvent(self, nevent);
-            keyDownHandlers.forEach(h => {
+            keyReleaseHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);
                 });
@@ -2315,11 +2288,38 @@ class Grid extends Widget {
             }
         });
 
-        Ui.on(shell, Ui.Events.KEYPRESS, fireKeyPress);
+        Ui.on(shell, Ui.Events.KEYDOWN, fireKeyPress);
 
         function fireKeyPress(nevent) {
-            const event = new KeyEvent(this, nevent);
+            const event = new KeyEvent(self, nevent);
             keyPressHandlers.forEach(h => {
+                Invoke.later(() => {
+                    h(event);
+                });
+            });
+        }
+
+        const keyTypeHandlers = new Set();
+
+        function addKeyTypeHandler(handler) {
+            keyTypeHandlers.add(handler);
+            return {
+                removeHandler: function() {
+                    keyTypeHandlers.delete(handler);
+                }
+            };
+        }
+        Object.defineProperty(this, 'addKeyTypeHandler', {
+            get: function() {
+                return addKeyTypeHandler;
+            }
+        });
+
+        Ui.on(shell, Ui.Events.KEYPRESS, fireKeyType);
+
+        function fireKeyType(nevent) {
+            const event = new KeyEvent(this, nevent);
+            keyTypeHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);
                 });
