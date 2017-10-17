@@ -1,7 +1,7 @@
 /* global Infinity */
-import Id from 'core/id';
-import Ui from 'ui/utils';
-import Bound from 'ui/bound';
+import Id from 'septima-utils/id';
+import Ui from 'kenga/utils';
+import Bound from 'kenga/bound';
 
 class Column {
     constructor(node) {
@@ -278,7 +278,7 @@ class Column {
                     viewCell.classList.add(grid.expanded(dataRow) ? 'p-grid-cell-expanded' : 'p-grid-cell-collapsed');
                 }
 
-                function onClick(event) {
+                const onClick = (event) => {
                     if (event.button === 0) {
                         const rect = viewCell.getBoundingClientRect();
                         if (event.clientX > rect.left + padding - grid.indent &&
@@ -293,7 +293,7 @@ class Column {
                             handleSelection(event);
                         }
                     }
-                }
+                };
                 Ui.on(viewCell, Ui.Events.CLICK, onClick);
                 if (checkbox) {
                     Ui.on(checkbox, Ui.Events.CLICK, onClick);

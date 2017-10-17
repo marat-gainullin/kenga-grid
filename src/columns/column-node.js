@@ -1,17 +1,14 @@
+import TextField from 'kenga-fields/text-field';
 import Column from '../column';
 import NodeView from '../header/node-view';
-import TextField from '../../fields/text-field';
 
 class ColumnNode {
-    constructor(column, nodeView) {
+    constructor(AColumn) {
         const self = this;
         let name = null;
-        if (!column) {
-            column = new Column(this);
-        }
-        if (!nodeView) {
-            nodeView = new NodeView('', this);
-        }
+        let column = AColumn ? new AColumn(this) : new Column(this);
+
+        const nodeView = new NodeView('', this);
         let parent = null;
         let children = [];
 
@@ -113,7 +110,7 @@ class ColumnNode {
             }
             if (!children.includes(aNode) && atIndex >= 0 && atIndex <= children.size()) {
                 children.splice(atIndex, 0, aNode);
-                aNode.parent = this;
+                aNode.parent = self;
             }
         }
         Object.defineProperty(this, 'insertColumnNode', {

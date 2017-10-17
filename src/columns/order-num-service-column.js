@@ -1,4 +1,4 @@
-import Ui from 'ui/utils';
+import Ui from 'kenga/utils';
 import ServiceColumn from '../service-column';
 
 class OrderNumServiceColumn extends ServiceColumn {

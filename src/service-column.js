@@ -1,4 +1,4 @@
-import Column from '../column';
+import Column from './column';
 
 class ServiceColumn extends Column {
     constructor(node) {

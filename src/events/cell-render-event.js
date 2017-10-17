@@ -1,4 +1,4 @@
-import Event from '../event';
+import Event from 'kenga/event';
 
 class CellRenderEvent extends Event {
     constructor(aSource, viewIndex, element, aRendered, aCell) {

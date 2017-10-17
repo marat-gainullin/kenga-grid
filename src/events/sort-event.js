@@ -1,4 +1,4 @@
-import Event from '../event';
+import Event from 'kenga/event';
 
 class SortEvent extends Event {
     constructor(w) {

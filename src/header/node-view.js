@@ -1,4 +1,4 @@
-import Ui from 'ui/utils';
+import Ui from 'kenga/utils';
 
 const HEADER_VIEW = 'header-view';
 let columnDrag = null;

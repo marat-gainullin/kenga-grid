@@ -1,18 +1,18 @@
-import Ui from 'ui/utils';
+import Ui from 'kenga/utils';
 import Invoke from 'septima-utils/invoke';
 
 const JS_ROW_NAME = 'js-row';
 
 class Section {
     constructor(
-        grid,
-        dynamicCellsClassName,
-        dynamicRowsClassName,
-        dynamicHeaderCellsClassName,
-        dynamicHeaderRowsClassName,
-        dynamicOddRowsClassName,
-        dynamicEvenRowsClassName
-    ) {
+            grid,
+            dynamicCellsClassName,
+            dynamicRowsClassName,
+            dynamicHeaderCellsClassName,
+            dynamicHeaderRowsClassName,
+            dynamicOddRowsClassName,
+            dynamicEvenRowsClassName
+            ) {
         const self = this;
 
         const table = document.createElement('table');
@@ -43,25 +43,25 @@ class Section {
         bodyFiller.className = 'p-grid-body-filler';
 
         Object.defineProperty(this, 'element', {
-            get: function() {
+            get: function () {
                 return table;
             }
         });
         Object.defineProperty(this, 'data', {
-            get: function() {
+            get: function () {
                 return data;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (data !== aValue) {
                     data = aValue;
                 }
             }
         });
         Object.defineProperty(this, 'rowsHeight', {
-            get: function() {
+            get: function () {
                 return rowsHeight;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (rowsHeight !== aValue) {
                     rowsHeight = aValue;
                     redrawBody();
@@ -69,42 +69,42 @@ class Section {
             }
         });
         Object.defineProperty(this, 'renderingThrottle', {
-            get: function() {
+            get: function () {
                 return renderingThrottle;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 renderingThrottle = aValue;
             }
         });
         Object.defineProperty(this, 'viewportBias', {
-            get: function() {
+            get: function () {
                 return viewportBias;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 viewportBias = aValue;
             }
         });
         Object.defineProperty(this, 'renderingPadding', {
-            get: function() {
+            get: function () {
                 return renderingPadding;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 renderingPadding = aValue;
             }
         });
         Object.defineProperty(this, 'onDrawBody', {
-            get: function() {
+            get: function () {
                 return onDrawBody;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 onDrawBody = aValue;
             }
         });
         Object.defineProperty(this, 'draggableRows', {
-            get: function() {
+            get: function () {
                 return draggableRows;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (draggableRows !== aValue) {
                     draggableRows = aValue;
                 }
@@ -130,7 +130,7 @@ class Section {
             }
         }
         Object.defineProperty(this, 'insertColumn', {
-            get: function() {
+            get: function () {
                 return insertColumn;
             }
         });
@@ -141,7 +141,7 @@ class Section {
             insertColumn(columns.length, aColumn, needRedraw);
         }
         Object.defineProperty(this, 'addColumn', {
-            get: function() {
+            get: function () {
                 return addColumn;
             }
         });
@@ -166,13 +166,13 @@ class Section {
             }
         }
         Object.defineProperty(this, 'removeColumn', {
-            get: function() {
+            get: function () {
                 return removeColumn;
             }
         });
 
         Object.defineProperty(this, 'columnsCount', {
-            get: function() {
+            get: function () {
                 return columns.length;
             }
         });
@@ -181,7 +181,7 @@ class Section {
             return index >= 0 && index < columns.length ? columns[index] : null;
         }
         Object.defineProperty(this, 'getColumn', {
-            get: function() {
+            get: function () {
                 return getColumn;
             }
         });
@@ -191,13 +191,13 @@ class Section {
         }
 
         Object.defineProperty(this, 'getColumnIndex', {
-            get: function() {
+            get: function () {
                 return getColumnIndex;
             }
         });
 
         Object.defineProperty(this, 'rowsCount', {
-            get: function() {
+            get: function () {
                 return tbody.rows.length;
             }
         });
@@ -218,7 +218,7 @@ class Section {
             return null;
         }
         Object.defineProperty(this, 'getViewCell', {
-            get: function() {
+            get: function () {
                 return getViewCell;
             }
         });
@@ -233,7 +233,7 @@ class Section {
             }
         }
         Object.defineProperty(this, 'setHeaderNodes', {
-            get: function() {
+            get: function () {
                 return setHeaderNodes;
             }
         });
@@ -256,7 +256,7 @@ class Section {
             }
         }
         Object.defineProperty(this, 'clearColumnsAndHeader', {
-            get: function() {
+            get: function () {
                 return clearColumnsAndHeader;
             }
         });
@@ -267,7 +267,7 @@ class Section {
             redrawFooters();
         }
         Object.defineProperty(this, 'redraw', {
-            get: function() {
+            get: function () {
                 return redraw;
             }
         });
@@ -287,7 +287,7 @@ class Section {
             drawHeaders();
         }
         Object.defineProperty(this, 'redrawHeaders', {
-            get: function() {
+            get: function () {
                 return redrawHeaders;
             }
         });
@@ -380,7 +380,7 @@ class Section {
             Invoke.throttle(renderingThrottle, drawBody);
         }
         Object.defineProperty(this, 'redrawBody', {
-            get: function() {
+            get: function () {
                 return redrawBody;
             }
         });
@@ -388,9 +388,9 @@ class Section {
         function inTrRect(viewRow, event) {
             const rect = viewRow.getBoundingClientRect();
             return event.clientX >= rect.left &&
-                event.clientY >= rect.top &&
-                event.clientX < rect.right &&
-                event.clientY < rect.bottom;
+                    event.clientY >= rect.top &&
+                    event.clientX < rect.right &&
+                    event.clientY < rect.bottom;
         }
 
         function checkRegion(viewRow, event) {
@@ -418,21 +418,21 @@ class Section {
             const rect = viewRow.getBoundingClientRect();
             const heightPortion = (event.clientY - rect.top) / rect.height;
             if (heightPortion <= 0.2) {
-                var modified = check('p-grid-row-drop-before');
+                const modified = check('p-grid-row-drop-before');
                 return {
                     onDrag: grid.onDragBefore,
                     onDrop: grid.onDropBefore,
                     modified
                 };
             } else if (heightPortion > 0.2 && heightPortion <= 0.8) {
-                var modified = check('p-grid-row-drop-into');
+                const modified = check('p-grid-row-drop-into');
                 return {
                     onDrag: grid.onDragInto,
                     onDrop: grid.onDropInto,
                     modified
                 };
             } else {
-                var modified = check('p-grid-row-drop-after');
+                const modified = check('p-grid-row-drop-after');
                 return {
                     onDrag: grid.onDragAfter,
                     onDrop: grid.onDropAfter,
@@ -445,119 +445,117 @@ class Section {
             if (end - start > 0 && columns.length > 0) {
                 const grid = columns[0].grid;
                 for (let i = start; i < end; i++) {
-                    ((() => {
-                        const dataRow = data[i];
-                        const viewRow = document.createElement('tr');
-                        if (draggableRows) {
-                            viewRow.draggable = draggableRows;
-                        }
-                        viewRow.className = `p-grid-row ${dynamicRowsClassName}`;
-                        if ((i + 1) % 2 === 0) {
-                            viewRow.classList.add(dynamicEvenRowsClassName);
-                        } else {
-                            viewRow.classList.add(dynamicOddRowsClassName);
-                        }
-                        if (grid.isSelected(dataRow))
-                            viewRow.classList.add('p-grid-selected-row');
-                        viewRow[JS_ROW_NAME] = dataRow;
-                        if (i < renderedRangeStart) {
-                            // insertFirst ...
-                            if (tbody.firstElementChild)
-                                tbody.insertBefore(viewRow, tbody.firstElementChild);
-                            else
-                                tbody.appendChild(viewRow);
-                            // ... insertFirst
-                        } else {
+                    const dataRow = data[i];
+                    const viewRow = document.createElement('tr');
+                    if (draggableRows) {
+                        viewRow.draggable = draggableRows;
+                    }
+                    viewRow.className = `p-grid-row ${dynamicRowsClassName}`;
+                    if ((i + 1) % 2 === 0) {
+                        viewRow.classList.add(dynamicEvenRowsClassName);
+                    } else {
+                        viewRow.classList.add(dynamicOddRowsClassName);
+                    }
+                    if (grid.isSelected(dataRow))
+                        viewRow.classList.add('p-grid-selected-row');
+                    viewRow[JS_ROW_NAME] = dataRow;
+                    if (i < renderedRangeStart) {
+                        // insertFirst ...
+                        if (tbody.firstElementChild)
+                            tbody.insertBefore(viewRow, tbody.firstElementChild);
+                        else
                             tbody.appendChild(viewRow);
+                        // ... insertFirst
+                    } else {
+                        tbody.appendChild(viewRow);
+                    }
+                    const columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
+                    for (let c = 0; c < columns.length; c++) {
+                        const column = columns[c];
+                        const viewCell = document.createElement('td');
+                        // TODO: Check alignment of the cell
+                        // TODO: Check image decoration of the cell and decoration styles
+                        viewCell.className = `p-grid-cell ${dynamicCellsClassName} ${column.styleName}`;
+                        if (i === grid.focusedRow && columnsBias + c === grid.focusedColumn) {
+                            viewCell.classList.add('p-grid-cell-focused');
                         }
-                        const columnsBias = self === grid.frozenRight || self === grid.bodyRight ? grid.frozenColumns : 0;
-                        for (let c = 0; c < columns.length; c++) {
-                            const column = columns[c];
-                            const viewCell = document.createElement('td');
-                            // TODO: Check alignment of the cell
-                            // TODO: Check image decoration of the cell and decoration styles
-                            viewCell.className = `p-grid-cell ${dynamicCellsClassName} ${column.styleName}`;
-                            if (i === grid.focusedRow && columnsBias + c === grid.focusedColumn) {
-                                viewCell.classList.add('p-grid-cell-focused');
-                            }
-                            viewRow.appendChild(viewCell);
-                            column.render(i, columnsBias + c, dataRow, viewCell);
-                            if (grid.activeEditor && i === grid.focusedRow && grid.activeEditor === column.editor) {
-                                viewCell.appendChild(grid.activeEditor.element);
-                                if (grid.activeEditor.focus) {
-                                    grid.activeEditor.focus();
-                                }
+                        viewRow.appendChild(viewCell);
+                        column.render(i, columnsBias + c, dataRow, viewCell);
+                        if (grid.activeEditor && i === grid.focusedRow && grid.activeEditor === column.editor) {
+                            viewCell.appendChild(grid.activeEditor.element);
+                            if (grid.activeEditor.focus) {
+                                grid.activeEditor.focus();
                             }
                         }
-                        if (draggableRows) {
-                            Ui.on(viewRow, Ui.Events.DRAGSTART, event => {
+                    }
+                    if (draggableRows) {
+                        Ui.on(viewRow, Ui.Events.DRAGSTART, event => {
+                            event.stopPropagation();
+                            rowDrag = {
+                                row: dataRow
+                            };
+                            event.dataTransfer.effectAllowed = 'move';
+                            event.dataTransfer.setData('text/plain', 'p-grid-row-move');
+                            let onDragEnd = Ui.on(viewRow, Ui.Events.DRAGEND, event => {
                                 event.stopPropagation();
-                                rowDrag = {
-                                    row: dataRow
-                                };
-                                event.dataTransfer.effectAllowed = 'move';
-                                event.dataTransfer.setData('text/plain', 'p-grid-row-move');
-                                let onDragEnd = Ui.on(viewRow, Ui.Events.DRAGEND, event => {
-                                    event.stopPropagation();
-                                    if (onDragEnd) {
-                                        onDragEnd.removeHandler();
-                                        onDragEnd = null;
-                                    }
-                                    if (rowDrag) {
-                                        if (rowDrag.clear) {
-                                            rowDrag.clear();
-                                        }
-                                        rowDrag = null;
-                                    }
-                                });
-                            });
-
-                            function onDragEnterOver(event) {
-                                if (rowDrag && rowDrag.row !== dataRow && inTrRect(viewRow, event)) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const region = checkRegion(viewRow, event);
-                                    if (region.onDrag) {
-                                        event.dropEffect = 'move';
-                                        if (region.modified) {
-                                            region.onDrag(rowDrag.row, dataRow, event);
-                                        }
-                                    } else {
-                                        event.dropEffect = 'none';
-                                    }
+                                if (onDragEnd) {
+                                    onDragEnd.removeHandler();
+                                    onDragEnd = null;
                                 }
-                            }
-                            Ui.on(viewRow, Ui.Events.DRAGENTER, onDragEnterOver);
-                            Ui.on(viewRow, Ui.Events.DRAGOVER, onDragEnterOver);
-                            Ui.on(viewRow, Ui.Events.DROP, event => {
-                                if (rowDrag && rowDrag.row !== dataRow) {
+                                if (rowDrag) {
                                     if (rowDrag.clear) {
                                         rowDrag.clear();
-                                        rowDrag.clear = null;
                                     }
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const region = checkRegion(viewRow, event);
-                                    if (region.onDrop) {
-                                        event.dropEffect = 'move';
-                                        region.onDrop(rowDrag.row, dataRow, event);
-                                    } else {
-                                        event.dropEffect = 'none';
-                                    }
+                                    rowDrag = null;
                                 }
                             });
-                            Ui.on(viewRow, Ui.Events.DRAGLEAVE, event => {
-                                if (rowDrag && !inTrRect(viewRow, event)) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    if (rowDrag && rowDrag.clear) {
-                                        rowDrag.clear();
-                                        rowDrag.clear = null;
+                        });
+
+                        const onDragEnterOver = (event) => {
+                            if (rowDrag && rowDrag.row !== dataRow && inTrRect(viewRow, event)) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const region = checkRegion(viewRow, event);
+                                if (region.onDrag) {
+                                    event.dropEffect = 'move';
+                                    if (region.modified) {
+                                        region.onDrag(rowDrag.row, dataRow, event);
                                     }
+                                } else {
+                                    event.dropEffect = 'none';
                                 }
-                            });
-                        }
-                    })());
+                            }
+                        };
+                        Ui.on(viewRow, Ui.Events.DRAGENTER, onDragEnterOver);
+                        Ui.on(viewRow, Ui.Events.DRAGOVER, onDragEnterOver);
+                        Ui.on(viewRow, Ui.Events.DROP, event => {
+                            if (rowDrag && rowDrag.row !== dataRow) {
+                                if (rowDrag.clear) {
+                                    rowDrag.clear();
+                                    rowDrag.clear = null;
+                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const region = checkRegion(viewRow, event);
+                                if (region.onDrop) {
+                                    event.dropEffect = 'move';
+                                    region.onDrop(rowDrag.row, dataRow, event);
+                                } else {
+                                    event.dropEffect = 'none';
+                                }
+                            }
+                        });
+                        Ui.on(viewRow, Ui.Events.DRAGLEAVE, event => {
+                            if (rowDrag && !inTrRect(viewRow, event)) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                if (rowDrag && rowDrag.clear) {
+                                    rowDrag.clear();
+                                    rowDrag.clear = null;
+                                }
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -578,7 +576,7 @@ class Section {
             }
         }
         Object.defineProperty(this, 'setDataRange', {
-            get: function() {
+            get: function () {
                 return setDataRange;
             }
         });
@@ -623,13 +621,14 @@ class Section {
             drawFooters();
         }
         Object.defineProperty(this, 'redrawFooters', {
-            get: function() {
+            get: function () {
                 return redrawFooters;
             }
         });
 
         function drawFooters() {
-            if (columns.length > 0) {}
+            if (columns.length > 0) {
+            }
         }
     }
 }

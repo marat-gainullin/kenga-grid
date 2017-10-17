@@ -356,7 +356,7 @@ describe('Grid Api', () => {
 
         document.body.removeChild(instance.element);
     });
-    it('Rows.Rendering', () => {
+    xit('Rows.Rendering', () => {
         const instance = new Grid();
     });
     it('Rows.Dragging', () => {
@@ -535,7 +535,7 @@ describe('Grid Api', () => {
 
         document.body.removeChild(instance.element);
     });
-    it('Columns.Performance', () => {
+    xit('Columns.Performance', () => {
         const instance = new Grid();
     });
     it('Editing.Inline', () => {
@@ -597,10 +597,10 @@ describe('Grid Api', () => {
 
         document.body.removeChild(instance.element);
     });
-    it('Editing.Popup', () => {
+    xit('Editing.Popup', () => {
         const instance = new Grid();
     });
-    it('Events', () => {
+    xit('Events', () => {
         const instance = new Grid();
     });
 });

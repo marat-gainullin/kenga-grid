@@ -1,18 +1,18 @@
 /* global Infinity */
-import Id from 'core/id';
-import Invoke from 'core/invoke';
-import Ui from 'ui/utils';
-import Color from 'ui/color';
-import Bound from 'ui/bound';
-import Widget from 'ui/widget';
-import KeyCodes from 'ui/key-codes';
-import KeyEvent from 'ui/events/key-event';
-import ItemEvent from 'ui/events/item-event';
-import BlurEvent from 'ui/events/blur-event';
-import FocusEvent from 'ui/events/focus-event';
+import Id from 'septima-utils/id';
+import Invoke from 'septima-utils/invoke';
+import Ui from 'kenga/utils';
+import Color from 'kenga/color';
+import Bound from 'kenga/bound';
+import Widget from 'kenga/widget';
+import KeyCodes from 'kenga/key-codes';
+import KeyEvent from 'kenga/events/key-event';
+import BlurEvent from 'kenga/events/blur-event';
+import ItemEvent from 'kenga/events/item-event';
+import FocusEvent from 'kenga/events/focus-event';
+import Menu from 'kenga-menu/menu';
+import CheckBoxMenuItem from 'kenga-menu/check-box-menu-item';
 import SortEvent from './events/sort-event';
-import Menu from '../menu/menu';
-import CheckBoxMenuItem from '../menu/check-box-menu-item';
 import Section from './section';
 import HeaderAnalyzer from './header/analyzer';
 import HeaderSplitter from './header/splitter';
@@ -47,14 +47,14 @@ class Grid extends Widget {
 
         const headerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'headerLeft', {
-            get: function() {
+            get: function () {
                 return headerLeft;
             }
         });
         headerLeftContainer.appendChild(headerLeft.element);
         const headerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'headerRight', {
-            get: function() {
+            get: function () {
                 return headerRight;
             }
         });
@@ -72,14 +72,14 @@ class Grid extends Widget {
 
         const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'frozenLeft', {
-            get: function() {
+            get: function () {
                 return frozenLeft;
             }
         });
         frozenLeftContainer.appendChild(frozenLeft.element);
         const frozenRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'frozenRight', {
-            get: function() {
+            get: function () {
                 return frozenRight;
             }
         });
@@ -92,14 +92,14 @@ class Grid extends Widget {
         const bodyRightContainer = document.createElement('div');
         const bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'bodyLeft', {
-            get: function() {
+            get: function () {
                 return bodyLeft;
             }
         });
         bodyLeftContainer.appendChild(bodyLeft.element);
         const bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'bodyRight', {
-            get: function() {
+            get: function () {
                 return bodyRight;
             }
         });
@@ -121,14 +121,14 @@ class Grid extends Widget {
         const footerRightContainer = document.createElement('div');
         const footerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'footerLeft', {
-            get: function() {
+            get: function () {
                 return footerLeft;
             }
         });
         footerLeftContainer.appendChild(footerLeft.element);
         var footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'footerRight', {
-            get: function() {
+            get: function () {
                 return footerRight;
             }
         });
@@ -141,7 +141,7 @@ class Grid extends Widget {
 
         let columnsFacade = [];
         Object.defineProperty(this, 'columns', {
-            get: function() {
+            get: function () {
                 return columnsFacade;
             }
         });
@@ -160,7 +160,7 @@ class Grid extends Widget {
         let selectedRows = new Set();
         let selectionLead = null;
         Object.defineProperty(this, 'selected', {
-            get: function() {
+            get: function () {
                 return Array.from(selectedRows);
             }
         });
@@ -226,7 +226,7 @@ class Grid extends Widget {
                     const rows = discoverRows();
                     const dataIndex = rows.indexOf(dragged);
                     event.dataTransfer.setData('text/p-grid-row',
-                        `{"p-grid-name":"${name}", "data-row-index": ${dataIndex}}`);
+                            `{"p-grid-name":"${name}", "data-row-index": ${dataIndex}}`);
                 }
             }
         });
@@ -235,14 +235,12 @@ class Grid extends Widget {
         ((() => {
             function fillColumnsMenu(section, target) {
                 for (let i = 0; i < section.columnsCount; i++) {
-                    ((() => {
-                        const column = section.getColumn(i);
-                        const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
-                        miCheck.addValueChangeHandler(event => {
-                            column.visible = !!event.newValue;
-                        });
-                        target.add(miCheck);
-                    })());
+                    const column = section.getColumn(i);
+                    const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
+                    miCheck.addValueChangeHandler(event => {
+                        column.visible = !!event.newValue;
+                    });
+                    target.add(miCheck);
                 }
             }
 
@@ -318,7 +316,7 @@ class Grid extends Widget {
             } else if (event.keyCode === KeyCodes.KEY_LEFT) {
                 event.preventDefault();
 
-                function goLeftCell() {
+                const goLeftCell = () => {
                     if (self.focusedColumn > 0 || self.focusedRow > 0) {
                         do {
                             if (self.focusedColumn === 0) {
@@ -327,13 +325,13 @@ class Grid extends Widget {
                                 self.focusedColumn--;
                             }
                         } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
-                            !columnsFacade[self.focusedColumn].visible);
+                                !columnsFacade[self.focusedColumn].visible);
                     }
-                }
+                };
                 if (isTreeConfigured() &&
-                    self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                    columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                    self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                     if (hasRowChildren(viewRows[self.focusedRow]) && isExpanded(viewRows[self.focusedRow])) {
                         collapse(viewRows[self.focusedRow]);
                     } else {
@@ -350,11 +348,11 @@ class Grid extends Widget {
             } else if (event.keyCode === KeyCodes.KEY_RIGHT) {
                 event.preventDefault();
                 if (isTreeConfigured() &&
-                    self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                    columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                    self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
-                    hasRowChildren(viewRows[self.focusedRow]) &&
-                    !isExpanded(viewRows[self.focusedRow])) {
+                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
+                        hasRowChildren(viewRows[self.focusedRow]) &&
+                        !isExpanded(viewRows[self.focusedRow])) {
                     expand(viewRows[self.focusedRow]);
                 } else {
                     if (self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) {
@@ -365,7 +363,7 @@ class Grid extends Widget {
                                 self.focusedColumn++;
                             }
                         } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
-                            !columnsFacade[self.focusedColumn].visible);
+                                !columnsFacade[self.focusedColumn].visible);
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_HOME) {
@@ -388,7 +386,7 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_PAGEUP) {
                 event.preventDefault();
-                var page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
+                const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
                 if (self.focusedRow - page >= 0) {
                     self.focusedRow -= page;
                 } else {
@@ -396,7 +394,7 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_PAGEDOWN) {
                 event.preventDefault();
-                var page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
+                const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
                 if (self.focusedRow + page < viewRows.length) {
                     self.focusedRow += page;
                 } else {
@@ -404,7 +402,7 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_F2) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                    editable && !columnsFacade[self.focusedColumn].readonly) {
+                        editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (focusedCell.editor) {
                         abortEditing();
                     } else {
@@ -414,23 +412,23 @@ class Grid extends Widget {
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
             } else if (event.keyCode === KeyCodes.KEY_F2 ||
-                event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
-                event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
-            ) {
+                    event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
+                    event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
+                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
+                    ) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                    editable && !columnsFacade[self.focusedColumn].readonly) {
+                        editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (!focusedCell.editor) {
                         editCell(self.focusedRow, self.focusedColumn);
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_SPACE) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                    self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                     const dataRow = viewRows[self.focusedRow];
                     const column = columnsFacade[self.focusedColumn];
                     const value = column.getValue(dataRow);
-                    if (typeof(value) === 'boolean') {
+                    if (typeof (value) === 'boolean') {
                         column.setValue(dataRow, !value);
                         redrawFrozen();
                         redrawBody();
@@ -483,8 +481,7 @@ class Grid extends Widget {
                     const lead = selectionLead;
                     insertAt = rows.indexOf(lead);
                     insertAt++;
-                    const elementClass = rows['elementClass'];
-                    const inserted = elementClass ? new elementClass() : {};
+                    const inserted = rows.elementClass ? new rows.elementClass() : {};
                     rows.splice(insertAt, 0, inserted);
                     itemsAdded([inserted]);
                     goTo(inserted, true);
@@ -509,7 +506,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'removed', {
-            get: function() {
+            get: function () {
                 return itemsRemoved;
             }
         });
@@ -523,7 +520,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'added', {
-            get: function() {
+            get: function () {
                 return itemsAdded;
             }
         });
@@ -536,7 +533,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'changed', {
-            get: function() {
+            get: function () {
                 return itemsChanged;
             }
         });
@@ -545,7 +542,7 @@ class Grid extends Widget {
             return selectedRows.has(item);
         }
         Object.defineProperty(this, 'isSelected', {
-            get: function() {
+            get: function () {
                 return isSelected;
             }
         });
@@ -563,7 +560,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'setCursorOn', {
-            get: function() {
+            get: function () {
                 return setCursorOn;
             }
         });
@@ -585,7 +582,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'select', {
-            get: function() {
+            get: function () {
                 return select;
             }
         });
@@ -604,7 +601,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'selectAll', {
-            get: function() {
+            get: function () {
                 return selectAll;
             }
         });
@@ -629,7 +626,7 @@ class Grid extends Widget {
             return res;
         }
         Object.defineProperty(this, 'unselect', {
-            get: function() {
+            get: function () {
                 return unselect;
             }
         });
@@ -648,22 +645,22 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'unselectAll', {
-            get: function() {
+            get: function () {
                 return unselectAll;
             }
         });
 
         Object.defineProperty(this, 'dynamicCellClassName', {
-            get: function() {
+            get: function () {
                 return dynamicCellsClassName;
             }
         });
 
         Object.defineProperty(this, 'showHorizontalLines', {
-            get: function() {
+            get: function () {
                 return showHorizontalLines;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (showHorizontalLines !== aValue) {
                     showHorizontalLines = !!aValue;
                     regenerateDynamicCellsStyles();
@@ -672,10 +669,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'showVerticalLines', {
-            get: function() {
+            get: function () {
                 return showVerticalLines;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (showVerticalLines !== aValue) {
                     showVerticalLines = !!aValue;
                     regenerateDynamicCellsStyles();
@@ -685,14 +682,14 @@ class Grid extends Widget {
 
         function regenerateDynamicCellsStyles() {
             cellsStyleElement.innerHTML =
-                `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${gridColor ? `border-color: ${gridColor.toStyled()};` : ''}}`;
+                    `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${gridColor ? `border-color: ${gridColor.toStyled()};` : ''}}`;
         }
 
         Object.defineProperty(this, 'gridColor', {
-            get: function() {
+            get: function () {
                 return gridColor;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (gridColor !== aValue) {
                     gridColor = aValue;
                     regenerateDynamicCellsStyles();
@@ -703,17 +700,17 @@ class Grid extends Widget {
         function regenerateDynamicOddRowsStyles() {
             if (showOddRowsInOtherColor && oddRowsColor) {
                 oddRowsStyleElement.innerHTML =
-                    `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled()};` : ''}}`;
+                        `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled()};` : ''}}`;
             } else {
                 oddRowsStyleElement.innerHTML = '';
             }
         }
 
         Object.defineProperty(this, 'oddRowsColor', {
-            get: function() {
+            get: function () {
                 return oddRowsColor;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (oddRowsColor !== aValue) {
                     oddRowsColor = aValue;
                     regenerateDynamicOddRowsStyles();
@@ -724,17 +721,17 @@ class Grid extends Widget {
         function regenerateDynamicEvenRowsStyles() {
             if (showOddRowsInOtherColor && evenRowsColor) {
                 evenRowsStyleElement.innerHTML =
-                    `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled()};` : ''}}`;
+                        `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled()};` : ''}}`;
             } else {
                 evenRowsStyleElement.innerHTML = '';
             }
         }
 
         Object.defineProperty(this, 'evenRowsColor', {
-            get: function() {
+            get: function () {
                 return evenRowsColor;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (evenRowsColor !== aValue) {
                     evenRowsColor = aValue;
                     regenerateDynamicEvenRowsStyles();
@@ -744,14 +741,14 @@ class Grid extends Widget {
 
         function regenerateDynamicRowsStyles() {
             rowsStyleElement.innerHTML =
-                `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
+                    `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'rowsHeight', {
-            get: function() {
+            get: function () {
                 return rowsHeight;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (rowsHeight !== aValue && aValue >= 10) {
                     rowsHeight = aValue;
                     regenerateDynamicRowsStyles();
@@ -761,10 +758,10 @@ class Grid extends Widget {
             }
         });
         Object.defineProperty(this, 'renderingThrottle', {
-            get: function() {
+            get: function () {
                 return renderingThrottle;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 renderingThrottle = aValue;
                 [
                     frozenLeft, frozenRight,
@@ -775,10 +772,10 @@ class Grid extends Widget {
             }
         });
         Object.defineProperty(this, 'renderingPadding', {
-            get: function() {
+            get: function () {
                 return renderingPadding;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 renderingPadding = aValue;
                 [
                     frozenLeft, frozenRight,
@@ -791,19 +788,19 @@ class Grid extends Widget {
 
         function regenerateDynamicHeaderCellsStyles() {
             headerCellsStyleElement.innerHTML =
-                `.${dynamicHeaderCellsClassName}{}`;
+                    `.${dynamicHeaderCellsClassName}{}`;
         }
 
         function regenerateDynamicHeaderRowsStyles() {
             headerCellsStyleElement.innerHTML =
-                `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
+                    `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'headerRowsHeight', {
-            get: function() {
+            get: function () {
                 return headerRowsHeight;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (headerRowsHeight !== aValue && aValue >= 10) {
                     headerRowsHeight = aValue;
                     regenerateDynamicHeaderRowsStyles();
@@ -812,10 +809,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'headerVisible', {
-            get: function() {
+            get: function () {
                 return 'none' !== headerLeft.element.style.display && 'none' !== headerRight.element.style.display;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue) {
                     headerContainer.style.display = '';
                 } else {
@@ -825,10 +822,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'frozenColumns', {
-            get: function() {
+            get: function () {
                 return frozenColumns;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue >= 0 && aValue <= getColumnsCount() && frozenColumns !== aValue) {
                     frozenColumns = aValue;
                     applyColumnsNodes();
@@ -837,10 +834,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'frozenRows', {
-            get: function() {
+            get: function () {
                 return frozenRows;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue >= 0 && frozenRows !== aValue) {
                     frozenRows = aValue;
                     setupRanges();
@@ -849,10 +846,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'showOddRowsInOtherColor', {
-            get: function() {
+            get: function () {
                 return showOddRowsInOtherColor;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (showOddRowsInOtherColor !== aValue) {
                     showOddRowsInOtherColor = aValue;
                     regenerateDynamicOddRowsStyles();
@@ -862,10 +859,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'draggableRows', {
-            get: function() {
+            get: function () {
                 return draggableRows;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (draggableRows !== aValue) {
                     draggableRows = aValue;
                     [frozenLeft, frozenRight, bodyLeft, bodyRight].forEach(section => {
@@ -878,35 +875,35 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'activeEditor', {
-            get: function() {
+            get: function () {
                 return focusedCell.editor;
             }
         });
 
         Object.defineProperty(this, 'onRender', {
-            get: function() {
+            get: function () {
                 return onRender;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 onRender = aValue;
             }
         });
 
         Object.defineProperty(this, 'rows', {
-            get: function() {
+            get: function () {
                 return discoverRows();
             }
         });
         Object.defineProperty(this, 'viewRows', {
-            get: function() {
+            get: function () {
                 return viewRows;
             }
         });
         Object.defineProperty(this, 'cursorProperty', {
-            get: function() {
+            get: function () {
                 return cursorProperty;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue && cursorProperty !== aValue) {
                     unbind();
                     cursorProperty = aValue;
@@ -916,28 +913,28 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'editable', {
-            get: function() {
+            get: function () {
                 return editable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 editable = aValue;
             }
         });
 
         Object.defineProperty(this, 'deletable', {
-            get: function() {
+            get: function () {
                 return deletable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 deletable = aValue;
             }
         });
 
         Object.defineProperty(this, 'insertable', {
-            get: function() {
+            get: function () {
                 return insertable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 insertable = aValue;
             }
         });
@@ -946,7 +943,7 @@ class Grid extends Widget {
             return isTreeConfigured() ? depths.get(item) : 0;
         }
         Object.defineProperty(this, 'depthOf', {
-            get: function() {
+            get: function () {
                 return depthOf;
             }
         });
@@ -956,7 +953,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'expanded', {
-            get: function() {
+            get: function () {
                 return isExpanded;
             }
         });
@@ -976,7 +973,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'expand', {
-            get: function() {
+            get: function () {
                 return expand;
             }
         });
@@ -993,7 +990,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'collapse', {
-            get: function() {
+            get: function () {
                 return collapse;
             }
         });
@@ -1009,7 +1006,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'toggle', {
-            get: function() {
+            get: function () {
                 return toggle;
             }
         });
@@ -1018,7 +1015,7 @@ class Grid extends Widget {
             return !hasRowChildren(anElement);
         }
         Object.defineProperty(this, 'isLeaf', {
-            get: function() {
+            get: function () {
                 return isLeaf;
             }
         });
@@ -1082,7 +1079,7 @@ class Grid extends Widget {
             return path;
         }
         Object.defineProperty(this, 'pathTo', {
-            get: function() {
+            get: function () {
                 return pathTo;
             }
         });
@@ -1091,7 +1088,7 @@ class Grid extends Widget {
             let expanded = false;
             if (isTreeConfigured()) {
                 const path = pathTo(anItem);
-                for (let p = 0; p < path.length - 1 /* exclude last element*/ ; p++) {
+                for (let p = 0; p < path.length - 1 /* exclude last element*/; p++) {
                     if (!expandedRows.has(path[p])) {
                         expandedRows.add(path[p]);
                         fireRowsSort();
@@ -1122,7 +1119,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'goTo', {
-            get: function() {
+            get: function () {
                 return goTo;
             }
         });
@@ -1201,10 +1198,10 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'data', {
-            get: function() {
+            get: function () {
                 return data;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (data !== aValue) {
                     unbind();
                     data = aValue;
@@ -1214,10 +1211,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'field', {
-            get: function() {
+            get: function () {
                 return field;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (field !== aValue) {
                     unbind();
                     field = aValue;
@@ -1227,10 +1224,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'parentField', {
-            get: function() {
+            get: function () {
                 return parentField;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (parentField !== aValue) {
                     const wasTree = isTreeConfigured();
                     parentField = aValue;
@@ -1245,10 +1242,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'indent', {
-            get: function() {
+            get: function () {
                 return indent;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (indent !== aValue) {
                     indent = aValue;
                     rowsToViewRows(true);
@@ -1257,10 +1254,10 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'childrenField', {
-            get: function() {
+            get: function () {
                 return childrenField;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (childrenField !== aValue) {
                     const wasTree = isTreeConfigured();
                     childrenField = aValue;
@@ -1330,7 +1327,7 @@ class Grid extends Widget {
             });
         }
         Object.defineProperty(this, 'updateSectionsWidth', {
-            get: function() {
+            get: function () {
                 return updateSectionsWidth;
             }
         });
@@ -1361,7 +1358,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'treeIndicatorColumn', {
-            get: function() {
+            get: function () {
                 return treeIndicatorColumn;
             }
         });
@@ -1400,7 +1397,7 @@ class Grid extends Widget {
             footerRight.clearColumnsAndHeader(needRedraw);
         }
         Object.defineProperty(this, 'clearColumnsNodes', {
-            get: function() {
+            get: function () {
                 return clearColumnsNodes;
             }
         });
@@ -1449,10 +1446,10 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'header', {
-            get: function() {
+            get: function () {
                 return columnNodes;
             },
-            set: function(aHeader) {
+            set: function (aHeader) {
                 if (columnNodes !== aHeader) {
                     columnNodes = aHeader;
                     applyColumnsNodes();
@@ -1461,7 +1458,7 @@ class Grid extends Widget {
         });
 
         Object.defineProperty(this, 'applyColumnsNodes', {
-            get: function() {
+            get: function () {
                 return applyColumnsNodes;
             }
         });
@@ -1483,7 +1480,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'removeColumnNode', {
-            get: function() {
+            get: function () {
                 return removeColumnNode;
             }
         });
@@ -1504,7 +1501,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'removeColumnNodeAt', {
-            get: function() {
+            get: function () {
                 return removeColumnNodeAt;
             }
         });
@@ -1517,7 +1514,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'addColumnNode', {
-            get: function() {
+            get: function () {
                 return addColumnNode;
             }
         });
@@ -1529,13 +1526,13 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'insertColumnNode', {
-            get: function() {
+            get: function () {
                 return insertColumnNode;
             }
         });
 
         Object.defineProperty(this, 'columnNodesCount', {
-            get: function() {
+            get: function () {
                 return columnNodes.length;
             }
         });
@@ -1547,7 +1544,7 @@ class Grid extends Widget {
         }
 
         Object.defineProperty(this, 'getColumnNode', {
-            get: function() {
+            get: function () {
                 return getColumnNode;
             }
         });
@@ -1564,7 +1561,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'insertBeforeColumnNode', {
-            get: function() {
+            get: function () {
                 return insertBeforeColumnNode;
             }
         });
@@ -1581,7 +1578,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'insertAfterColumnNode', {
-            get: function() {
+            get: function () {
                 return insertAfterColumnNode;
             }
         });
@@ -1612,7 +1609,7 @@ class Grid extends Widget {
             footerRight.redraw();
         }
         Object.defineProperty(this, 'redraw', {
-            get: function() {
+            get: function () {
                 return redraw;
             }
         });
@@ -1622,7 +1619,7 @@ class Grid extends Widget {
             frozenRight.redraw();
         }
         Object.defineProperty(this, 'redrawFrozen', {
-            get: function() {
+            get: function () {
                 return redrawFrozen;
             }
         });
@@ -1632,7 +1629,7 @@ class Grid extends Widget {
             bodyRight.redraw();
         }
         Object.defineProperty(this, 'redrawBody', {
-            get: function() {
+            get: function () {
                 return redrawBody;
             }
         });
@@ -1642,7 +1639,7 @@ class Grid extends Widget {
             headerRight.redrawHeaders();
         }
         Object.defineProperty(this, 'redrawHeaders', {
-            get: function() {
+            get: function () {
                 return redrawHeaders;
             }
         });
@@ -1652,7 +1649,7 @@ class Grid extends Widget {
             footerRight.redrawFooters();
         }
         Object.defineProperty(this, 'redrawFooters', {
-            get: function() {
+            get: function () {
                 return redrawFooters;
             }
         });
@@ -1661,7 +1658,7 @@ class Grid extends Widget {
             return (headerLeft ? headerLeft.columnsCount : 0) + (headerRight ? headerRight.columnsCount : 0);
         }
         Object.defineProperty(this, 'columnsCount', {
-            get: function() {
+            get: function () {
                 return getColumnsCount();
             }
         });
@@ -1674,7 +1671,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'getColumn', {
-            get: function() {
+            get: function () {
                 return getColumn;
             }
         });
@@ -1697,7 +1694,7 @@ class Grid extends Widget {
             return targetSection.getViewCell(aRow, aCol);
         }
         Object.defineProperty(this, 'getCell', {
-            get: function() {
+            get: function () {
                 return getCell;
             }
         });
@@ -1711,7 +1708,7 @@ class Grid extends Widget {
             if (arguments.length < 3)
                 needRedraw = true;
             if (row >= 0 && row < viewRows.length ||
-                column >= 0 && column < columnsFacade.length) {
+                    column >= 0 && column < columnsFacade.length) {
                 if (row >= 0 && row < viewRows.length) {
                     focusedCell.row = row;
                 }
@@ -1719,7 +1716,7 @@ class Grid extends Widget {
                     focusedCell.column = column;
                 }
                 if (focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
-                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                        focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                     let cell = frozenLeft.getViewCell(row, column);
                     if (cell) {
                         cell.scrollIntoView();
@@ -1753,25 +1750,25 @@ class Grid extends Widget {
             return false;
         }
         Object.defineProperty(this, 'focusCell', {
-            get: function() {
+            get: function () {
                 return focusCell;
             }
         });
         Object.defineProperty(this, 'focusedRow', {
-            get: function() {
+            get: function () {
                 return focusedCell.row;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue >= 0 && aValue < viewRows.length && aValue !== focusedCell.row) {
                     focusCell(aValue, focusedCell.column);
                 }
             }
         });
         Object.defineProperty(this, 'focusedColumn', {
-            get: function() {
+            get: function () {
                 return focusedCell.column;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue >= 0 && aValue < columnsFacade.length && aValue !== focusedCell.column) {
                     focusCell(focusedCell.row, aValue);
                 }
@@ -1780,7 +1777,7 @@ class Grid extends Widget {
 
         function startEditing() {
             if (!focusedCell.editor && focusedCell.row >= 0 && focusedCell.row < viewRows.length ||
-                focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                 const edited = viewRows[focusedCell.row];
                 const column = columnsFacade[focusedCell.column];
                 if (column.editor) {
@@ -1792,13 +1789,13 @@ class Grid extends Widget {
                         column.setValue(edited, editor.value);
                     };
                     let valueChangeReg = editor.addValueChangeHandler ?
-                        editor.addValueChangeHandler(event => {
-                            column.setValue(edited, event.newValue);
-                        }) : null;
+                            editor.addValueChangeHandler(event => {
+                                column.setValue(edited, event.newValue);
+                            }) : null;
                     let focusLostReg = editor.addFocusLostHandler ?
-                        editor.addFocusLostHandler(event => {
-                            completeEditing();
-                        }) : null;
+                            editor.addFocusLostHandler(event => {
+                                completeEditing();
+                            }) : null;
                     focusedCell.clean = () => {
                         if (focusLostReg) {
                             focusLostReg.removeHandler();
@@ -1822,7 +1819,7 @@ class Grid extends Widget {
             return false;
         }
         Object.defineProperty(this, 'startEditing', {
-            get: function() {
+            get: function () {
                 return startEditing;
             }
         });
@@ -1849,7 +1846,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'abortEditing', {
-            get: function() {
+            get: function () {
                 return abortEditing;
             }
         });
@@ -1862,7 +1859,7 @@ class Grid extends Widget {
             abortEditing();
         }
         Object.defineProperty(this, 'completeEditing', {
-            get: function() {
+            get: function () {
                 return completeEditing;
             }
         });
@@ -1872,7 +1869,7 @@ class Grid extends Widget {
             redrawHeaders();
         }
         Object.defineProperty(this, 'sort', {
-            get: function() {
+            get: function () {
                 return sort;
             }
         });
@@ -1885,7 +1882,7 @@ class Grid extends Widget {
             sort();
         }
         Object.defineProperty(this, 'addSortedColumn', {
-            get: function() {
+            get: function () {
                 return addSortedColumn;
             }
         });
@@ -1898,7 +1895,7 @@ class Grid extends Widget {
             sort();
         }
         Object.defineProperty(this, 'removeSortedColumn', {
-            get: function() {
+            get: function () {
                 return removeSortedColumn;
             }
         });
@@ -1916,7 +1913,7 @@ class Grid extends Widget {
             }
         }
         Object.defineProperty(this, 'unsort', {
-            get: function() {
+            get: function () {
                 return unsort;
             }
         });
@@ -2015,13 +2012,13 @@ class Grid extends Widget {
         function addExpandHandler(h) {
             expandListeners.add(h);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     expandListeners.delete(h);
                 }
             };
         }
         Object.defineProperty(this, 'addExpandHandler', {
-            get: function() {
+            get: function () {
                 return addExpandHandler;
             }
         });
@@ -2038,10 +2035,10 @@ class Grid extends Widget {
         let onExpand;
         let expandedReg;
         Object.defineProperty(this, 'onExpand', {
-            get: function() {
+            get: function () {
                 return onExpand;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (onExpand !== aValue) {
                     if (expandedReg) {
                         expandedReg.removeHandler();
@@ -2064,13 +2061,13 @@ class Grid extends Widget {
         function addCollapseHandler(h) {
             collapseHandlers.add(h);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     collapseHandlers.delete(h);
                 }
             };
         }
         Object.defineProperty(this, 'addCollapseHandler', {
-            get: function() {
+            get: function () {
                 return addCollapseHandler;
             }
         });
@@ -2087,10 +2084,10 @@ class Grid extends Widget {
         let onCollapse;
         let collapseReg;
         Object.defineProperty(this, 'onCollapse', {
-            get: function() {
+            get: function () {
                 return onCollapse;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (onCollapse !== aValue) {
                     if (collapseReg) {
                         collapseReg.removeHandler();
@@ -2113,13 +2110,13 @@ class Grid extends Widget {
         function addSortHandler(handler) {
             sortHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     sortHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addSortHandler', {
-            get: function() {
+            get: function () {
                 return addSortHandler;
             }
         });
@@ -2134,7 +2131,7 @@ class Grid extends Widget {
         }
 
         function fireRowsSort() {
-            const event = new SortEvent(this);
+            const event = new SortEvent(self);
             sortHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);
@@ -2145,10 +2142,10 @@ class Grid extends Widget {
         let onSort;
         let sortedReg;
         Object.defineProperty(this, 'onSort', {
-            get: function() {
+            get: function () {
                 return onSort;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (onSort !== aValue) {
                     if (sortedReg) {
                         sortedReg.removeHandler();
@@ -2171,13 +2168,13 @@ class Grid extends Widget {
         function addSelectHandler(handler) {
             selectHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     selectHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addSelectHandler', {
-            get: function() {
+            get: function () {
                 return addSelectHandler;
             }
         });
@@ -2196,13 +2193,13 @@ class Grid extends Widget {
         function addFocusHandler(handler) {
             focusHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     focusHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addFocusHandler', {
-            get: function() {
+            get: function () {
                 return addFocusHandler;
             }
         });
@@ -2223,13 +2220,13 @@ class Grid extends Widget {
         function addFocusLostHandler(handler) {
             focusLostHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     focusLostHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addFocusLostHandler', {
-            get: function() {
+            get: function () {
                 return addFocusLostHandler;
             }
         });
@@ -2250,13 +2247,13 @@ class Grid extends Widget {
         function addKeyReleaseHandler(handler) {
             keyReleaseHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     keyReleaseHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyReleaseHandler', {
-            get: function() {
+            get: function () {
                 return addKeyReleaseHandler;
             }
         });
@@ -2277,13 +2274,13 @@ class Grid extends Widget {
         function addKeyPressHandler(handler) {
             keyPressHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     keyPressHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyPressHandler', {
-            get: function() {
+            get: function () {
                 return addKeyPressHandler;
             }
         });
@@ -2304,13 +2301,13 @@ class Grid extends Widget {
         function addKeyTypeHandler(handler) {
             keyTypeHandlers.add(handler);
             return {
-                removeHandler: function() {
+                removeHandler: function () {
                     keyTypeHandlers.delete(handler);
                 }
             };
         }
         Object.defineProperty(this, 'addKeyTypeHandler', {
-            get: function() {
+            get: function () {
                 return addKeyTypeHandler;
             }
         });
@@ -2318,7 +2315,7 @@ class Grid extends Widget {
         Ui.on(shell, Ui.Events.KEYPRESS, fireKeyType);
 
         function fireKeyType(nevent) {
-            const event = new KeyEvent(this, nevent);
+            const event = new KeyEvent(self, nevent);
             keyTypeHandlers.forEach(h => {
                 Invoke.later(() => {
                     h(event);

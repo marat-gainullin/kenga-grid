@@ -4,15 +4,15 @@ import NodeView from '../../header/node-view';
 
 class OrderNumServiceColumnNode extends ColumnNode {
     constructor() {
+        super(OrderNumServiceColumn);
+        this.view.text = '\\';
+        
         const self = this;
-        const column = new OrderNumServiceColumn(this);
-        const header = new NodeView('\\', this);
-        super(column, header);
 
         function copy() {
             const copied = new OrderNumServiceColumnNode();
-            copied.column = column;
-            copied.view.text = header.text;
+            copied.column = self.column;
+            copied.view.text = self.view.text;
             copied.leavesCount = self.leavesCount;
             copied.depthRemainder = self.depthRemainder;
             return copied;

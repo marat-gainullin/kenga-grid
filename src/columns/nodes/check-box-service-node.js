@@ -1,19 +1,19 @@
-import HeaderNode from '../column-node';
-import CheckServiceColumn from '../../columns/check-box-service-column';
+import ColumnNode from '../column-node';
+import CheckServiceColumn from '../check-box-service-column';
 import NodeView from '../../header/node-view';
 
-class CheckServiceColumnNode extends HeaderNode {
+class CheckServiceColumnNode extends ColumnNode {
     constructor() {
+        super(CheckServiceColumn);
+        this.view.text = '\\';
+        this.column.editor = null;
+        
         const self = this;
-        const column = new CheckServiceColumn(this);
-        const header = new NodeView('\\', this);
-        super(column, header);
-        column.editor = null;
 
         function copy() {
             const copied = new CheckServiceColumnNode();
-            copied.column = column;
-            copied.view.text = header.text;
+            copied.column = self.column;
+            copied.view.text = self.view.text;
             copied.leavesCount = self.leavesCount;
             copied.depthRemainder = self.depthRemainder;
             return copied;

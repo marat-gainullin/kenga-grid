@@ -1,4 +1,4 @@
-import Id from 'core/id';
+import Id from 'septima-utils/id';
 import ServiceColumn from '../service-column';
 
 class RadioButtonServiceColumn extends ServiceColumn {

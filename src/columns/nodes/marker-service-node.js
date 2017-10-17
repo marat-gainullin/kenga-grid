@@ -1,18 +1,18 @@
-import HeaderNode from '../column-node';
+import ColumnNode from '../column-node';
 import MarkerServiceColumn from '../marker-service-column';
 import NodeView from '../../header/node-view';
 
-class MarkerServiceColumnNode extends HeaderNode {
+class MarkerServiceColumnNode extends ColumnNode {
     constructor() {
-        const self = this;
-        const column = new MarkerServiceColumn(this);
-        const header = new NodeView('\\', this);
-        super(column, header);
+        super(MarkerServiceColumn);
+        this.view.text = '\\';
 
+        const self = this;
+        
         function copy() {
             const copied = new MarkerServiceColumnNode();
-            copied.column = column;
-            copied.view.text = header.text;
+            copied.column = self.column;
+            copied.view.text = self.view.text;
             copied.leavesCount = self.leavesCount;
             copied.depthRemainder = self.depthRemainder;
             return copied;
