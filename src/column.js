@@ -81,7 +81,7 @@ class Column {
                 return headers.length === 1 ? headers[0] : null;
             }
         });
-        Object.defineProperty(this, 'grcore/id', {
+        Object.defineProperty(this, 'grid', {
             get: function() {
                 return grid;
             },
@@ -266,10 +266,10 @@ class Column {
                     setValue(dataRow, !getValue(dataRow));
                 }
                 if (!event.ctrlKey && !event.metaKey) {
-                    self.grid.unselectAll(false);
+                    grid.unselectAll(false);
                 }
-                self.grid.select(dataRow, false);
-                self.grid.focusCell(viewRowIndex, viewColumnIndex, true);
+                grid.select(dataRow, false);
+                grid.focusCell(viewRowIndex, viewColumnIndex, true);
             }
             if (grid.treeIndicatorColumn === self) {
                 const padding = grid.indent * grid.depthOf(dataRow);
@@ -301,7 +301,7 @@ class Column {
                 Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                     if (event.button === 0) {
                         handleSelection(event);
-                        self.grid.startEditing();
+                        grid.startEditing();
                     }
                 });
             } else {

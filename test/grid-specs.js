@@ -478,7 +478,7 @@ describe('Grid Api', () => {
     })());
     it('Rows.Tree', () => {
         const instance = new Grid();
-        instance.width = instance.height = 250;
+        instance.width = instance.height = 240;
         instance.frozenRows = 2;
         document.body.appendChild(instance.element);
 
@@ -525,8 +525,8 @@ describe('Grid Api', () => {
 
         expect(instance.frozenLeft.rowsCount).toEqual(2);
         expect(instance.frozenRight.rowsCount).toEqual(2);
-        expect(instance.bodyLeft.rowsCount).toEqual(5);// 5 instead of 8 because of virtual nature of grid
-        expect(instance.bodyRight.rowsCount).toEqual(5);
+        expect(instance.bodyLeft.rowsCount).toEqual(4);// 4 instead of 8 because of virtual nature of grid
+        expect(instance.bodyRight.rowsCount).toEqual(4);
 
         expect(instance.frozenLeft.columnsCount).toEqual(4);
         expect(instance.bodyLeft.columnsCount).toEqual(4);

@@ -1415,7 +1415,7 @@ class Grid extends Widget {
             }
 
             const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
-            leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
+            const leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
             injectHeaders(leftHeader);
             HeaderAnalyzer.analyzeLeaves(leftHeader);
             headerLeft.setHeaderNodes(leftHeader, maxDepth, false);
