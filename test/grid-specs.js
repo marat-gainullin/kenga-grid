@@ -476,7 +476,7 @@ describe('Grid Api', () => {
             r++;
         }
     })());
-    it('Rows.Tree', () => {
+    it('Rows.Tree after columns', () => {
         const instance = new Grid();
         instance.width = instance.height = 240;
         instance.frozenRows = 2;
@@ -515,6 +515,66 @@ describe('Grid Api', () => {
         instance.data = treeSamples;
         instance.parentField = 'parent';
         instance.childrenField = 'children';
+
+        birth.sort();
+        birth.sortDesc();
+        birth.unsort();
+        birth.sort();
+        birth.sortDesc();
+        instance.unsort();
+
+        expect(instance.frozenLeft.rowsCount).toEqual(2);
+        expect(instance.frozenRight.rowsCount).toEqual(2);
+        expect(instance.bodyLeft.rowsCount).toEqual(4);// 4 instead of 8 because of virtual nature of grid
+        expect(instance.bodyRight.rowsCount).toEqual(4);
+
+        expect(instance.frozenLeft.columnsCount).toEqual(4);
+        expect(instance.bodyLeft.columnsCount).toEqual(4);
+        expect(instance.frozenRight.columnsCount).toEqual(3);
+        expect(instance.bodyRight.columnsCount).toEqual(3);
+
+        document.body.removeChild(instance.element);
+    });
+    it('Rows.Tree before columns', () => {
+        const instance = new Grid();
+        instance.width = instance.height = 240;
+        instance.frozenRows = 2;
+        
+        instance.data = treeSamples;
+        instance.parentField = 'parent';
+        instance.childrenField = 'children';
+
+        document.body.appendChild(instance.element);
+
+        const nmb = new OrderNumServiceColumnNode();
+        instance.addColumnNode(nmb);
+        const marker = new MarkerColumnNode();
+        instance.addColumnNode(marker);
+        const check = new CheckBoxColumnNode();
+        instance.addColumnNode(check);
+        const radio = new RadioButtonColumnNode();
+        instance.addColumnNode(radio);
+
+        const semantic = new ColumnNode();
+        semantic.title = 'semantic';
+
+        const name = new ColumnNode();
+        name.field = name.title = 'name';
+
+        semantic.addColumnNode(name);
+        const birth = new ColumnNode();
+        birth.editor = null;
+        birth.field = birth.title = 'birth';
+        birth.width = 170;
+        birth.visible = false;
+        semantic.addColumnNode(birth);
+        const payed = new ColumnNode();
+        payed.field = payed.title = 'payed';
+        semantic.addColumnNode(payed);
+
+        instance.addColumnNode(semantic);
+
+        instance.frozenColumns = 4;
 
         birth.sort();
         birth.sortDesc();

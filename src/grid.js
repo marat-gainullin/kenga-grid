@@ -1950,7 +1950,9 @@ class Grid extends Widget {
                         }
                     }
                 }
-                treeIndicatorColumn.padding = maxPathLength * indent;
+                if (treeIndicatorColumn) {
+                    treeIndicatorColumn.padding = maxPathLength * indent;
+                }
             } else {
                 viewRows = rows.slice(0, rows.length);
                 itemToLookupIndex = viewRows.indexOf(anItemToLookup);
