@@ -2,6 +2,7 @@ import Ui from 'kenga/utils';
 import Invoke from 'septima-utils/invoke';
 
 const JS_ROW_NAME = 'js-row';
+let rowDrag = null;
 
 class Section {
     constructor(

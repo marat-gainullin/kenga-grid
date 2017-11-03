@@ -74,7 +74,8 @@ class ColumnNode {
             if (children) {
                 const idx = children.indexOf(aNode);
                 if (idx !== -1) {
-                    children.splice(idx, 1);
+                    const removed = children.splice(idx, 1);
+                    removed[0].parent = null;
                     return true;
                 } else {
                     return false;
@@ -86,6 +87,25 @@ class ColumnNode {
         Object.defineProperty(this, 'removeColumnNode', {
             get: function() {
                 return removeColumnNode;
+            }
+        });
+
+        function removeColumnNodeAt(idx) {
+            if (children) {
+                if (idx >= 0 && idx  < children.length) {
+                    const removed = children.splice(idx, 1);
+                    removed[0].parent = null;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        Object.defineProperty(this, 'removeColumnNodeAt', {
+            get: function() {
+                return removeColumnNodeAt;
             }
         });
 
@@ -108,7 +128,7 @@ class ColumnNode {
             if (!children) {
                 children = [];
             }
-            if (!children.includes(aNode) && atIndex >= 0 && atIndex <= children.size()) {
+            if (!children.includes(aNode) && atIndex >= 0 && atIndex <= children.length) {
                 children.splice(atIndex, 0, aNode);
                 aNode.parent = self;
             }
