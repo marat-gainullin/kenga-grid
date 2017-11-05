@@ -117,11 +117,11 @@
 }
 
 .p-grid-selected-row {
-    background: #5acaef !important;
+    background: lightblue !important;
 }
 
 .p-grid-cell-focused {
-    background: lightblue;
+    background: #5acaef;
 }
 
 .p-grid-cell-check-box,

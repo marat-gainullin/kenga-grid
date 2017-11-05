@@ -298,18 +298,18 @@ class Column {
                 if (checkbox) {
                     Ui.on(checkbox, Ui.Events.CLICK, onClick);
                 }
-                Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
-                    if (event.button === 0) {
-                        handleSelection(event);
-                        grid.startEditing();
-                    }
-                });
             } else {
                 Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
                 if (checkbox) {
                     Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
                 }
             }
+            Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
+                if (event.button === 0) {
+                    handleSelection(event);
+                    grid.startEditing();
+                }
+            });
             const value = getValue(dataRow);
             if (value == null) { // null == undefined, null !== undefined
                 viewCell.innerTHML = ''; // No native rendering for null values

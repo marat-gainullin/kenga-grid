@@ -296,211 +296,210 @@ class Grid extends Widget {
                             }
                         }
                     }
-                } else if (event.keyCode === KeyCodes.KEY_DOWN) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        if (self.focusedRow < viewRows.length - 1) {
-                            let wasFocused = self.focusedRow;
-                            focusCell(focusedCell.row + 1, focusedCell.column, false);
-                            if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
-                                if (event.shiftKey) {
-                                    if (isSelected(viewRows[self.focusedRow])) {
-                                        unselect(viewRows[wasFocused]);
-                                    } else {
-                                        select(viewRows[self.focusedRow]);
-                                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_DOWN) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    if (self.focusedRow < viewRows.length - 1) {
+                        let wasFocused = self.focusedRow;
+                        focusCell(focusedCell.row + 1, focusedCell.column, false);
+                        if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                            if (event.shiftKey) {
+                                if (isSelected(viewRows[self.focusedRow])) {
+                                    unselect(viewRows[wasFocused]);
                                 } else {
-                                    unselectAll(false);
                                     select(viewRows[self.focusedRow]);
                                 }
-                            }
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_LEFT) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-
-                        const goLeftCell = () => {
-                            if (self.focusedColumn > 0 || self.focusedRow > 0) {
-                                do {
-                                    if (self.focusedColumn === 0) {
-                                        focusCell(self.focusedRow - 1, columnsFacade.length - 1);
-                                    } else {
-                                        self.focusedColumn--;
-                                    }
-                                } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
-                                        !columnsFacade[self.focusedColumn].visible);
-                            }
-                        };
-                        if (isTreeConfigured() &&
-                                self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                                columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                                self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
-                            if (hasRowChildren(viewRows[self.focusedRow]) && isExpanded(viewRows[self.focusedRow])) {
-                                collapse(viewRows[self.focusedRow]);
                             } else {
-                                const parent = getParentOf(viewRows[self.focusedRow]);
-                                if (parent) {
-                                    goTo(parent);
+                                unselectAll(false);
+                                select(viewRows[self.focusedRow]);
+                            }
+                        }
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_LEFT) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+
+                    const goLeftCell = () => {
+                        if (self.focusedColumn > 0 || self.focusedRow > 0) {
+                            do {
+                                if (self.focusedColumn === 0) {
+                                    focusCell(self.focusedRow - 1, columnsFacade.length - 1);
                                 } else {
-                                    goLeftCell();
+                                    self.focusedColumn--;
                                 }
-                            }
-                        } else {
-                            goLeftCell();
+                            } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
+                                    !columnsFacade[self.focusedColumn].visible);
                         }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_RIGHT) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        if (isTreeConfigured() &&
-                                self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                                columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                                self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
-                                hasRowChildren(viewRows[self.focusedRow]) &&
-                                !isExpanded(viewRows[self.focusedRow])) {
-                            expand(viewRows[self.focusedRow]);
-                        } else {
-                            if (self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) {
-                                do {
-                                    if (self.focusedColumn === columnsFacade.length - 1) {
-                                        focusCell(self.focusedRow + 1, 0);
-                                    } else {
-                                        self.focusedColumn++;
-                                    }
-                                } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
-                                        !columnsFacade[self.focusedColumn].visible);
-                            }
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_HOME) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        if (event.ctrlKey || event.metaKey) {
-                            if (self.focusedRow > 0 || self.focusedColumn > 0) {
-                                focusCell(0, 0);
-                            }
-                        } else {
-                            self.focusedColumn = 0;
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_END) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        if (event.ctrlKey || event.metaKey) {
-                            if (self.focusedRow < viewRows.length - 1 || self.focusedColumn < columnsFacade.length - 1) {
-                                focusCell(viewRows.length - 1, columnsFacade.length - 1);
-                            }
-                        } else {
-                            self.focusedColumn = columnsFacade.length - 1;
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_PAGEUP) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
-                        if (self.focusedRow - page >= 0) {
-                            self.focusedRow -= page;
-                        } else {
-                            self.focusedRow = 0;
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_PAGEDOWN) {
-                    if (!focusedCell.editor) {
-                        event.preventDefault();
-                        const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
-                        if (self.focusedRow + page < viewRows.length) {
-                            self.focusedRow += page;
-                        } else {
-                            self.focusedRow = viewRows.length - 1;
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_F2) {
-                    if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                            editable && !columnsFacade[self.focusedColumn].readonly) {
-                        if (focusedCell.editor) {
-                            abortEditing();
-                        } else {
-                            editCell(self.focusedRow, self.focusedColumn);
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
-                    abortEditing();
-                } else if (event.keyCode === KeyCodes.KEY_F2 ||
-                        event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
-                        event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                        event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
-                        ) {
-                    if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                            editable && !columnsFacade[self.focusedColumn].readonly) {
-                        if (!focusedCell.editor) {
-                            editCell(self.focusedRow, self.focusedColumn);
-                        }
-                    }
-                } else if (event.keyCode === KeyCodes.KEY_SPACE) {
-                    if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                    };
+                    if (isTreeConfigured() &&
+                            self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                            columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
                             self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
-                        const dataRow = viewRows[self.focusedRow];
-                        const column = columnsFacade[self.focusedColumn];
-                        const value = column.getValue(dataRow);
-                        if (typeof (value) === 'boolean') {
-                            column.setValue(dataRow, !value);
-                            redrawFrozen();
-                            redrawBody();
+                        if (hasRowChildren(viewRows[self.focusedRow]) && isExpanded(viewRows[self.focusedRow])) {
+                            collapse(viewRows[self.focusedRow]);
+                        } else {
+                            const parent = getParentOf(viewRows[self.focusedRow]);
+                            if (parent) {
+                                goTo(parent);
+                            } else {
+                                goLeftCell();
+                            }
                         }
+                    } else {
+                        goLeftCell();
                     }
-                } else if (event.keyCode === KeyCodes.KEY_DELETE) {
-                    if (deletable && !focusedCell.editor) {
-                        let rows = discoverRows();
-                        if (viewRows.length > 0) {
-                            // calculate some view sugar
-                            let lastSelectedViewIndex = -1;
-                            for (let i = viewRows.length - 1; i >= 0; i--) {
-                                const element = viewRows[i];
-                                if (isSelected(element)) {
-                                    lastSelectedViewIndex = i;
-                                    break;
-                                }
-                            }
-                            // actually delete selected elements
-                            let deletedAt = -1;
-                            const deleted = [];
-                            for (let i = rows.length - 1; i >= 0; i--) {
-                                const item = rows[i];
-                                if (isSelected(item)) {
-                                    deleted.push(item);
-                                    rows.splice(i, 1);
-                                    deletedAt = i;
-                                }
-                            }
-                            itemsRemoved(deleted);
-                            const viewIndexToSelect = lastSelectedViewIndex;
-                            if (deletedAt > -1) {
-                                let vIndex = viewIndexToSelect;
-                                if (vIndex >= 0 && viewRows.length > 0) {
-                                    if (vIndex >= viewRows.length) {
-                                        vIndex = viewRows.length - 1;
-                                    }
-                                    const toSelect = viewRows[vIndex];
-                                    goTo(toSelect, true);
+                }
+            } else if (event.keyCode === KeyCodes.KEY_RIGHT) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    if (isTreeConfigured() &&
+                            self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                            columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                            self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
+                            hasRowChildren(viewRows[self.focusedRow]) &&
+                            !isExpanded(viewRows[self.focusedRow])) {
+                        expand(viewRows[self.focusedRow]);
+                    } else {
+                        if (self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) {
+                            do {
+                                if (self.focusedColumn === columnsFacade.length - 1) {
+                                    focusCell(self.focusedRow + 1, 0);
                                 } else {
-                                    self.focus();
+                                    self.focusedColumn++;
                                 }
+                            } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
+                                    !columnsFacade[self.focusedColumn].visible);
+                        }
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_HOME) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    if (event.ctrlKey || event.metaKey) {
+                        if (self.focusedRow > 0 || self.focusedColumn > 0) {
+                            focusCell(0, 0);
+                        }
+                    } else {
+                        self.focusedColumn = 0;
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_END) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    if (event.ctrlKey || event.metaKey) {
+                        if (self.focusedRow < viewRows.length - 1 || self.focusedColumn < columnsFacade.length - 1) {
+                            focusCell(viewRows.length - 1, columnsFacade.length - 1);
+                        }
+                    } else {
+                        self.focusedColumn = columnsFacade.length - 1;
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_PAGEUP) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
+                    if (self.focusedRow - page >= 0) {
+                        self.focusedRow -= page;
+                    } else {
+                        self.focusedRow = 0;
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_PAGEDOWN) {
+                if (!focusedCell.editor) {
+                    event.preventDefault();
+                    const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
+                    if (self.focusedRow + page < viewRows.length) {
+                        self.focusedRow += page;
+                    } else {
+                        self.focusedRow = viewRows.length - 1;
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_F2) {
+                if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    if (focusedCell.editor) {
+                        abortEditing();
+                    } else {
+                        editCell(self.focusedRow, self.focusedColumn);
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
+                abortEditing();
+            } else if (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
+                    event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
+                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
+                    ) {
+                if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    if (!focusedCell.editor) {
+                        editCell(self.focusedRow, self.focusedColumn, true);
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_SPACE) {
+                if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                    const dataRow = viewRows[self.focusedRow];
+                    const column = columnsFacade[self.focusedColumn];
+                    const value = column.getValue(dataRow);
+                    if (typeof (value) === 'boolean') {
+                        column.setValue(dataRow, !value);
+                        redrawFrozen();
+                        redrawBody();
+                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_DELETE) {
+                if (deletable && !focusedCell.editor) {
+                    let rows = discoverRows();
+                    if (viewRows.length > 0) {
+                        // calculate some view sugar
+                        let lastSelectedViewIndex = -1;
+                        for (let i = viewRows.length - 1; i >= 0; i--) {
+                            const element = viewRows[i];
+                            if (isSelected(element)) {
+                                lastSelectedViewIndex = i;
+                                break;
+                            }
+                        }
+                        // actually delete selected elements
+                        let deletedAt = -1;
+                        const deleted = [];
+                        for (let i = rows.length - 1; i >= 0; i--) {
+                            const item = rows[i];
+                            if (isSelected(item)) {
+                                deleted.push(item);
+                                rows.splice(i, 1);
+                                deletedAt = i;
+                            }
+                        }
+                        itemsRemoved(deleted);
+                        const viewIndexToSelect = lastSelectedViewIndex;
+                        if (deletedAt > -1) {
+                            let vIndex = viewIndexToSelect;
+                            if (vIndex >= 0 && viewRows.length > 0) {
+                                if (vIndex >= viewRows.length) {
+                                    vIndex = viewRows.length - 1;
+                                }
+                                const toSelect = viewRows[vIndex];
+                                goTo(toSelect, true);
+                            } else {
+                                self.focus();
                             }
                         }
                     }
-                } else if (event.keyCode === KeyCodes.KEY_INSERT) {
-                    if (insertable && !focusedCell.editor) {
-                        var rows = discoverRows();
-                        let insertAt = -1;
-                        const lead = selectionLead;
-                        insertAt = rows.indexOf(lead);
-                        insertAt++;
-                        const inserted = rows.elementClass ? new rows.elementClass() : {};
-                        rows.splice(insertAt, 0, inserted);
-                        itemsAdded([inserted]);
-                        goTo(inserted, true);
-                    }
+                }
+            } else if (event.keyCode === KeyCodes.KEY_INSERT) {
+                if (insertable && !focusedCell.editor) {
+                    var rows = discoverRows();
+                    let insertAt = -1;
+                    const lead = selectionLead;
+                    insertAt = rows.indexOf(lead);
+                    insertAt++;
+                    const inserted = rows.elementClass ? new rows.elementClass() : {};
+                    rows.splice(insertAt, 0, inserted);
+                    itemsAdded([inserted]);
+                    goTo(inserted, true);
                 }
             }
         });
@@ -1791,15 +1790,15 @@ class Grid extends Widget {
             }
         });
 
-        function startEditing() {
-            if (!focusedCell.editor && focusedCell.row >= 0 && focusedCell.row < viewRows.length ||
+        function startEditing(replace = false) {
+            if (!focusedCell.editor && focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
                     focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                 const edited = viewRows[focusedCell.row];
                 const column = columnsFacade[focusedCell.column];
                 if (column.editor) {
                     const editor = column.editor;
                     const value = column.getValue(edited);
-                    editor.value = value === undefined ? null : value;
+                    editor.value = replace || value === undefined ? null : value;
                     focusedCell.editor = editor;
                     focusedCell.commit = () => {
                         column.setValue(edited, editor.value);
@@ -1840,9 +1839,9 @@ class Grid extends Widget {
             }
         });
 
-        function editCell(row, column) {
+        function editCell(row, column, replace) {
             if (focusCell(row, column)) {
-                startEditing();
+                startEditing(replace);
             }
         }
 
