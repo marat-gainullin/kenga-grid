@@ -360,12 +360,17 @@ class Section {
 
                 const renderedRowsCount = endRenderedRow - startRenderedRow;
                 const fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
-                bodyFiller.style.height = `${fillerHeight}px`;
-                bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
+                const wasParentScrollTop = table.parentElement.scrollTop;
+                try {
+                    bodyFiller.style.height = `${fillerHeight}px`;
+                    bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
 
-                renderRange(startRenderedRow + dataRangeStart, endRenderedRow + dataRangeStart);
+                    renderRange(startRenderedRow + dataRangeStart, endRenderedRow + dataRangeStart);
 
-                table.style.top = `${startRenderedRow * rowsHeight}px`;
+                    table.style.top = `${startRenderedRow * rowsHeight}px`;
+                } finally {
+                    table.parentElement.scrollTop = wasParentScrollTop;
+                }
             }
             calc();
             if (viewportHeight !== table.parentElement.clientHeight) {
