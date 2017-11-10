@@ -427,9 +427,10 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
-            } else if (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
+            } else if (!event.ctrlKey && !event.shiftKey && !event.metaKey &&
+                    (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
                     event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108
+                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
                     ) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
                         editable && !columnsFacade[self.focusedColumn].readonly) {
