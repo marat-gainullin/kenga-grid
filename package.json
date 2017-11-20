@@ -1,6 +1,6 @@
 {
   "name": "kenga-grid",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Kenga interactive virtual grid. Frozen rows and columns, treegrid, hierarchical header, etc.",
   "main": "index.js",
   "repository": "https://github.com/marat-gainullin/kenga-grid.git",
