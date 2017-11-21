@@ -155,7 +155,7 @@ class Grid extends Widget {
         let showOddRowsInOtherColor = true;
         let linesColor = null;
         let oddRowsColor = null;
-        let evenRowsColor = new Color(241, 241, 241, 255);
+        let evenRowsColor = '#f6f6f6';
 
         let selectedRows = new Set();
         let selectionLead = null;
@@ -698,7 +698,7 @@ class Grid extends Widget {
 
         function regenerateDynamicCellsStyles() {
             cellsStyleElement.innerHTML =
-                    `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${linesColor ? `border-color: ${linesColor.toStyled()};` : ''}}`;
+                    `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${linesColor ? `border-color: ${linesColor.toStyled ? linesColor.toStyled() : linesColor};` : ''}}`;
         }
 
         Object.defineProperty(this, 'linesColor', {
@@ -716,7 +716,7 @@ class Grid extends Widget {
         function regenerateDynamicOddRowsStyles() {
             if (showOddRowsInOtherColor && oddRowsColor) {
                 oddRowsStyleElement.innerHTML =
-                        `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled()};` : ''}}`;
+                        `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled ? oddRowsColor.toStyled() : oddRowsColor};` : ''}}`;
             } else {
                 oddRowsStyleElement.innerHTML = '';
             }
@@ -737,7 +737,7 @@ class Grid extends Widget {
         function regenerateDynamicEvenRowsStyles() {
             if (showOddRowsInOtherColor && evenRowsColor) {
                 evenRowsStyleElement.innerHTML =
-                        `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled()};` : ''}}`;
+                        `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled ? evenRowsColor.toStyled() : evenRowsColor};` : ''}}`;
             } else {
                 evenRowsStyleElement.innerHTML = '';
             }
@@ -1505,6 +1505,7 @@ class Grid extends Widget {
             closeColumnMenu();
             if (nodeIndex >= 0 && nodeIndex < columnNodes.length) {
                 const node = columnNodes[nodeIndex];
+                node.column.grid = null; // TODO: Think about recursive assignment through all nodes
                 columnNodes.splice(nodeIndex, 1);
                 if (treeIndicatorColumn === node.column) {
                     treeIndicatorColumn.padding = 0;
