@@ -40,4 +40,5 @@ Grid supports multi column sorting, multi line hierarchical columns headers, vri
 
 It can be turned into tree grid if you assign `parentField` and `childrenField` properties.
 It assigns special cursor property of data rows array to last selected data row.
+
 Cursor property name can be customized with grid's `cursorProperty`.
