@@ -35,37 +35,37 @@ class ColumnNode {
 
         Object.defineProperty(this, 'copy', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return copy;
             }
         });
         Object.defineProperty(this, 'column', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return column;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column = aValue;
             }
         });
 
         Object.defineProperty(this, 'parent', {
-            get: function() {
+            get: function () {
                 return parent;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 parent = aValue;
             }
         });
 
         Object.defineProperty(this, 'children', {
-            get: function() {
+            get: function () {
                 return children;
             }
         });
 
         Object.defineProperty(this, 'view', {
-            get: function() {
+            get: function () {
                 return nodeView;
             }
         });
@@ -85,14 +85,14 @@ class ColumnNode {
             }
         }
         Object.defineProperty(this, 'removeColumnNode', {
-            get: function() {
+            get: function () {
                 return removeColumnNode;
             }
         });
 
         function removeColumnNodeAt(idx) {
             if (children) {
-                if (idx >= 0 && idx  < children.length) {
+                if (idx >= 0 && idx < children.length) {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
                     return true;
@@ -104,7 +104,7 @@ class ColumnNode {
             }
         }
         Object.defineProperty(this, 'removeColumnNodeAt', {
-            get: function() {
+            get: function () {
                 return removeColumnNodeAt;
             }
         });
@@ -119,7 +119,7 @@ class ColumnNode {
             }
         }
         Object.defineProperty(this, 'addColumnNode', {
-            get: function() {
+            get: function () {
                 return addColumnNode;
             }
         });
@@ -134,22 +134,22 @@ class ColumnNode {
             }
         }
         Object.defineProperty(this, 'insertColumnNode', {
-            get: function() {
+            get: function () {
                 return insertColumnNode;
             }
         });
 
         Object.defineProperty(this, 'childrenNodes', {
-            get: function() {
+            get: function () {
                 return children.slice(0, children.length);
             }
         });
 
         Object.defineProperty(this, 'depthRemainder', {
-            get: function() {
+            get: function () {
                 return depthRemainder;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 depthRemainder = aValue;
                 if (aValue > 0) {
                     nodeView.element.setAttribute('rowspan', `${aValue + 1}`);
@@ -160,10 +160,10 @@ class ColumnNode {
         });
 
         Object.defineProperty(this, 'leavesCount', {
-            get: function() {
+            get: function () {
                 return leavesCount;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 leavesCount = aValue;
                 if (aValue > 1) {
                     nodeView.element.setAttribute('colspan', `${aValue}`);
@@ -174,169 +174,199 @@ class ColumnNode {
         });
 
         Object.defineProperty(this, 'leaf', {
-            get: function() {
+            get: function () {
                 return children.length === 0;
             }
         });
 
         Object.defineProperty(this, 'name', {
-            get: function() {
+            get: function () {
                 return name;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 name = aValue;
             }
         });
 
         Object.defineProperty(this, 'background', {
-            get: function() {
+            get: function () {
                 return nodeView.background;
             },
-            set: function(aValue) {
-                nodeView.background = aValue;
+            set: function (aValue) {
+                if (nodeView.background !== aValue) {
+                    nodeView.background = aValue;
+                    column.headers.forEach(nv => {
+                        nv.background = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'foreground', {
-            get: function() {
+            get: function () {
                 return nodeView.foreground;
             },
-            set: function(aValue) {
-                nodeView.foreground = aValue;
+            set: function (aValue) {
+                if (nodeView.foreground !== aValue) {
+                    nodeView.foreground = aValue;
+                    column.headers.forEach(nv => {
+                        nv.foreground = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'font', {
-            get: function() {
+            get: function () {
                 return nodeView.font;
             },
-            set: function(aValue) {
-                nodeView.font = aValue;
+            set: function (aValue) {
+                if (nodeView.font !== aValue) {
+                    nodeView.font = aValue;
+                    column.headers.forEach(nv => {
+                        nv.font = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'minWidth', {
-            get: function() {
+            get: function () {
                 return column.minWidth;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.minWidth = aValue;
             }
         });
 
         Object.defineProperty(this, 'maxWidth', {
-            get: function() {
+            get: function () {
                 return column.maxWidth;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.maxWidth = aValue;
             }
         });
 
         Object.defineProperty(this, 'preferredWidth', {
-            get: function() {
+            get: function () {
                 return column.designedWidth;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.designedWidth = aValue;
             }
         });
 
         Object.defineProperty(this, 'field', {
-            get: function() {
+            get: function () {
                 return column.field;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.field = aValue;
             }
         });
 
         Object.defineProperty(this, 'title', {
-            get: function() {
+            get: function () {
                 return nodeView.text;
             },
-            set: function(aValue) {
-                nodeView.text = aValue;
+            set: function (aValue) {
+                if (nodeView.text !== aValue) {
+                    nodeView.text = aValue;
+                    column.headers.forEach(nv => {
+                        nv.text = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'resizable', {
-            get: function() {
+            get: function () {
                 return nodeView.resizable;
             },
-            set: function(aValue) {
-                nodeView.resizable = aValue;
+            set: function (aValue) {
+                if (nodeView.resizable !== aValue) {
+                    nodeView.resizable = aValue;
+                    column.headers.forEach(nv => {
+                        nv.resizable = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'moveable', {
-            get: function() {
+            get: function () {
                 return nodeView.moveable;
             },
-            set: function(aValue) {
-                nodeView.moveable = aValue;
+            set: function (aValue) {
+                if (nodeView.moveable !== aValue) {
+                    nodeView.moveable = aValue;
+                    column.headers.forEach(nv => {
+                        nv.moveable = aValue;
+                    });
+                }
             }
         });
 
         Object.defineProperty(this, 'visible', {
-            get: function() {
+            get: function () {
                 return column.visible;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.visible = aValue;
             }
         });
 
         Object.defineProperty(this, 'width', {
-            get: function() {
+            get: function () {
                 return column.width;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.width = aValue;
             }
         });
 
         Object.defineProperty(this, 'readonly', {
-            get: function() {
+            get: function () {
                 return column.readonly;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.readonly = aValue;
             }
         });
 
         Object.defineProperty(this, 'sortable', {
-            get: function() {
+            get: function () {
                 return column.sortable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.sortable = aValue;
             }
         });
 
         Object.defineProperty(this, 'sortField', {
-            get: function() {
+            get: function () {
                 return column.sortField;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.sortField = aValue;
             }
         });
 
         Object.defineProperty(this, 'onRender', {
-            get: function() {
+            get: function () {
                 return column.onRender;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.onRender = aValue;
             }
         });
 
         Object.defineProperty(this, 'onSelect', {
-            get: function() {
+            get: function () {
                 return column.onSelect;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 column.onSelect = aValue;
             }
         });
@@ -345,7 +375,7 @@ class ColumnNode {
             column.sort();
         }
         Object.defineProperty(this, 'sort', {
-            get: function() {
+            get: function () {
                 return sort;
             }
         });
@@ -354,7 +384,7 @@ class ColumnNode {
             column.sortDesc();
         }
         Object.defineProperty(this, 'sortDesc', {
-            get: function() {
+            get: function () {
                 return sortDesc;
             }
         });
@@ -363,17 +393,17 @@ class ColumnNode {
             column.unsort();
         }
         Object.defineProperty(this, 'unsort', {
-            get: function() {
+            get: function () {
                 return unsort;
             }
         });
 
         Object.defineProperty(this, 'renderer', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return column ? column.renderer : null;
             },
-            set: function(aWidget) {
+            set: function (aWidget) {
                 if (column) {
                     column.renderer = aWidget;
                 }
@@ -382,10 +412,10 @@ class ColumnNode {
 
         Object.defineProperty(this, 'editor', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return column ? column.editor : null;
             },
-            set: function(aWidget) {
+            set: function (aWidget) {
                 if (column) {
                     column.editor = aWidget;
                 }

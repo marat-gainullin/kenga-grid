@@ -248,7 +248,7 @@ class NodeView {
 
         Object.defineProperty(this, 'text', {
             get: function() {
-                return th.innerText;
+                return thTitle.innerText;
             },
             set: function(aValue) {
                 thTitle.innerText = aValue;
