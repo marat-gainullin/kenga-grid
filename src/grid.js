@@ -429,8 +429,8 @@ class Grid extends Widget {
                 abortEditing();
             } else if (!event.ctrlKey && !event.shiftKey && !event.metaKey &&
                     (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
-                    event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
+                            event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
+                            event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
                     ) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
                         editable && !columnsFacade[self.focusedColumn].readonly) {
@@ -826,7 +826,7 @@ class Grid extends Widget {
 
         Object.defineProperty(this, 'headerVisible', {
             get: function () {
-                return 'none' !== headerLeft.element.style.display && 'none' !== headerRight.element.style.display;
+                return 'none' !== headerContainer.style.display;
             },
             set: function (aValue) {
                 if (aValue) {
@@ -1113,15 +1113,13 @@ class Grid extends Widget {
                     }
                 }
             }
-            let index;
             if (expanded) {
                 lookupDataColumn();
-                index = generateViewRows(anItem);
+                generateViewRows();
                 sortViewRows();
                 setupRanges(false);
-            } else {
-                index = viewRows.indexOf(anItem);
             }
+            const index = viewRows.indexOf(anItem);
             if (index !== -1) {
                 if (aNeedToSelect) {
                     unselectAll(false);
@@ -1749,7 +1747,13 @@ class Grid extends Widget {
                             if (row >= frozenRows) {
                                 const rowCenter = (row - frozenRows) * rowsHeight + rowsHeight / 2;
                                 if (bodyRightContainer.scrollTop > rowCenter || rowCenter > bodyRightContainer.scrollTop + bodyRightContainer.clientHeight) {
-                                    bodyRightContainer.scrollTop = (row - frozenRows) * rowsHeight - bodyRightContainer.clientHeight / 2 + rowsHeight / 2;
+                                    const scrollTop = (row - frozenRows) * rowsHeight - bodyRightContainer.clientHeight / 2 + rowsHeight / 2;
+                                    bodyRightContainer.scrollTop = scrollTop;
+                                    if (bodyRightContainer.scrollTop !== scrollTop) {
+                                        redrawFrozen();
+                                        redrawBody();
+                                        bodyRightContainer.scrollTop = scrollTop;
+                                    }
                                 }
                             }
                         }
@@ -1935,8 +1939,7 @@ class Grid extends Widget {
             }
         });
 
-        function generateViewRows(anItemToLookup) {
-            let itemToLookupIndex = -1;
+        function generateViewRows() {
             depths.clear();
             const rows = discoverRows();
             if (isTreeConfigured()) {
@@ -1952,9 +1955,6 @@ class Grid extends Widget {
                         parents.pop();
                     }
                     depths.set(item, parents.length);
-                    if (item === anItemToLookup) {
-                        itemToLookupIndex = viewRows.length;
-                    }
                     viewRows.push(item);
                     if (expandedRows.has(item)) {
                         const children = getChildrenOf(item);
@@ -1972,9 +1972,7 @@ class Grid extends Widget {
                 }
             } else {
                 viewRows = rows.slice(0, rows.length);
-                itemToLookupIndex = viewRows.indexOf(anItemToLookup);
             }
-            return itemToLookupIndex;
         }
 
         function sortViewRows() {
