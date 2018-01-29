@@ -8,7 +8,7 @@ class Column {
         const self = this;
         const cols = []; // dom 'col' elements for header,frozen,body and footer sections of the grid
         const columnRule = document.createElement('style');
-        const columnStyleName = `p-grid-column-${Id.generate()}`;
+        const columnStyleName = `p-grid-column-${Id.next()}`;
         let field = null;
         let sortField = null;
         let renderer = null;

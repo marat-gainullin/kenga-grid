@@ -1,6 +1,6 @@
 {
   "name": "kenga-grid",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Kenga interactive virtual grid. Frozen rows and columns, treegrid, hierarchical header, etc.",
   "main": "index.js",
   "repository": "https://github.com/marat-gainullin/kenga-grid.git",
@@ -35,15 +35,16 @@
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "septima-model": "0.0.8",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0",
     "yargs": "^9.0.1"
   },
   "dependencies": {
-    "kenga": "^0.0.24",
-    "kenga-fields": "^0.0.12",
-    "kenga-menu": "^0.0.12",
-    "septima-utils": "^0.0.4"
+    "kenga": "0.0.26",
+    "kenga-fields": "0.0.13",
+    "kenga-menu": "0.0.13",
+    "septima-utils": "0.0.5"
   }
 }

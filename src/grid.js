@@ -33,13 +33,13 @@ class Grid extends Widget {
         const oddRowsStyleElement = document.createElement('style');
         const evenRowsStyleElement = document.createElement('style');
 
-        const dynamicCellsClassName = `p-grid-cell-${Id.generate()}`;
-        const dynamicRowsClassName = `p-grid-row-${Id.generate()}`;
-        const dynamicHeaderCellsClassName = `p-grid-header-cell-${Id.generate()}`;
-        const dynamicHeaderRowsClassName = `p-grid-header-row-${Id.generate()}`;
+        const dynamicCellsClassName = `p-grid-cell-${Id.next()}`;
+        const dynamicRowsClassName = `p-grid-row-${Id.next()}`;
+        const dynamicHeaderCellsClassName = `p-grid-header-cell-${Id.next()}`;
+        const dynamicHeaderRowsClassName = `p-grid-header-row-${Id.next()}`;
 
-        const dynamicOddRowsClassName = `p-grid-odd-row-${Id.generate()}`;
-        const dynamicEvenRowsClassName = `p-grid-even-row-${Id.generate()}`;
+        const dynamicOddRowsClassName = `p-grid-odd-row-${Id.next()}`;
+        const dynamicEvenRowsClassName = `p-grid-even-row-${Id.next()}`;
 
         const headerContainer = document.createElement('div');
         const headerLeftContainer = document.createElement('div');
@@ -178,6 +178,7 @@ class Grid extends Widget {
         let field = null;
         let boundToData = null;
         let boundToElements = null;
+        let boundToElementsComposition = null;
         let boundToCursor = null;
         let cursorProperty = 'cursor';
         let onRender = null;
@@ -226,7 +227,7 @@ class Grid extends Widget {
                     const rows = discoverRows();
                     const dataIndex = rows.indexOf(dragged);
                     event.dataTransfer.setData('text/p-grid-row',
-                            `{"p-grid-name":"${name}", "data-row-index": ${dataIndex}}`);
+                        `{"p-grid-name":"${name}", "data-row-index": ${dataIndex}}`);
                 }
             }
         });
@@ -253,6 +254,7 @@ class Grid extends Widget {
                 const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
                 columnsMenu.showAt(pageX, pageY);
             }
+
             Ui.on(columnsChevron, Ui.Events.CLICK, event => {
                 if (columnsMenu) {
                     columnsMenu.close();
@@ -330,13 +332,13 @@ class Grid extends Widget {
                                     self.focusedColumn--;
                                 }
                             } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
-                                    !columnsFacade[self.focusedColumn].visible);
+                            !columnsFacade[self.focusedColumn].visible);
                         }
                     };
                     if (isTreeConfigured() &&
-                            self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                            columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                            self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                         if (hasRowChildren(viewRows[self.focusedRow]) && isExpanded(viewRows[self.focusedRow])) {
                             collapse(viewRows[self.focusedRow]);
                         } else {
@@ -355,11 +357,11 @@ class Grid extends Widget {
                 if (!focusedCell.editor) {
                     event.preventDefault();
                     if (isTreeConfigured() &&
-                            self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                            columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
-                            self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
-                            hasRowChildren(viewRows[self.focusedRow]) &&
-                            !isExpanded(viewRows[self.focusedRow])) {
+                        self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
+                        columnsFacade[self.focusedColumn] === treeIndicatorColumn &&
+                        self.focusedRow >= 0 && self.focusedRow < viewRows.length &&
+                        hasRowChildren(viewRows[self.focusedRow]) &&
+                        !isExpanded(viewRows[self.focusedRow])) {
                         expand(viewRows[self.focusedRow]);
                     } else {
                         if (self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) {
@@ -370,7 +372,7 @@ class Grid extends Widget {
                                     self.focusedColumn++;
                                 }
                             } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
-                                    !columnsFacade[self.focusedColumn].visible);
+                            !columnsFacade[self.focusedColumn].visible);
                         }
                     }
                 }
@@ -418,7 +420,7 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_F2) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (focusedCell.editor) {
                         abortEditing();
                     } else {
@@ -428,19 +430,19 @@ class Grid extends Widget {
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
             } else if (!event.ctrlKey && !event.shiftKey && !event.metaKey &&
-                    (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
-                            event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
-                            event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
-                    ) {
+                (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
+                    event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
+                    event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
+            ) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        editable && !columnsFacade[self.focusedColumn].readonly) {
+                    editable && !columnsFacade[self.focusedColumn].readonly) {
                     if (!focusedCell.editor) {
                         editCell(self.focusedRow, self.focusedColumn, true);
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_SPACE) {
                 if (self.focusedColumn >= 0 && self.focusedColumn < columnsFacade.length &&
-                        self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                    self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                     const dataRow = viewRows[self.focusedRow];
                     const column = columnsFacade[self.focusedColumn];
                     const value = column.getValue(dataRow);
@@ -557,6 +559,7 @@ class Grid extends Widget {
         function isSelected(item) {
             return selectedRows.has(item);
         }
+
         Object.defineProperty(this, 'isSelected', {
             get: function () {
                 return isSelected;
@@ -575,6 +578,7 @@ class Grid extends Widget {
                 }
             }
         }
+
         Object.defineProperty(this, 'setCursorOn', {
             get: function () {
                 return setCursorOn;
@@ -597,6 +601,7 @@ class Grid extends Widget {
                 redrawBody();
             }
         }
+
         Object.defineProperty(this, 'select', {
             get: function () {
                 return select;
@@ -616,6 +621,7 @@ class Grid extends Widget {
                 redrawBody();
             }
         }
+
         Object.defineProperty(this, 'selectAll', {
             get: function () {
                 return selectAll;
@@ -641,6 +647,7 @@ class Grid extends Widget {
             }
             return res;
         }
+
         Object.defineProperty(this, 'unselect', {
             get: function () {
                 return unselect;
@@ -660,6 +667,7 @@ class Grid extends Widget {
                 redrawBody();
             }
         }
+
         Object.defineProperty(this, 'unselectAll', {
             get: function () {
                 return unselectAll;
@@ -698,7 +706,7 @@ class Grid extends Widget {
 
         function regenerateDynamicCellsStyles() {
             cellsStyleElement.innerHTML =
-                    `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${linesColor ? `border-color: ${linesColor.toStyled ? linesColor.toStyled() : linesColor};` : ''}}`;
+                `.${dynamicCellsClassName}{${showHorizontalLines ? '' : 'border-top-style: none;'}${showHorizontalLines ? '' : 'border-bottom-style: none;'}${showVerticalLines ? '' : 'border-left-style: none;'}${showVerticalLines ? '' : 'border-right-style: none;'}${linesColor ? `border-color: ${linesColor.toStyled ? linesColor.toStyled() : linesColor};` : ''}}`;
         }
 
         Object.defineProperty(this, 'linesColor', {
@@ -716,7 +724,7 @@ class Grid extends Widget {
         function regenerateDynamicOddRowsStyles() {
             if (showOddRowsInOtherColor && oddRowsColor) {
                 oddRowsStyleElement.innerHTML =
-                        `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled ? oddRowsColor.toStyled() : oddRowsColor};` : ''}}`;
+                    `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled ? oddRowsColor.toStyled() : oddRowsColor};` : ''}}`;
             } else {
                 oddRowsStyleElement.innerHTML = '';
             }
@@ -737,7 +745,7 @@ class Grid extends Widget {
         function regenerateDynamicEvenRowsStyles() {
             if (showOddRowsInOtherColor && evenRowsColor) {
                 evenRowsStyleElement.innerHTML =
-                        `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled ? evenRowsColor.toStyled() : evenRowsColor};` : ''}}`;
+                    `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled ? evenRowsColor.toStyled() : evenRowsColor};` : ''}}`;
             } else {
                 evenRowsStyleElement.innerHTML = '';
             }
@@ -757,7 +765,7 @@ class Grid extends Widget {
 
         function regenerateDynamicRowsStyles() {
             rowsStyleElement.innerHTML =
-                    `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
+                `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'rowsHeight', {
@@ -804,12 +812,12 @@ class Grid extends Widget {
 
         function regenerateDynamicHeaderCellsStyles() {
             headerCellsStyleElement.innerHTML =
-                    `.${dynamicHeaderCellsClassName}{}`;
+                `.${dynamicHeaderCellsClassName}{}`;
         }
 
         function regenerateDynamicHeaderRowsStyles() {
             headerCellsStyleElement.innerHTML =
-                    `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
+                `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
         }
 
         Object.defineProperty(this, 'headerRowsHeight', {
@@ -958,6 +966,7 @@ class Grid extends Widget {
         function depthOf(item) {
             return isTreeConfigured() ? depths.get(item) : 0;
         }
+
         Object.defineProperty(this, 'depthOf', {
             get: function () {
                 return depthOf;
@@ -1030,6 +1039,7 @@ class Grid extends Widget {
         function isLeaf(anElement) {
             return !hasRowChildren(anElement);
         }
+
         Object.defineProperty(this, 'isLeaf', {
             get: function () {
                 return isLeaf;
@@ -1094,6 +1104,7 @@ class Grid extends Widget {
             }
             return path;
         }
+
         Object.defineProperty(this, 'pathTo', {
             get: function () {
                 return pathTo;
@@ -1146,10 +1157,12 @@ class Grid extends Widget {
         function bind() {
             if (data) {
                 if (field) {
-                    boundToData = Bound.observePath(data, field, anEvent => {
-                        rebind();
-                        redrawFrozen();
-                        redrawBody();
+                    boundToData = Bound.observePath(data, field, {
+                        change: anEvent => {
+                            rebind();
+                            redrawFrozen();
+                            redrawBody();
+                        }
                     });
                 }
                 bindElements();
@@ -1161,16 +1174,31 @@ class Grid extends Widget {
 
         function bindElements() {
             const rows = discoverRows();
-            boundToElements = Bound.observeElements(rows, anEvent => {
-                redrawFrozen();
-                redrawBody();
+            boundToElements = Bound.observeElements(rows, {
+                change: anEvent => {
+                    redrawFrozen();
+                    redrawBody();
+                }
             });
+            const unlisten = Bound.listen(rows, {
+                spliced: (added, removed) => {
+                    itemsAdded(added);
+                    itemsRemoved(removed)
+                }
+            });
+            boundToElementsComposition = {
+                unlisten: unlisten
+            };
         }
 
         function unbindElements() {
             if (boundToElements) {
                 boundToElements.unlisten();
                 boundToElements = null;
+            }
+            if (boundToElementsComposition) {
+                boundToElementsComposition.unlisten();
+                boundToElementsComposition = null;
             }
         }
 
@@ -1196,9 +1224,11 @@ class Grid extends Widget {
             if (data) {
                 const rows = discoverRows();
                 if (cursorProperty) {
-                    boundToCursor = Bound.observePath(rows, cursorProperty, anEvent => {
-                        redrawFrozen();
-                        redrawBody();
+                    boundToCursor = Bound.observePath(rows, cursorProperty, {
+                        change: anEvent => {
+                            redrawFrozen();
+                            redrawBody();
+                        }
                     });
                 }
             }
@@ -1340,6 +1370,7 @@ class Grid extends Widget {
                 section.element.style.width = `${rightColumnsWidth}px`;
             });
         }
+
         Object.defineProperty(this, 'updateSectionsWidth', {
             get: function () {
                 return updateSectionsWidth;
@@ -1371,6 +1402,7 @@ class Grid extends Widget {
                 }
             }
         }
+
         Object.defineProperty(this, 'treeIndicatorColumn', {
             get: function () {
                 return treeIndicatorColumn;
@@ -1389,6 +1421,7 @@ class Grid extends Widget {
                     clearHeaders(node.children);
                 });
             }
+
             clearHeaders(columnNodes);
             columnsFacade = [];
             sortedColumns = [];
@@ -1410,6 +1443,7 @@ class Grid extends Widget {
             footerLeft.clearColumnsAndHeader(needRedraw);
             footerRight.clearColumnsAndHeader(needRedraw);
         }
+
         Object.defineProperty(this, 'clearColumnsNodes', {
             get: function () {
                 return clearColumnsNodes;
@@ -1493,6 +1527,7 @@ class Grid extends Widget {
                 return false;
             }
         }
+
         Object.defineProperty(this, 'removeColumnNode', {
             get: function () {
                 return removeColumnNode;
@@ -1515,6 +1550,7 @@ class Grid extends Widget {
                 return false;
             }
         }
+
         Object.defineProperty(this, 'removeColumnNodeAt', {
             get: function () {
                 return removeColumnNodeAt;
@@ -1575,6 +1611,7 @@ class Grid extends Widget {
                 applyColumnsNodes();
             }
         }
+
         Object.defineProperty(this, 'insertBeforeColumnNode', {
             get: function () {
                 return insertBeforeColumnNode;
@@ -1592,6 +1629,7 @@ class Grid extends Widget {
                 applyColumnsNodes();
             }
         }
+
         Object.defineProperty(this, 'insertAfterColumnNode', {
             get: function () {
                 return insertAfterColumnNode;
@@ -1623,6 +1661,7 @@ class Grid extends Widget {
             footerLeft.redraw();
             footerRight.redraw();
         }
+
         Object.defineProperty(this, 'redraw', {
             get: function () {
                 return redraw;
@@ -1633,6 +1672,7 @@ class Grid extends Widget {
             frozenLeft.redraw();
             frozenRight.redraw();
         }
+
         Object.defineProperty(this, 'redrawFrozen', {
             get: function () {
                 return redrawFrozen;
@@ -1643,6 +1683,7 @@ class Grid extends Widget {
             bodyLeft.redraw();
             bodyRight.redraw();
         }
+
         Object.defineProperty(this, 'redrawBody', {
             get: function () {
                 return redrawBody;
@@ -1653,6 +1694,7 @@ class Grid extends Widget {
             headerLeft.redrawHeaders();
             headerRight.redrawHeaders();
         }
+
         Object.defineProperty(this, 'redrawHeaders', {
             get: function () {
                 return redrawHeaders;
@@ -1663,6 +1705,7 @@ class Grid extends Widget {
             footerLeft.redrawFooters();
             footerRight.redrawFooters();
         }
+
         Object.defineProperty(this, 'redrawFooters', {
             get: function () {
                 return redrawFooters;
@@ -1672,6 +1715,7 @@ class Grid extends Widget {
         function getColumnsCount() {
             return (headerLeft ? headerLeft.columnsCount : 0) + (headerRight ? headerRight.columnsCount : 0);
         }
+
         Object.defineProperty(this, 'columnsCount', {
             get: function () {
                 return getColumnsCount();
@@ -1685,6 +1729,7 @@ class Grid extends Widget {
                 return null;
             }
         }
+
         Object.defineProperty(this, 'getColumn', {
             get: function () {
                 return getColumn;
@@ -1708,6 +1753,7 @@ class Grid extends Widget {
             }
             return targetSection.getViewCell(aRow, aCol);
         }
+
         Object.defineProperty(this, 'getCell', {
             get: function () {
                 return getCell;
@@ -1723,7 +1769,7 @@ class Grid extends Widget {
             if (arguments.length < 3)
                 needRedraw = true;
             if (row >= 0 && row < viewRows.length ||
-                    column >= 0 && column < columnsFacade.length) {
+                column >= 0 && column < columnsFacade.length) {
                 if (row >= 0 && row < viewRows.length) {
                     focusedCell.row = row;
                 }
@@ -1731,7 +1777,7 @@ class Grid extends Widget {
                     focusedCell.column = column;
                 }
                 if (focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
-                        focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                     let cell = frozenLeft.getViewCell(row, column);
                     if (cell) {
                         cell.scrollIntoView();
@@ -1770,6 +1816,7 @@ class Grid extends Widget {
             }
             return false;
         }
+
         Object.defineProperty(this, 'focusCell', {
             get: function () {
                 return focusCell;
@@ -1798,7 +1845,7 @@ class Grid extends Widget {
 
         function startEditing(replace = false) {
             if (!focusedCell.editor && focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
-                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                 const edited = viewRows[focusedCell.row];
                 const column = columnsFacade[focusedCell.column];
                 if (column.editor) {
@@ -1810,13 +1857,13 @@ class Grid extends Widget {
                         column.setValue(edited, editor.value);
                     };
                     let valueChangeReg = editor.addValueChangeHandler ?
-                            editor.addValueChangeHandler(event => {
-                                column.setValue(edited, event.newValue);
-                            }) : null;
+                        editor.addValueChangeHandler(event => {
+                            column.setValue(edited, event.newValue);
+                        }) : null;
                     let focusLostReg = editor.addFocusLostHandler ?
-                            editor.addFocusLostHandler(event => {
-                                completeEditing();
-                            }) : null;
+                        editor.addFocusLostHandler(event => {
+                            completeEditing();
+                        }) : null;
                     focusedCell.clean = () => {
                         if (focusLostReg) {
                             focusLostReg.removeHandler();
@@ -1839,6 +1886,7 @@ class Grid extends Widget {
             }
             return false;
         }
+
         Object.defineProperty(this, 'startEditing', {
             get: function () {
                 return startEditing;
@@ -1866,6 +1914,7 @@ class Grid extends Widget {
                 self.focus();
             }
         }
+
         Object.defineProperty(this, 'abortEditing', {
             get: function () {
                 return abortEditing;
@@ -1879,6 +1928,7 @@ class Grid extends Widget {
             }
             abortEditing();
         }
+
         Object.defineProperty(this, 'completeEditing', {
             get: function () {
                 return completeEditing;
@@ -1889,6 +1939,7 @@ class Grid extends Widget {
             rowsToViewRows(true);
             redrawHeaders();
         }
+
         Object.defineProperty(this, 'sort', {
             get: function () {
                 return sort;
@@ -1902,6 +1953,7 @@ class Grid extends Widget {
             }
             sort();
         }
+
         Object.defineProperty(this, 'addSortedColumn', {
             get: function () {
                 return addSortedColumn;
@@ -1915,6 +1967,7 @@ class Grid extends Widget {
             }
             sort();
         }
+
         Object.defineProperty(this, 'removeSortedColumn', {
             get: function () {
                 return removeSortedColumn;
@@ -1933,6 +1986,7 @@ class Grid extends Widget {
                 redrawHeaders();
             }
         }
+
         Object.defineProperty(this, 'unsort', {
             get: function () {
                 return unsort;
@@ -2034,6 +2088,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addExpandHandler', {
             get: function () {
                 return addExpandHandler;
@@ -2083,6 +2138,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addCollapseHandler', {
             get: function () {
                 return addCollapseHandler;
@@ -2132,6 +2188,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addSortHandler', {
             get: function () {
                 return addSortHandler;
@@ -2190,6 +2247,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addSelectHandler', {
             get: function () {
                 return addSelectHandler;
@@ -2215,6 +2273,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addFocusHandler', {
             get: function () {
                 return addFocusHandler;
@@ -2242,6 +2301,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addFocusLostHandler', {
             get: function () {
                 return addFocusLostHandler;
@@ -2269,6 +2329,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addKeyReleaseHandler', {
             get: function () {
                 return addKeyReleaseHandler;
@@ -2296,6 +2357,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addKeyPressHandler', {
             get: function () {
                 return addKeyPressHandler;
@@ -2323,6 +2385,7 @@ class Grid extends Widget {
                 }
             };
         }
+
         Object.defineProperty(this, 'addKeyTypeHandler', {
             get: function () {
                 return addKeyTypeHandler;

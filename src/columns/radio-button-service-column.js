@@ -5,7 +5,7 @@ class RadioButtonServiceColumn extends ServiceColumn {
     constructor(node) {
         super(node);
         const self = this;
-        const radioGroup = `p-grid-group-${Id.generate()}`;
+        const radioGroup = `p-grid-group-${Id.next()}`;
 
         function getValue(dataRow) {
             return self.grid.isSelected(dataRow);
