@@ -429,7 +429,7 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
-            } else if (!event.ctrlKey && !event.shiftKey && !event.metaKey &&
+            } else if (!event.ctrlKey && !event.metaKey &&
                 (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
                     event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
                     event.keyCode >= KeyCodes.KEY_NUM_ZERO && event.keyCode <= KeyCodes.KEY_NUM_DIVISION && event.keyCode !== 108)
@@ -1180,15 +1180,12 @@ class Grid extends Widget {
                     redrawBody();
                 }
             });
-            const unlisten = Bound.listen(rows, {
+            boundToElementsComposition = Bound.listen(rows, {
                 spliced: (added, removed) => {
                     itemsAdded(added);
                     itemsRemoved(removed)
                 }
             });
-            boundToElementsComposition = {
-                unlisten: unlisten
-            };
         }
 
         function unbindElements() {
@@ -1197,7 +1194,7 @@ class Grid extends Widget {
                 boundToElements = null;
             }
             if (boundToElementsComposition) {
-                boundToElementsComposition.unlisten();
+                boundToElementsComposition();
                 boundToElementsComposition = null;
             }
         }

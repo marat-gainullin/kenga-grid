@@ -130,13 +130,14 @@
 }
 
 .p-grid-row-drop-before {
-    background-image: linear-gradient(to top, white 80%, gray);
+    border-top: solid #c17819 2px;
 }
 
 .p-grid-row-drop-into {
-    background-color: gray !important;
+    border-top: solid #c17819 2px;
+    border-bottom: solid #c17819 2px;
 }
 
 .p-grid-row-drop-after {
-    background-image: linear-gradient(to bottom, white 80%, gray);
+    border-bottom: solid #c17819 2px;
 }
