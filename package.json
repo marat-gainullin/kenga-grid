@@ -42,9 +42,9 @@
     "yargs": "^9.0.1"
   },
   "dependencies": {
-    "kenga": "0.0.28",
-    "kenga-fields": "0.0.15",
-    "kenga-menu": "0.0.17",
+    "kenga": "0.0.30",
+    "kenga-fields": "0.0.16",
+    "kenga-menu": "0.0.18",
     "septima-utils": "0.0.5"
   }
 }
