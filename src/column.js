@@ -181,7 +181,7 @@ class Column {
             },
             set: function(aValue) {
                 if (width !== aValue) {
-                    width = aValue;
+                    width = +aValue;
                     regenerateColStyle();
                     if (grid) {
                         grid.updateSectionsWidth();
@@ -196,7 +196,7 @@ class Column {
             },
             set: function(aValue) {
                 if (aValue != null && padding !== aValue) {
-                    padding = aValue;
+                    padding = +aValue;
                     regenerateColStyle();
                     if (grid) {
                         grid.updateSectionsWidth();
@@ -212,7 +212,7 @@ class Column {
             },
             set: function(aValue) {
                 if (minWidth !== aValue) {
-                    minWidth = aValue;
+                    minWidth = +aValue;
                     regenerateColStyle();
                 }
             }
@@ -225,7 +225,7 @@ class Column {
             },
             set: function(aValue) {
                 if (maxWidth !== aValue) {
-                    maxWidth = aValue;
+                    maxWidth = +aValue;
                     regenerateColStyle();
                 }
             }
