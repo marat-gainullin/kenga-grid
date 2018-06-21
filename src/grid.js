@@ -454,56 +454,76 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_DELETE) {
                 if (deletable && !focusedCell.editor) {
-                    let rows = discoverRows();
-                    if (viewRows.length > 0) {
-                        // calculate some view sugar
-                        let lastSelectedViewIndex = -1;
-                        for (let i = viewRows.length - 1; i >= 0; i--) {
-                            const element = viewRows[i];
-                            if (isSelected(element)) {
-                                lastSelectedViewIndex = i;
-                                break;
-                            }
-                        }
-                        // actually delete selected elements
-                        let deletedAt = -1;
-                        const deleted = [];
-                        for (let i = rows.length - 1; i >= 0; i--) {
-                            const item = rows[i];
-                            if (isSelected(item)) {
-                                deleted.push(item);
-                                rows.splice(i, 1);
-                                deletedAt = i;
-                            }
-                        }
-                        itemsRemoved(deleted);
-                        const viewIndexToSelect = lastSelectedViewIndex;
-                        if (deletedAt > -1) {
-                            let vIndex = viewIndexToSelect;
-                            if (vIndex >= 0 && viewRows.length > 0) {
-                                if (vIndex >= viewRows.length) {
-                                    vIndex = viewRows.length - 1;
-                                }
-                                const toSelect = viewRows[vIndex];
-                                goTo(toSelect, true);
-                            } else {
-                                self.focus();
-                            }
-                        }
-                    }
+                    deleteSelected();
                 }
             } else if (event.keyCode === KeyCodes.KEY_INSERT) {
                 if (insertable && !focusedCell.editor) {
-                    var rows = discoverRows();
-                    let insertAt = -1;
-                    const lead = selectionLead;
-                    insertAt = rows.indexOf(lead);
-                    insertAt++;
-                    const inserted = rows.elementClass ? new rows.elementClass() : {};
-                    rows.splice(insertAt, 0, inserted);
-                    itemsAdded([inserted]);
-                    goTo(inserted, true);
+                    insertRow();
                 }
+            }
+        });
+
+        function insertRow(){
+            var rows = discoverRows();
+            let insertAt = -1;
+            const lead = selectionLead;
+            insertAt = rows.indexOf(lead);
+            insertAt++;
+            const inserted = rows.elementClass ? new rows.elementClass() : {};
+            rows.splice(insertAt, 0, inserted);
+            itemsAdded([inserted]);
+            goTo(inserted, true);
+        }
+
+        Object.defineProperty(this, 'insertRow', {
+            get: function () {
+                return insertRow;
+            }
+        });
+
+        function deleteSelected() {
+            let rows = discoverRows();
+            if (viewRows.length > 0) {
+                // calculate some view sugar
+                let lastSelectedViewIndex = -1;
+                for (let i = viewRows.length - 1; i >= 0; i--) {
+                    const element = viewRows[i];
+                    if (isSelected(element)) {
+                        lastSelectedViewIndex = i;
+                        break;
+                    }
+                }
+                // actually delete selected elements
+                let deletedAt = -1;
+                const deleted = [];
+                for (let i = rows.length - 1; i >= 0; i--) {
+                    const item = rows[i];
+                    if (isSelected(item)) {
+                        deleted.push(item);
+                        rows.splice(i, 1);
+                        deletedAt = i;
+                    }
+                }
+                itemsRemoved(deleted);
+                const viewIndexToSelect = lastSelectedViewIndex;
+                if (deletedAt > -1) {
+                    let vIndex = viewIndexToSelect;
+                    if (vIndex >= 0 && viewRows.length > 0) {
+                        if (vIndex >= viewRows.length) {
+                            vIndex = viewRows.length - 1;
+                        }
+                        const toSelect = viewRows[vIndex];
+                        goTo(toSelect, true);
+                    } else {
+                        self.focus();
+                    }
+                }
+            }
+        }
+
+        Object.defineProperty(this, 'deleteSelected', {
+            get: function () {
+                return deleteSelected;
             }
         });
 
