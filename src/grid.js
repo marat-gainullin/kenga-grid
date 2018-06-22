@@ -458,26 +458,26 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_INSERT) {
                 if (insertable && !focusedCell.editor) {
-                    insertRow();
+                    insert();
                 }
             }
         });
 
-        function insertRow(){
+        function insert(instance){
             var rows = discoverRows();
             let insertAt = -1;
             const lead = selectionLead;
             insertAt = rows.indexOf(lead);
             insertAt++;
-            const inserted = rows.elementClass ? new rows.elementClass() : {};
+            const inserted = instance ? instance : rows.elementClass ? new rows.elementClass() : {};
             rows.splice(insertAt, 0, inserted);
             itemsAdded([inserted]);
             goTo(inserted, true);
         }
 
-        Object.defineProperty(this, 'insertRow', {
+        Object.defineProperty(this, 'insert', {
             get: function () {
-                return insertRow;
+                return insert;
             }
         });
 
