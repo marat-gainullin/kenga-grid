@@ -35,10 +35,11 @@ class Column {
         function regenerateColStyle() {
             columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${width == null || width == Infinity ? '' : `width: ${width + padding}px;`}${minWidth == null || minWidth == Infinity ? '' : `min-width: ${minWidth}px;`}${maxWidth == null || maxWidth == Infinity ? '' : `max-width: ${maxWidth}px;`}}`;
         }
+
         regenerateColStyle();
 
         Object.defineProperty(this, 'styleName', {
-            get: function() {
+            get: function () {
                 return columnStyleName;
             }
         });
@@ -51,7 +52,7 @@ class Column {
         }
 
         Object.defineProperty(this, 'addCol', {
-            get: function() {
+            get: function () {
                 return addCol;
             }
         });
@@ -59,7 +60,7 @@ class Column {
          * Multiple 'col' elements for the single column, because of grid sections.
          */
         Object.defineProperty(this, 'elements', {
-            get: function() {
+            get: function () {
                 return cols;
             }
         });
@@ -68,7 +69,7 @@ class Column {
          * Multiple 'headers' for the single column, because of splitted column nodes.
          */
         Object.defineProperty(this, 'headers', {
-            get: function() {
+            get: function () {
                 return headers;
             }
         });
@@ -77,36 +78,36 @@ class Column {
          * Leaf nodes' columns can have only single header, by nature.
          */
         Object.defineProperty(this, 'header', {
-            get: function() {
+            get: function () {
                 return headers.length === 1 ? headers[0] : null;
             }
         });
         Object.defineProperty(this, 'grid', {
-            get: function() {
+            get: function () {
                 return grid;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 grid = aValue;
             }
         });
 
         Object.defineProperty(this, 'node', {
-            get: function() {
+            get: function () {
                 return node;
             }
         });
 
         Object.defineProperty(this, 'columnRule', {
-            get: function() {
+            get: function () {
                 return columnRule;
             }
         });
 
         Object.defineProperty(this, 'comparator', {
-            get: function() {
+            get: function () {
                 return comparator;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 comparator = aValue;
             }
         });
@@ -119,8 +120,9 @@ class Column {
                 grid.addSortedColumn(self);
             }
         }
+
         Object.defineProperty(this, 'sort', {
-            get: function() {
+            get: function () {
                 return sort;
             }
         });
@@ -133,8 +135,9 @@ class Column {
                 grid.addSortedColumn(self);
             }
         }
+
         Object.defineProperty(this, 'sortDesc', {
-            get: function() {
+            get: function () {
                 return sortDesc;
             }
         });
@@ -147,17 +150,18 @@ class Column {
                 grid.removeSortedColumn(self);
             }
         }
+
         Object.defineProperty(this, 'unsort', {
-            get: function() {
+            get: function () {
                 return unsort;
             }
         });
 
         Object.defineProperty(this, 'field', {
-            get: function() {
+            get: function () {
                 return field;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (field !== aValue) {
                     field = aValue;
                 }
@@ -165,10 +169,10 @@ class Column {
         });
 
         Object.defineProperty(this, 'sortField', {
-            get: function() {
+            get: function () {
                 return sortField;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (sortField !== aValue) {
                     sortField = aValue;
                 }
@@ -176,10 +180,10 @@ class Column {
         });
 
         Object.defineProperty(this, 'width', {
-            get: function() {
+            get: function () {
                 return width;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (width !== aValue) {
                     width = +aValue;
                     regenerateColStyle();
@@ -191,10 +195,10 @@ class Column {
         });
 
         Object.defineProperty(this, 'padding', {
-            get: function() {
+            get: function () {
                 return padding;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (aValue != null && padding !== aValue) {
                     padding = +aValue;
                     regenerateColStyle();
@@ -207,10 +211,10 @@ class Column {
 
         Object.defineProperty(this, 'minWidth', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return minWidth;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (minWidth !== aValue) {
                     minWidth = +aValue;
                     regenerateColStyle();
@@ -220,10 +224,10 @@ class Column {
 
         Object.defineProperty(this, 'maxWidth', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return maxWidth;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (maxWidth !== aValue) {
                     maxWidth = +aValue;
                     regenerateColStyle();
@@ -238,9 +242,10 @@ class Column {
                 return null;
             }
         }
+
         Object.defineProperty(this, 'getValue', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return getValue;
             }
         });
@@ -250,9 +255,10 @@ class Column {
                 Bound.setPathData(anElement, field, value);
             }
         }
+
         Object.defineProperty(this, 'setValue', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return setValue;
             }
         });
@@ -271,6 +277,7 @@ class Column {
                 grid.select(dataRow, false);
                 grid.focusCell(viewRowIndex, viewColumnIndex, true);
             }
+
             if (grid.treeIndicatorColumn === self) {
                 const padding = grid.indent * grid.depthOf(dataRow);
                 viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
@@ -307,7 +314,9 @@ class Column {
             Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                 if (event.button === 0) {
                     handleSelection(event);
-                    grid.startEditing();
+                    if (!readonly) {
+                        grid.startEditing();
+                    }
                 }
             });
             const value = getValue(dataRow);
@@ -339,15 +348,15 @@ class Column {
 
         Object.defineProperty(this, 'render', {
             configurable: true,
-            get: function() {
+            get: function () {
                 return render;
             }
         });
         Object.defineProperty(this, 'visible', {
-            get: function() {
+            get: function () {
                 return visible;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (visible !== aValue) {
                     visible = aValue;
                     regenerateColStyle();
@@ -359,28 +368,28 @@ class Column {
         });
 
         Object.defineProperty(this, 'readonly', {
-            get: function() {
+            get: function () {
                 return readonly;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 readonly = aValue;
             }
         });
 
         Object.defineProperty(this, 'sortable', {
-            get: function() {
+            get: function () {
                 return sortable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 sortable = aValue;
             }
         });
 
         Object.defineProperty(this, 'onRender', {
-            get: function() {
+            get: function () {
                 return onRender;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (onRender !== aValue) {
                     onRender = aValue;
                 }
@@ -388,10 +397,10 @@ class Column {
         });
 
         Object.defineProperty(this, 'onSelect', {
-            get: function() {
+            get: function () {
                 return editor ? editor.onSelect : null;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (onSelect !== aValue && editor) {
                     editor.onSelect = aValue;
                 }
@@ -399,20 +408,20 @@ class Column {
         });
 
         Object.defineProperty(this, 'renderer', {
-            get: function() {
+            get: function () {
                 return renderer;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (renderer !== aValue) {
                     renderer = aValue;
                 }
             }
         });
         Object.defineProperty(this, 'editor', {
-            get: function() {
+            get: function () {
                 return editor;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (editor !== aValue) {
                     if (editor && editor.element) {
                         editor.element.classList.remove('p-grid-cell-editor');

@@ -6,14 +6,14 @@ let rowDrag = null;
 
 class Section {
     constructor(
-            grid,
-            dynamicCellsClassName,
-            dynamicRowsClassName,
-            dynamicHeaderCellsClassName,
-            dynamicHeaderRowsClassName,
-            dynamicOddRowsClassName,
-            dynamicEvenRowsClassName
-            ) {
+        grid,
+        dynamicCellsClassName,
+        dynamicRowsClassName,
+        dynamicHeaderCellsClassName,
+        dynamicHeaderRowsClassName,
+        dynamicOddRowsClassName,
+        dynamicEvenRowsClassName
+    ) {
         const self = this;
 
         const table = document.createElement('table');
@@ -130,6 +130,7 @@ class Section {
                 }
             }
         }
+
         Object.defineProperty(this, 'insertColumn', {
             get: function () {
                 return insertColumn;
@@ -141,6 +142,7 @@ class Section {
                 needRedraw = true;
             insertColumn(columns.length, aColumn, needRedraw);
         }
+
         Object.defineProperty(this, 'addColumn', {
             get: function () {
                 return addColumn;
@@ -166,6 +168,7 @@ class Section {
                 return null;
             }
         }
+
         Object.defineProperty(this, 'removeColumn', {
             get: function () {
                 return removeColumn;
@@ -181,6 +184,7 @@ class Section {
         function getColumn(index) {
             return index >= 0 && index < columns.length ? columns[index] : null;
         }
+
         Object.defineProperty(this, 'getColumn', {
             get: function () {
                 return getColumn;
@@ -218,6 +222,7 @@ class Section {
             }
             return null;
         }
+
         Object.defineProperty(this, 'getViewCell', {
             get: function () {
                 return getViewCell;
@@ -233,6 +238,7 @@ class Section {
                 redrawHeaders();
             }
         }
+
         Object.defineProperty(this, 'setHeaderNodes', {
             get: function () {
                 return setHeaderNodes;
@@ -256,6 +262,7 @@ class Section {
                 redraw();
             }
         }
+
         Object.defineProperty(this, 'clearColumnsAndHeader', {
             get: function () {
                 return clearColumnsAndHeader;
@@ -267,6 +274,7 @@ class Section {
             redrawBody();
             redrawFooters();
         }
+
         Object.defineProperty(this, 'redraw', {
             get: function () {
                 return redraw;
@@ -287,6 +295,7 @@ class Section {
             recreateHead();
             drawHeaders();
         }
+
         Object.defineProperty(this, 'redrawHeaders', {
             get: function () {
                 return redrawHeaders;
@@ -372,6 +381,7 @@ class Section {
                     table.parentElement.scrollTop = wasParentScrollTop;
                 }
             }
+
             calc();
             if (viewportHeight !== table.parentElement.clientHeight) {
                 calc();
@@ -385,6 +395,7 @@ class Section {
             renderedRangeStart = renderedRangeEnd = -1;
             Invoke.throttle(renderingThrottle, drawBody);
         }
+
         Object.defineProperty(this, 'redrawBody', {
             get: function () {
                 return redrawBody;
@@ -394,9 +405,9 @@ class Section {
         function inTrRect(viewRow, event) {
             const rect = viewRow.getBoundingClientRect();
             return event.clientX >= rect.left &&
-                    event.clientY >= rect.top &&
-                    event.clientX < rect.right &&
-                    event.clientY < rect.bottom;
+                event.clientY >= rect.top &&
+                event.clientX < rect.right &&
+                event.clientY < rect.bottom;
         }
 
         function checkRegion(viewRow, event) {
@@ -421,6 +432,7 @@ class Section {
                     return false;
                 }
             }
+
             const rect = viewRow.getBoundingClientRect();
             const heightPortion = (event.clientY - rect.top) / rect.height;
             if (heightPortion <= 0.2) {
@@ -516,52 +528,51 @@ class Section {
                                 }
                             });
                         });
-
-                        const onDragEnterOver = (event) => {
-                            if (rowDrag && rowDrag.row !== dataRow && inTrRect(viewRow, event)) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                const region = checkRegion(viewRow, event);
-                                if (region.onDrag) {
-                                    event.dropEffect = 'move';
-                                    if (region.modified) {
-                                        region.onDrag(rowDrag.row, dataRow, event);
-                                    }
-                                } else {
-                                    event.dropEffect = 'none';
-                                }
-                            }
-                        };
-                        Ui.on(viewRow, Ui.Events.DRAGENTER, onDragEnterOver);
-                        Ui.on(viewRow, Ui.Events.DRAGOVER, onDragEnterOver);
-                        Ui.on(viewRow, Ui.Events.DROP, event => {
-                            if (rowDrag && rowDrag.row !== dataRow) {
-                                if (rowDrag.clear) {
-                                    rowDrag.clear();
-                                    rowDrag.clear = null;
-                                }
-                                event.preventDefault();
-                                event.stopPropagation();
-                                const region = checkRegion(viewRow, event);
-                                if (region.onDrop) {
-                                    event.dropEffect = 'move';
-                                    region.onDrop(rowDrag.row, dataRow, event);
-                                } else {
-                                    event.dropEffect = 'none';
-                                }
-                            }
-                        });
-                        Ui.on(viewRow, Ui.Events.DRAGLEAVE, event => {
-                            if (rowDrag && !inTrRect(viewRow, event)) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                if (rowDrag && rowDrag.clear) {
-                                    rowDrag.clear();
-                                    rowDrag.clear = null;
-                                }
-                            }
-                        });
                     }
+                    const onDragEnterOver = (event) => {
+                        if (rowDrag && rowDrag.row !== dataRow && inTrRect(viewRow, event)) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const region = checkRegion(viewRow, event);
+                            if (region.onDrag) {
+                                event.dropEffect = 'move';
+                                if (region.modified) {
+                                    region.onDrag(rowDrag.row, dataRow, event);
+                                }
+                            } else {
+                                event.dropEffect = 'none';
+                            }
+                        }
+                    };
+                    Ui.on(viewRow, Ui.Events.DRAGENTER, onDragEnterOver);
+                    Ui.on(viewRow, Ui.Events.DRAGOVER, onDragEnterOver);
+                    Ui.on(viewRow, Ui.Events.DROP, event => {
+                        if (rowDrag && rowDrag.row !== dataRow) {
+                            if (rowDrag.clear) {
+                                rowDrag.clear();
+                                rowDrag.clear = null;
+                            }
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const region = checkRegion(viewRow, event);
+                            if (region.onDrop) {
+                                event.dropEffect = 'move';
+                                region.onDrop(rowDrag.row, dataRow, event);
+                            } else {
+                                event.dropEffect = 'none';
+                            }
+                        }
+                    });
+                    Ui.on(viewRow, Ui.Events.DRAGLEAVE, event => {
+                        if (rowDrag && !inTrRect(viewRow, event)) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            if (rowDrag && rowDrag.clear) {
+                                rowDrag.clear();
+                                rowDrag.clear = null;
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -581,6 +592,7 @@ class Section {
                 redrawBody();
             }
         }
+
         Object.defineProperty(this, 'setDataRange', {
             get: function () {
                 return setDataRange;
@@ -626,6 +638,7 @@ class Section {
             recreateFoot();
             drawFooters();
         }
+
         Object.defineProperty(this, 'redrawFooters', {
             get: function () {
                 return redrawFooters;
