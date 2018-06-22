@@ -1427,10 +1427,7 @@ class Grid extends Widget {
         });
 
 
-        function clearColumnsNodes(needRedraw) {
-            if (arguments.length < 1)
-                needRedraw = true;
-
+        function clearColumnsNodes(needRedraw = true) {
             function clearHeaders(forest) {
                 forest.forEach(node => {
                     node.column.grid = null;

@@ -70,12 +70,15 @@ class ColumnNode {
             }
         });
 
-        function removeColumnNode(aNode) {
+        function removeColumnNode(aNode, applyOnGrid = true) {
             if (children) {
                 const idx = children.indexOf(aNode);
                 if (idx !== -1) {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
+                    if(applyOnGrid && column && column.grid){
+                        column.grid.applyColumnNodes();
+                    }
                     return true;
                 } else {
                     return false;
@@ -90,11 +93,14 @@ class ColumnNode {
             }
         });
 
-        function removeColumnNodeAt(idx) {
+        function removeColumnNodeAt(idx, applyOnGrid = true) {
             if (children) {
                 if (idx >= 0 && idx < children.length) {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
+                    if(applyOnGrid && column && column.grid){
+                        column.grid.applyColumnNodes();
+                    }
                     return true;
                 } else {
                     return false;
@@ -109,13 +115,16 @@ class ColumnNode {
             }
         });
 
-        function addColumnNode(aNode) {
+        function addColumnNode(aNode, applyOnGrid = true) {
             if (!children) {
                 children = [];
             }
             if (!children.includes(aNode)) {
                 children.push(aNode);
                 aNode.parent = self;
+            }
+            if(applyOnGrid && column && column.grid){
+                column.grid.applyColumnNodes();
             }
         }
         Object.defineProperty(this, 'addColumnNode', {
@@ -124,13 +133,16 @@ class ColumnNode {
             }
         });
 
-        function insertColumnNode(atIndex, aNode) {
+        function insertColumnNode(atIndex, aNode, applyOnGrid = true) {
             if (!children) {
                 children = [];
             }
             if (!children.includes(aNode) && atIndex >= 0 && atIndex <= children.length) {
                 children.splice(atIndex, 0, aNode);
                 aNode.parent = self;
+            }
+            if(applyOnGrid && column && column.grid){
+                column.grid.applyColumnNodes();
             }
         }
         Object.defineProperty(this, 'insertColumnNode', {

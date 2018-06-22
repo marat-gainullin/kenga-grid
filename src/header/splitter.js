@@ -36,7 +36,7 @@ class HeaderSplitter {
                         res = true;
                         splittedLeaves.push(nc);
                         if (aClonedParent) {
-                            aClonedParent.addColumnNode(nc);
+                            aClonedParent.addColumnNode(nc, false);
                         }
                     }
                 } else {
@@ -44,7 +44,7 @@ class HeaderSplitter {
                     if (isGoodLeaveIndex) {
                         res = true;
                         if (aClonedParent) {
-                            aClonedParent.addColumnNode(nc);
+                            aClonedParent.addColumnNode(nc, false);
                         }
                     }
                 }
