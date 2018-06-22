@@ -77,7 +77,7 @@ class ColumnNode {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
                     if(applyOnGrid && column && column.grid){
-                        column.grid.applyColumnNodes();
+                        column.grid.applyColumnsNodes();
                     }
                     return true;
                 } else {
@@ -99,7 +99,7 @@ class ColumnNode {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
                     if(applyOnGrid && column && column.grid){
-                        column.grid.applyColumnNodes();
+                        column.grid.applyColumnsNodes();
                     }
                     return true;
                 } else {
@@ -124,7 +124,7 @@ class ColumnNode {
                 aNode.parent = self;
             }
             if(applyOnGrid && column && column.grid){
-                column.grid.applyColumnNodes();
+                column.grid.applyColumnsNodes();
             }
         }
         Object.defineProperty(this, 'addColumnNode', {
@@ -142,7 +142,7 @@ class ColumnNode {
                 aNode.parent = self;
             }
             if(applyOnGrid && column && column.grid){
-                column.grid.applyColumnNodes();
+                column.grid.applyColumnsNodes();
             }
         }
         Object.defineProperty(this, 'insertColumnNode', {
