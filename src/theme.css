@@ -117,7 +117,7 @@
 }
 
 .p-grid-selected-row {
-    background: lightblue !important;
+    background: lightblue;
 }
 
 .p-grid-cell-focused {
