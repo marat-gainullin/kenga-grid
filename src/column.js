@@ -265,7 +265,7 @@ class Column {
 
         function render(viewRowIndex, viewColumnIndex, dataRow, viewCell) {
             let checkbox = null;
-            let html;
+            let text;
 
             function handleSelection(event) {
                 if (checkbox && !readonly) {
@@ -331,18 +331,18 @@ class Column {
             } else {
                 if (renderer) {
                     renderer.value = value;
-                    html = renderer.text;
+                    text = renderer.text;
                 } else if (value instanceof Date) {
-                    html = value.toJSON();
+                    text = value.toJSON();
                 } else {
-                    html = `${value}`;
+                    text = `${value}`;
                 }
-                viewCell.innerHTML = html;
+                viewCell.innerText = text;
             }
             // User's rendering for all values, including null
             if (onRender || grid.onRender) {
                 const handler = onRender ? onRender : grid.onRender;
-                handler.call(self, dataRow, viewCell, viewRowIndex, html);
+                handler.call(self, dataRow, viewCell, viewRowIndex, text);
             }
         }
 
