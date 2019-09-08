@@ -33,6 +33,7 @@
 
 .p-grid-section-body {
     flex: 1 1;
+    min-height: 0px;
     overflow: hidden;
 }
 
@@ -63,6 +64,7 @@
 .p-grid-section-body-right,
 .p-grid-section-footer-right {
     flex: 1 1;
+    min-height: 0px;
 }
 
 .p-grid-section-header-right,
@@ -141,5 +143,5 @@
     width: 100%;
     height: 100%;
     margin: 0px;
-    padding: 0px;
+    padding: 0 0 0 5px;
 }

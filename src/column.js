@@ -271,11 +271,20 @@ class Column {
                 if (checkbox && !readonly) {
                     setValue(dataRow, !getValue(dataRow));
                 }
+
+                const focusedViewRowIndexBefore = grid.focusedRow;
+                const focusedViewColumnIndexBefore = grid.focusedColumn;
+                const onlySelectedBefore = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
+
                 if (!event.ctrlKey && !event.metaKey) {
                     grid.unselectAll(false);
                 }
                 grid.select(dataRow, false);
-                grid.focusCell(viewRowIndex, viewColumnIndex, true);
+
+                const onlySelectedAfter = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
+                if(onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex){
+                    grid.focusCell(viewRowIndex, viewColumnIndex, true);
+                }
             }
 
             if (grid.treeIndicatorColumn === self) {

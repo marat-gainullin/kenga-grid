@@ -533,6 +533,7 @@ class Grid extends Widget {
         }
 
         function itemsRemoved(items) {
+            abortEditing();
             if (!Array.isArray(items))
                 items = [items];
             items.forEach(item => {
@@ -550,6 +551,7 @@ class Grid extends Widget {
         });
 
         function itemsAdded(items) {
+            abortEditing();
             if (!Array.isArray(items))
                 items = [items];
             rebindElements();
@@ -564,6 +566,7 @@ class Grid extends Widget {
         });
 
         function itemsChanged(items) {
+            abortEditing();
             if (!Array.isArray(items))
                 items = [items];
             redrawFrozen();
