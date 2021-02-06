@@ -2,7 +2,6 @@
 import Id from 'septima-utils/id';
 import Invoke from 'septima-utils/invoke';
 import Ui from 'kenga/utils';
-import Color from 'kenga/color';
 import Bound from 'kenga/bound';
 import Widget from 'kenga/widget';
 import KeyCodes from 'kenga/key-codes';
