@@ -25,14 +25,29 @@ class CheckBoxServiceColumn extends ServiceColumn {
             viewCell.appendChild(checkbox);
             viewCell.classList.add('p-grid-cell-check-box');
         }
+
         Object.defineProperty(this, 'render', {
-            get: function() {
+            get: function () {
                 return render;
             }
         });
         Object.defineProperty(this, 'getValue', {
-            get: function() {
+            get: function () {
                 return getValue;
+            }
+        });
+        Object.defineProperty(this, 'checked', {
+            get: function () {
+                return self.grid != null ? self.grid.hasSelected : false;
+            },
+            set: function (value) {
+                if (self.grid != null && self.grid.hasSelected !== value) {
+                    if (value) {
+                        self.grid.selectAll()
+                    } else {
+                        self.grid.unselectAll()
+                    }
+                }
             }
         });
     }

@@ -1,14 +1,26 @@
 import ColumnNode from '../column-node';
 import CheckServiceColumn from '../check-box-service-column';
-import NodeView from '../../header/node-view';
+import Ui from "kenga/utils";
 
 class CheckServiceColumnNode extends ColumnNode {
     constructor() {
         super(CheckServiceColumn);
-        this.view.text = '\\';
-        this.column.editor = null;
-        
+        this.view.text = '';
+        const thChecker = document.createElement('input');
+        thChecker.setAttribute('type', 'checkbox')
+        thChecker.className = 'p-grid-column-checker';
+        const thCheckerAligner = document.createElement('div');
+        thCheckerAligner.className = 'p-grid-column-checker-aligner';
         const self = this;
+        Ui.on(thChecker, Ui.Events.CLICK, event => {
+            event.stopPropagation();
+        });
+        Ui.on(thChecker, Ui.Events.CHANGE, event => {
+            self.column.checked = thChecker.checked
+        });
+        this.view.mover.appendChild(thCheckerAligner);
+        this.view.mover.appendChild(thChecker);
+        this.column.editor = null;
 
         function copy() {
             const copied = new CheckServiceColumnNode();
@@ -19,18 +31,27 @@ class CheckServiceColumnNode extends ColumnNode {
             return copied;
         }
 
+        this.gridChanged = () => {
+            thChecker.checked = self.column.checked;
+        };
+
         Object.defineProperty(this, 'copy', {
-            get: function() {
+            get: function () {
                 return copy;
             }
         });
         Object.defineProperty(this, 'renderer', {
-            get: function() {
+            get: function () {
                 return null;
             }
         });
+        Object.defineProperty(this, 'checker', {
+            get: function () {
+                return thChecker;
+            }
+        });
         Object.defineProperty(this, 'editor', {
-            get: function() {
+            get: function () {
                 return null;
             }
         });

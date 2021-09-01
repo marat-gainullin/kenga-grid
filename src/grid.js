@@ -163,6 +163,11 @@ class Grid extends Widget {
                 return Array.from(selectedRows);
             }
         });
+        Object.defineProperty(this, 'hasSelected', {
+            get: function () {
+                return selectedRows.size > 0;
+            }
+        });
 
         let frozenColumns = 0;
         let frozenRows = 0;
@@ -398,7 +403,7 @@ class Grid extends Widget {
                     }
                 }
             } else if (event.keyCode === KeyCodes.KEY_PAGEUP) {
-                if (!focusedCell.editor) {
+                if (!focusedCell.editor && rowsHeight != null) {
                     event.preventDefault();
                     const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
                     if (self.focusedRow - page >= 0) {
@@ -407,7 +412,7 @@ class Grid extends Widget {
                         self.focusedRow = 0;
                     }
                 }
-            } else if (event.keyCode === KeyCodes.KEY_PAGEDOWN) {
+            } else if (event.keyCode === KeyCodes.KEY_PAGEDOWN && rowsHeight != null) {
                 if (!focusedCell.editor) {
                     event.preventDefault();
                     const page = frozenRows + Math.floor(bodyRightContainer.offsetHeight / rowsHeight);
@@ -795,7 +800,7 @@ class Grid extends Widget {
                 return rowsHeight;
             },
             set: function (aValue) {
-                if (rowsHeight !== aValue && aValue >= 10) {
+                if (rowsHeight !== aValue) {
                     rowsHeight = aValue;
                     regenerateDynamicRowsStyles();
                     bodyLeft.rowsHeight = rowsHeight;
@@ -847,7 +852,7 @@ class Grid extends Widget {
                 return headerRowsHeight;
             },
             set: function (aValue) {
-                if (headerRowsHeight !== aValue && aValue >= 10) {
+                if (headerRowsHeight !== aValue) {
                     headerRowsHeight = aValue;
                     regenerateDynamicHeaderRowsStyles();
                 }
@@ -1474,6 +1479,7 @@ class Grid extends Widget {
                 forest.forEach(node => {
                     node.column.grid = self;
                     node.column.headers.push(node.view);
+                    node.gridChanged();
                     injectHeaders(node.children);
                 });
             }
@@ -1806,7 +1812,7 @@ class Grid extends Widget {
                             else
                                 cell.scrollIntoView();
                         } else {
-                            if (row >= frozenRows) {
+                            if (row >= frozenRows && rowsHeight != null) {
                                 const rowCenter = (row - frozenRows) * rowsHeight + rowsHeight / 2;
                                 if (bodyRightContainer.scrollTop > rowCenter || rowCenter > bodyRightContainer.scrollTop + bodyRightContainer.clientHeight) {
                                     const scrollTop = (row - frozenRows) * rowsHeight - bodyRightContainer.clientHeight / 2 + rowsHeight / 2;

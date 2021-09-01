@@ -349,36 +349,48 @@ class Section {
             let viewportHeight;
 
             function calc() {
-                const rowsCount = dataRangeEnd - dataRangeStart;
+                if (rowsHeight != null) {
+                    const rowsCount = dataRangeEnd - dataRangeStart;
 
-                viewportHeight = table.parentElement.clientHeight - viewportBias;
-                const contentHeight = rowsCount * rowsHeight;
-                let topPadding = Math.floor(viewportHeight * renderingPadding);
-                topPadding = Math.max(topPadding, 0);
-                let bottomPadding = Math.floor(viewportHeight * renderingPadding);
-                bottomPadding = Math.max(bottomPadding, 0);
+                    viewportHeight = table.parentElement.clientHeight - viewportBias;
+                    const contentHeight = rowsCount * rowsHeight;
+                    let topPadding = Math.floor(viewportHeight * renderingPadding);
+                    topPadding = Math.max(topPadding, 0);
+                    let bottomPadding = Math.floor(viewportHeight * renderingPadding);
+                    bottomPadding = Math.max(bottomPadding, 0);
 
-                let startY = table.parentElement.scrollTop - topPadding;
-                startY = Math.max(startY, 0);
-                startRenderedRow = Math.floor(startY / rowsHeight);
+                    let startY = table.parentElement.scrollTop - topPadding;
+                    startY = Math.max(startY, 0);
+                    startRenderedRow = Math.floor(startY / rowsHeight);
 
-                let endY = table.parentElement.scrollTop + viewportHeight + bottomPadding;
-                endY = Math.min(endY, contentHeight - 1);
-                endRenderedRow = Math.ceil(endY / rowsHeight);
-                endRenderedRow = Math.min(endRenderedRow, rowsCount);
+                    let endY = table.parentElement.scrollTop + viewportHeight + bottomPadding;
+                    endY = Math.min(endY, contentHeight - 1);
+                    endRenderedRow = Math.min(Math.ceil(endY / rowsHeight), rowsCount);
 
-                const renderedRowsCount = endRenderedRow - startRenderedRow;
-                const fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
-                const wasParentScrollTop = table.parentElement.scrollTop;
-                try {
-                    bodyFiller.style.height = `${fillerHeight}px`;
-                    bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
+                    const renderedRowsCount = endRenderedRow - startRenderedRow;
+                    const fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
+                    const wasParentScrollTop = table.parentElement.scrollTop;
+                    try {
+                        bodyFiller.style.height = `${fillerHeight}px`;
+                        bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
 
-                    renderRange(startRenderedRow + dataRangeStart, endRenderedRow + dataRangeStart);
+                        renderRange(dataRangeStart + startRenderedRow, dataRangeStart + endRenderedRow);
 
-                    table.style.top = `${startRenderedRow * rowsHeight}px`;
-                } finally {
-                    table.parentElement.scrollTop = wasParentScrollTop;
+                        table.style.top = `${startRenderedRow * rowsHeight}px`;
+                    } finally {
+                        table.parentElement.scrollTop = wasParentScrollTop;
+                    }
+                } else {
+                    const wasParentScrollTop = table.parentElement.scrollTop;
+                    try {
+                        bodyFiller.style.display = 'none';
+
+                        renderRange(dataRangeStart, dataRangeEnd);
+
+                        table.style.top = `0px`;
+                    } finally {
+                        table.parentElement.scrollTop = wasParentScrollTop;
+                    }
                 }
             }
 

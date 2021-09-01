@@ -17,6 +17,8 @@ class ColumnNode {
 
         column.renderer = new TextField();
         column.editor = new TextField();
+        this.gridChanged = () => {
+        };
 
         function copy() {
             const copied = new ColumnNode();
@@ -76,7 +78,7 @@ class ColumnNode {
                 if (idx !== -1) {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
-                    if(applyOnGrid && column && column.grid){
+                    if (applyOnGrid && column && column.grid) {
                         column.grid.applyColumnsNodes();
                     }
                     return true;
@@ -87,6 +89,7 @@ class ColumnNode {
                 return false;
             }
         }
+
         Object.defineProperty(this, 'removeColumnNode', {
             get: function () {
                 return removeColumnNode;
@@ -98,7 +101,7 @@ class ColumnNode {
                 if (idx >= 0 && idx < children.length) {
                     const removed = children.splice(idx, 1);
                     removed[0].parent = null;
-                    if(applyOnGrid && column && column.grid){
+                    if (applyOnGrid && column && column.grid) {
                         column.grid.applyColumnsNodes();
                     }
                     return true;
@@ -109,6 +112,7 @@ class ColumnNode {
                 return false;
             }
         }
+
         Object.defineProperty(this, 'removeColumnNodeAt', {
             get: function () {
                 return removeColumnNodeAt;
@@ -123,10 +127,11 @@ class ColumnNode {
                 children.push(aNode);
                 aNode.parent = self;
             }
-            if(applyOnGrid && column && column.grid){
+            if (applyOnGrid && column && column.grid) {
                 column.grid.applyColumnsNodes();
             }
         }
+
         Object.defineProperty(this, 'addColumnNode', {
             get: function () {
                 return addColumnNode;
@@ -141,10 +146,11 @@ class ColumnNode {
                 children.splice(atIndex, 0, aNode);
                 aNode.parent = self;
             }
-            if(applyOnGrid && column && column.grid){
+            if (applyOnGrid && column && column.grid) {
                 column.grid.applyColumnsNodes();
             }
         }
+
         Object.defineProperty(this, 'insertColumnNode', {
             get: function () {
                 return insertColumnNode;
@@ -386,6 +392,7 @@ class ColumnNode {
         function sort() {
             column.sort();
         }
+
         Object.defineProperty(this, 'sort', {
             get: function () {
                 return sort;
@@ -395,6 +402,7 @@ class ColumnNode {
         function sortDesc() {
             column.sortDesc();
         }
+
         Object.defineProperty(this, 'sortDesc', {
             get: function () {
                 return sortDesc;
@@ -404,6 +412,7 @@ class ColumnNode {
         function unsort() {
             column.unsort();
         }
+
         Object.defineProperty(this, 'unsort', {
             get: function () {
                 return unsort;

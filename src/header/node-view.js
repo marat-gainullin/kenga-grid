@@ -246,6 +246,18 @@ class NodeView {
             }
         });
 
+        Object.defineProperty(this, 'title', {
+            get: function() {
+                return thTitle;
+            }
+        });
+
+        Object.defineProperty(this, 'mover', {
+            get: function() {
+                return thMover;
+            }
+        });
+
         Object.defineProperty(this, 'text', {
             get: function() {
                 return thTitle.innerText;

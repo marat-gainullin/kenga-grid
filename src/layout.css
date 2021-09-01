@@ -59,6 +59,7 @@
 .p-grid-section-footer-left {
     flex: none;
 }
+
 .p-grid-section-header-right,
 .p-grid-section-frozen-right,
 .p-grid-section-body-right,
@@ -110,6 +111,20 @@
 
 .p-grid-column-mover-alone {
     right: 0px;
+}
+
+.p-grid-column-checker, .p-grid-column-checker-aligner {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.p-grid-column-checker:focus {
+    outline: none;
+}
+
+.p-grid-column-checker-aligner {
+    height: 100%;
+    width: 0px;
 }
 
 .p-grid-column-resizer {

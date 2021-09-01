@@ -33,7 +33,7 @@ class Column {
         let grid;
 
         function regenerateColStyle() {
-            columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${width == null || width == Infinity ? '' : `width: ${width + padding}px;`}${minWidth == null || minWidth == Infinity ? '' : `min-width: ${minWidth}px;`}${maxWidth == null || maxWidth == Infinity ? '' : `max-width: ${maxWidth}px;`}}`;
+            columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${width == null || width === Infinity ? '' : `width: ${width + padding}px;`}${minWidth == null || minWidth === Infinity ? '' : `min-width: ${minWidth}px;`}${maxWidth == null || maxWidth === Infinity ? '' : `max-width: ${maxWidth}px;`}}`;
         }
 
         regenerateColStyle();
