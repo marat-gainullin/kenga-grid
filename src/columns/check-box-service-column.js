@@ -23,6 +23,7 @@ class CheckBoxServiceColumn extends ServiceColumn {
                 self.grid.focus();
             });
             viewCell.appendChild(checkbox);
+            viewCell.classList.add('p-grid-cell-service');
             viewCell.classList.add('p-grid-cell-check-box');
         }
 

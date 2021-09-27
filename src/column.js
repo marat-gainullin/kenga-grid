@@ -1,7 +1,7 @@
 /* global Infinity */
-import Id from 'septima-utils/id';
 import Ui from 'kenga/utils';
 import Bound from 'kenga/bound';
+import Id from './id';
 
 class Column {
     constructor(node) {
@@ -21,7 +21,7 @@ class Column {
          * Maximum column width while resizing by a user.
          */
         let maxWidth = Infinity;
-        let width = 75;
+        let width = '75px';
         let padding = 0;
         let readonly = false;
         let visible = true;
@@ -32,8 +32,20 @@ class Column {
         let onSelect;
         let grid;
 
+        function paddedWidthToStyle() {
+            return width == null || width === '' || width === Infinity ? '' : `width: ${typeof width == 'number' || (typeof width == 'string' && width.endsWith('px')) ? `${parseFloat(width) + padding}px` : width};`;
+        }
+
+        function minWidthToStyle() {
+            return minWidth == null || minWidth === '' || minWidth === Infinity ? '' : `min-width: ${typeof minWidth == 'number' ? `${minWidth}px` : minWidth};`;
+        }
+
+        function maxWidthToStyle() {
+            return maxWidth == null || maxWidth === '' || maxWidth === Infinity ? '' : `max-width: ${typeof maxWidth == 'number' ? `${maxWidth}px` : maxWidth};`;
+        }
+
         function regenerateColStyle() {
-            columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${width == null || width === Infinity ? '' : `width: ${width + padding}px;`}${minWidth == null || minWidth === Infinity ? '' : `min-width: ${minWidth}px;`}${maxWidth == null || maxWidth === Infinity ? '' : `max-width: ${maxWidth}px;`}}`;
+            columnRule.innerHTML = `.${columnStyleName}{${visible ? '' : 'display: none;'}${paddedWidthToStyle()}${minWidthToStyle()}${maxWidthToStyle()}`;
         }
 
         regenerateColStyle();
@@ -185,7 +197,7 @@ class Column {
             },
             set: function (aValue) {
                 if (width !== aValue) {
-                    width = +aValue;
+                    width = aValue;
                     regenerateColStyle();
                     if (grid) {
                         grid.updateSectionsWidth();
@@ -216,7 +228,7 @@ class Column {
             },
             set: function (aValue) {
                 if (minWidth !== aValue) {
-                    minWidth = +aValue;
+                    minWidth = aValue;
                     regenerateColStyle();
                 }
             }
@@ -229,7 +241,7 @@ class Column {
             },
             set: function (aValue) {
                 if (maxWidth !== aValue) {
-                    maxWidth = +aValue;
+                    maxWidth = aValue;
                     regenerateColStyle();
                 }
             }
@@ -279,10 +291,10 @@ class Column {
                 if (!event.ctrlKey && !event.metaKey) {
                     grid.unselectAll(false);
                 }
-                grid.select(dataRow, false);
+                grid.select(dataRow, true);
 
                 const onlySelectedAfter = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
-                if(onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex){
+                if (onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex) {
                     grid.focusCell(viewRowIndex, viewColumnIndex, true);
                 }
             }
@@ -331,7 +343,7 @@ class Column {
             const value = getValue(dataRow);
             if (value == null) { // null == undefined, null !== undefined
                 viewCell.innerTHML = ''; // No native rendering for null values
-            } else if (typeof(value) === 'boolean') {
+            } else if (typeof (value) === 'boolean') {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = !!value;

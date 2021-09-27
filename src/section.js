@@ -1,5 +1,4 @@
 import Ui from 'kenga/utils';
-import Invoke from 'septima-utils/invoke';
 
 const JS_ROW_NAME = 'js-row';
 let rowDrag = null;
@@ -27,12 +26,12 @@ class Section {
         let data = []; // Already sorted data
         let dataRangeStart = 0; // Inclusive
         let dataRangeEnd = 0; // Exclusive
-        let renderedRangeStart = 0; // Inclusive
-        let renderedRangeEnd = 0; // Exclusive
-        let renderingThrottle = 0; // No throttling
-        let renderingPadding = 0; // No padding
+        let renderedRangeStart = -1; // Inclusive
+        let renderedRangeEnd = -1; // Exclusive
+        let renderingThrottle = 0;
+        let renderingPadding = 1;
         let viewportBias = 0;
-        let onDrawBody = null;
+        let virtual = false;
 
         let thead;
         recreateHead();
@@ -85,20 +84,20 @@ class Section {
                 viewportBias = aValue;
             }
         });
+        Object.defineProperty(this, 'virtual', {
+            get: function () {
+                return virtual;
+            },
+            set: function (aValue) {
+                virtual = aValue;
+            }
+        });
         Object.defineProperty(this, 'renderingPadding', {
             get: function () {
                 return renderingPadding;
             },
             set: function (aValue) {
                 renderingPadding = aValue;
-            }
-        });
-        Object.defineProperty(this, 'onDrawBody', {
-            get: function () {
-                return onDrawBody;
-            },
-            set: function (aValue) {
-                onDrawBody = aValue;
             }
         });
         Object.defineProperty(this, 'draggableRows', {
@@ -245,6 +244,15 @@ class Section {
             }
         });
 
+        Object.defineProperty(this, 'headerVisible', {
+            get: function () {
+                return thead.style.display !== 'none';
+            },
+            set: function (aValue) {
+                thead.style.display = aValue ? '' : 'none';
+            }
+        });
+
         function clearColumnsAndHeader(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
@@ -269,10 +277,17 @@ class Section {
             }
         });
 
-        function redraw() {
-            redrawHeaders();
-            redrawBody();
-            redrawFooters();
+        function redraw(light) {
+            if (arguments.length < 1) {
+                light = false
+            }
+            if (light) {
+                redrawOnlySelection();
+            } else {
+                redrawHeaders();
+                redrawBody();
+                redrawFooters();
+            }
         }
 
         Object.defineProperty(this, 'redraw', {
@@ -344,75 +359,96 @@ class Section {
         }
 
         function drawBody() {
-            let startRenderedRow;
-            let endRenderedRow;
-            let viewportHeight;
+            const viewportElement = table.parentElement.parentElement.parentElement
+            if (virtual && rowsHeight != null) {
+                const contentBeginsAtY = table.parentElement.parentElement.offsetTop + table.parentElement.offsetTop;
+                let viewportHeight = viewportElement.clientHeight - contentBeginsAtY;
 
-            function calc() {
-                if (rowsHeight != null) {
-                    const rowsCount = dataRangeEnd - dataRangeStart;
+                const rangeRowsCount = dataRangeEnd - dataRangeStart;
+                const contentHeight = rangeRowsCount * rowsHeight;
 
-                    viewportHeight = table.parentElement.clientHeight - viewportBias;
-                    const contentHeight = rowsCount * rowsHeight;
-                    let topPadding = Math.floor(viewportHeight * renderingPadding);
-                    topPadding = Math.max(topPadding, 0);
-                    let bottomPadding = Math.floor(viewportHeight * renderingPadding);
-                    bottomPadding = Math.max(bottomPadding, 0);
+                let topPadding = Math.floor(viewportHeight * renderingPadding);
+                topPadding = Math.max(topPadding, 0);
+                let bottomPadding = Math.floor(viewportHeight * renderingPadding);
+                bottomPadding = Math.max(bottomPadding, 0);
 
-                    let startY = table.parentElement.scrollTop - topPadding;
-                    startY = Math.max(startY, 0);
-                    startRenderedRow = Math.floor(startY / rowsHeight);
+                let startVisibleY = viewportElement.scrollTop;
+                startVisibleY = Math.max(startVisibleY, 0);
+                const startVisibleRow = Math.floor(startVisibleY / rowsHeight);
 
-                    let endY = table.parentElement.scrollTop + viewportHeight + bottomPadding;
-                    endY = Math.min(endY, contentHeight - 1);
-                    endRenderedRow = Math.min(Math.ceil(endY / rowsHeight), rowsCount);
+                let startY = viewportElement.scrollTop - topPadding;
+                startY = Math.max(startY, 0);
+                let startRenderedRow = Math.floor(startY / rowsHeight);
 
-                    const renderedRowsCount = endRenderedRow - startRenderedRow;
-                    const fillerHeight = rowsHeight * (rowsCount - renderedRowsCount) + viewportBias;
-                    const wasParentScrollTop = table.parentElement.scrollTop;
-                    try {
-                        bodyFiller.style.height = `${fillerHeight}px`;
-                        bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
+                let endVisibleY = viewportElement.scrollTop + viewportHeight;
+                endVisibleY = Math.min(endVisibleY, contentHeight - 1);
+                const endVisibleRow = Math.min(Math.ceil(endVisibleY / rowsHeight), rangeRowsCount);
 
-                        renderRange(dataRangeStart + startRenderedRow, dataRangeStart + endRenderedRow);
+                let endY = viewportElement.scrollTop + viewportHeight + bottomPadding;
+                endY = Math.min(endY, contentHeight - 1);
+                let endRenderedRow = Math.min(Math.ceil(endY / rowsHeight), rangeRowsCount);
 
-                        table.style.top = `${startRenderedRow * rowsHeight}px`;
-                    } finally {
-                        table.parentElement.scrollTop = wasParentScrollTop;
+                const renderedRowsCount = endRenderedRow - startRenderedRow;
+                const unRenderedRowsCount = rangeRowsCount - renderedRowsCount
+                const fillerHeight = rowsHeight * unRenderedRowsCount;
+
+                const dataRangeVisibleStart = dataRangeStart + startVisibleRow;
+                const dataRangeVisibleEnd = dataRangeStart + endVisibleRow;
+                if (renderedRangeStart === -1 || renderedRangeEnd === -1 || dataRangeVisibleStart < renderedRangeStart || dataRangeVisibleEnd > renderedRangeEnd) {
+                    bodyFiller.style.height = `${fillerHeight}px`;
+                    bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
+                    table.style.top = `${startRenderedRow * rowsHeight}px`;
+                    renderRange(dataRangeStart + startRenderedRow, dataRangeStart + endRenderedRow);
+                }
+            } else {
+                bodyFiller.style.display = 'none';
+                table.style.top = `0px`;
+                renderRange(dataRangeStart, dataRangeEnd, dataRangeStart, dataRangeEnd);
+            }
+        }
+
+        function redrawOnlySelection() {
+            if (columns.length > 0) {
+                const grid = columns[0].grid;
+                const viewRows = tbody.rows;
+                const cursorDataRow = grid.cursorProperty && grid.rows ? grid.rows[grid.cursorProperty] : null;
+                for (let row = 0; row < viewRows.length; row++) {
+                    const viewRow = viewRows[row];
+                    const dataRow = viewRow[JS_ROW_NAME];
+                    const selected = dataRow && grid.isSelected(dataRow);
+                    if (selected) {
+                        viewRow.classList.add('p-grid-selected-row');
+                    } else {
+                        viewRow.classList.remove('p-grid-selected-row');
                     }
-                } else {
-                    const wasParentScrollTop = table.parentElement.scrollTop;
-                    try {
-                        bodyFiller.style.display = 'none';
-
-                        renderRange(dataRangeStart, dataRangeEnd);
-
-                        table.style.top = `0px`;
-                    } finally {
-                        table.parentElement.scrollTop = wasParentScrollTop;
+                    for (let col = 0; col < viewRow.cells.length; col++) {
+                        const viewCell = viewRow.cells[col];
+                        if (viewCell.className.indexOf('p-grid-cell-service') > -1 && viewCell.firstElementChild) {
+                            viewCell.firstElementChild.checked = selected
+                        }
+                        if (viewCell.className.indexOf('p-grid-cell-marker') > -1) {
+                            if (dataRow === cursorDataRow) {
+                                viewCell.classList.add('p-grid-cell-cursor')
+                            } else {
+                                viewCell.classList.remove('p-grid-cell-cursor')
+                            }
+                        }
                     }
                 }
-            }
-
-            calc();
-            if (viewportHeight !== table.parentElement.clientHeight) {
-                calc();
-            }
-            if (onDrawBody) {
-                onDrawBody();
             }
         }
 
         function redrawBody() {
             renderedRangeStart = renderedRangeEnd = -1;
-            Invoke.throttle(renderingThrottle, drawBody);
+            drawBody();
         }
 
         Object.defineProperty(this, 'redrawBody', {
-            get: function () {
-                return redrawBody;
+                get: function () {
+                    return redrawBody;
+                }
             }
-        });
+        );
 
         function inTrRect(viewRow, event) {
             const rect = viewRow.getBoundingClientRect();
@@ -473,7 +509,10 @@ class Section {
 
         function drawBodyPortion(start, end) {
             if (end - start > 0 && columns.length > 0) {
+                const contentBeginsAtY = table.parentElement.parentElement.offsetTop + table.parentElement.offsetTop;
+                const scrollMarginTop = `${contentBeginsAtY}px`;
                 const grid = columns[0].grid;
+                const insertPriorTo = tbody.firstElementChild;
                 for (let i = start; i < end; i++) {
                     const dataRow = data[i];
                     const viewRow = document.createElement('tr');
@@ -488,14 +527,14 @@ class Section {
                     }
                     if (grid.isSelected(dataRow))
                         viewRow.classList.add('p-grid-selected-row');
+                    viewRow.style.scrollMarginTop = scrollMarginTop;
                     viewRow[JS_ROW_NAME] = dataRow;
                     if (i < renderedRangeStart) {
-                        // insertFirst ...
-                        if (tbody.firstElementChild)
-                            tbody.insertBefore(viewRow, tbody.firstElementChild);
-                        else
+                        if (insertPriorTo) {
+                            tbody.insertBefore(viewRow, insertPriorTo);
+                        } else {
                             tbody.appendChild(viewRow);
-                        // ... insertFirst
+                        }
                     } else {
                         tbody.appendChild(viewRow);
                     }
@@ -507,14 +546,18 @@ class Section {
                         // TODO: Check image decoration of the cell and decoration styles
                         viewCell.className = `p-grid-cell ${dynamicCellsClassName} ${column.styleName}`;
                         if (i === grid.focusedRow && columnsBias + c === grid.focusedColumn) {
-                            viewCell.classList.add('p-grid-cell-focused');
+                            grid.focusedCell = viewCell;
                         }
                         viewRow.appendChild(viewCell);
                         column.render(i, columnsBias + c, dataRow, viewCell);
                         if (grid.activeEditor && i === grid.focusedRow && grid.activeEditor === column.editor) {
                             viewCell.appendChild(grid.activeEditor.element);
-                            if (grid.activeEditor.focus) {
-                                grid.activeEditor.focus();
+                            const gridActiveEditor = grid.activeEditor;
+                            if (gridActiveEditor.focus) {
+                                gridActiveEditor.focus();
+                            }
+                            if (gridActiveEditor.box && gridActiveEditor.box.select) {
+                                gridActiveEditor.box.select();
                             }
                         }
                     }
@@ -594,8 +637,9 @@ class Section {
                 needRedraw = true;
             if (!bodyFiller.parentElement) {
                 table.parentElement.appendChild(bodyFiller);
-                Ui.on(table.parentElement, Ui.Events.SCROLL, event => {
-                    Invoke.throttle(renderingThrottle, drawBody);
+                const viewportElement = table.parentElement.parentElement.parentElement
+                Ui.on(viewportElement, Ui.Events.SCROLL, event => {
+                    drawBody();
                 });
             }
             dataRangeStart = start;
@@ -613,7 +657,8 @@ class Section {
 
         function renderRange(start, end) {
             if (start !== renderedRangeStart || end !== renderedRangeEnd) {
-                if (start >= renderedRangeEnd || end < renderedRangeStart) {
+                if (renderedRangeEnd === -1 || renderedRangeStart === -1 ||
+                    start >= renderedRangeEnd || end < renderedRangeStart) {
                     recreateBody();
                     renderedRangeStart = start;
                     renderedRangeEnd = end;
@@ -628,7 +673,7 @@ class Section {
                     }
                     renderedRangeStart = start;
                     if (end < renderedRangeEnd) {
-                        for (let i2 = renderedRangeEnd - 1; i2 >= end && tbody.rows.length > 0; i2--) {
+                        for (let i2 = renderedRangeEnd; i2 > end && tbody.rows.length > 0; i2--) {
                             tbody.removeChild(tbody.rows[tbody.rows.length - 1]);
                         }
                     } else if (end > renderedRangeEnd) {
@@ -663,5 +708,30 @@ class Section {
         }
     }
 }
+
+function focusCell(cell) {
+    if (cell) {
+        cell.classList.add('p-grid-cell-focused');
+    }
+}
+
+Object.defineProperty(Section, 'focusCell', {
+    get: function () {
+        return focusCell;
+    }
+});
+
+function unFocusCell(cell) {
+    if (cell) {
+        cell.classList.remove('p-grid-cell-focused');
+    }
+}
+
+Object.defineProperty(Section, 'unFocusCell', {
+    get: function () {
+        return unFocusCell;
+    }
+});
+
 
 export default Section;

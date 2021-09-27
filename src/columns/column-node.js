@@ -28,7 +28,7 @@ class ColumnNode {
             copied.column = column;
             // For one header node, single or multiple header cells may be created, while header split.
             // So, we have to replicate header cell and copied.header = header assignment is not applicable.
-            // Othewise, spans will be reassigned by header nodes unpredictibly.
+            // Otherwise, spans will be reassigned by header nodes unpredictably.
             copied.view.text = nodeView.text;
             copied.leavesCount = leavesCount;
             copied.depthRemainder = depthRemainder;

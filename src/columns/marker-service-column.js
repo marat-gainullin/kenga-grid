@@ -11,10 +11,11 @@ class MarkerServiceColumn extends ServiceColumn {
                 self.grid.setCursorOn(dataRow);
                 self.grid.focusCell(viewRowIndex, viewColumnIndex);
             });
+            viewCell.classList.add('p-grid-cell-service');
+            viewCell.classList.add('p-grid-cell-marker');
             if (self.grid.cursorProperty && self.grid.rows && self.grid.rows[self.grid.cursorProperty] === dataRow) {
                 viewCell.classList.add('p-grid-cell-cursor');
             }
-            viewCell.classList.add('p-grid-cell-service');
             /*
              if (value.inserted)
              content.className = 'grid-marker-inserted';

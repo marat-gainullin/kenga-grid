@@ -1,4 +1,4 @@
-import Id from 'septima-utils/id';
+import Id from '../id';
 import ServiceColumn from '../service-column';
 
 class RadioButtonServiceColumn extends ServiceColumn {
@@ -24,6 +24,7 @@ class RadioButtonServiceColumn extends ServiceColumn {
                 self.grid.focus();
             };
             viewCell.appendChild(radio);
+            viewCell.classList.add('p-grid-cell-service');
             viewCell.classList.add('p-grid-cell-check-box');
         }
         Object.defineProperty(this, 'render', {

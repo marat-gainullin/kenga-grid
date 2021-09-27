@@ -11,20 +11,22 @@ import MarkerColumnNode from '../src/columns/nodes/marker-service-node';
 import CheckBoxColumnNode from '../src/columns/nodes/check-box-service-node';
 import RadioButtonColumnNode from '../src/columns/nodes/radio-button-service-node';
 import OrderNumServiceColumnNode from '../src/columns/nodes/order-num-service-node';
+import NumberField from 'kenga-fields/number-field';
 
 describe('Grid Api', () => {
 
     function expectColumns(instance) {
-        expect(instance.headerLeft.columnsCount).toEqual(instance.frozenLeft.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(instance.bodyLeft.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(instance.footerLeft.columnsCount);
-        expect(instance.headerRight.columnsCount).toEqual(instance.frozenRight.columnsCount);
-        expect(instance.headerRight.columnsCount).toEqual(instance.bodyRight.columnsCount);
-        expect(instance.headerRight.columnsCount).toEqual(instance.footerRight.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(instance.frozenLeft.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(instance.bodyLeft.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(instance.footerLeft.columnsCount);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.frozenRight.columnsCount);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.bodyRight.columnsCount);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.footerRight.columnsCount);
     }
 
     it('Header.Split.Plain', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         const marker = new MarkerColumnNode();
         const check = new CheckBoxColumnNode();
         const radio = new RadioButtonColumnNode();
@@ -37,33 +39,33 @@ describe('Grid Api', () => {
         instance.addColumnNode(name);
         instance.addColumnNode(birth);
         instance.addColumnNode(payed);
-        expect(instance.headerRight.columnsCount).toEqual(instance.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(0);
-        expect(instance.headerRight.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(0);
+        expect(instance.frozenRight.columnsCount).toEqual(6);
         expectColumns(instance);
         instance.frozenColumns = 1;
-        expect(instance.headerLeft.columnsCount).toEqual(1);
-        expect(instance.headerRight.columnsCount).toEqual(5);
+        expect(instance.frozenLeft.columnsCount).toEqual(1);
+        expect(instance.frozenRight.columnsCount).toEqual(5);
         expectColumns(instance);
         instance.frozenColumns = 2;
-        expect(instance.headerLeft.columnsCount).toEqual(2);
-        expect(instance.headerRight.columnsCount).toEqual(4);
+        expect(instance.frozenLeft.columnsCount).toEqual(2);
+        expect(instance.frozenRight.columnsCount).toEqual(4);
         expectColumns(instance);
         instance.frozenColumns = 3;
-        expect(instance.headerLeft.columnsCount).toEqual(3);
-        expect(instance.headerRight.columnsCount).toEqual(3);
+        expect(instance.frozenLeft.columnsCount).toEqual(3);
+        expect(instance.frozenRight.columnsCount).toEqual(3);
         expectColumns(instance);
         instance.frozenColumns = 4;
-        expect(instance.headerLeft.columnsCount).toEqual(4);
-        expect(instance.headerRight.columnsCount).toEqual(2);
+        expect(instance.frozenLeft.columnsCount).toEqual(4);
+        expect(instance.frozenRight.columnsCount).toEqual(2);
         expectColumns(instance);
         instance.frozenColumns = 5;
-        expect(instance.headerLeft.columnsCount).toEqual(5);
-        expect(instance.headerRight.columnsCount).toEqual(1);
+        expect(instance.frozenLeft.columnsCount).toEqual(5);
+        expect(instance.frozenRight.columnsCount).toEqual(1);
         expectColumns(instance);
         instance.frozenColumns = 6;
-        expect(instance.headerLeft.columnsCount).toEqual(6);
-        expect(instance.headerRight.columnsCount).toEqual(0);
+        expect(instance.frozenLeft.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(0);
         instance.frozenColumns = 7;
         expect(instance.frozenColumns).toEqual(6);
         instance.frozenColumns = -1;
@@ -71,6 +73,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.1', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         const marker = new MarkerColumnNode();
         const marker1 = new MarkerColumnNode();
         marker1.addColumnNode(marker);
@@ -99,27 +102,27 @@ describe('Grid Api', () => {
             payed1
         ];
 
-        expect(instance.headerRight.columnsCount).toEqual(instance.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(0);
-        expect(instance.headerRight.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(0);
+        expect(instance.frozenRight.columnsCount).toEqual(6);
         instance.frozenColumns = 1;
-        expect(instance.headerLeft.columnsCount).toEqual(1);
-        expect(instance.headerRight.columnsCount).toEqual(5);
+        expect(instance.frozenLeft.columnsCount).toEqual(1);
+        expect(instance.frozenRight.columnsCount).toEqual(5);
         instance.frozenColumns = 2;
-        expect(instance.headerLeft.columnsCount).toEqual(2);
-        expect(instance.headerRight.columnsCount).toEqual(4);
+        expect(instance.frozenLeft.columnsCount).toEqual(2);
+        expect(instance.frozenRight.columnsCount).toEqual(4);
         instance.frozenColumns = 3;
-        expect(instance.headerLeft.columnsCount).toEqual(3);
-        expect(instance.headerRight.columnsCount).toEqual(3);
+        expect(instance.frozenLeft.columnsCount).toEqual(3);
+        expect(instance.frozenRight.columnsCount).toEqual(3);
         instance.frozenColumns = 4;
-        expect(instance.headerLeft.columnsCount).toEqual(4);
-        expect(instance.headerRight.columnsCount).toEqual(2);
+        expect(instance.frozenLeft.columnsCount).toEqual(4);
+        expect(instance.frozenRight.columnsCount).toEqual(2);
         instance.frozenColumns = 5;
-        expect(instance.headerLeft.columnsCount).toEqual(5);
-        expect(instance.headerRight.columnsCount).toEqual(1);
+        expect(instance.frozenLeft.columnsCount).toEqual(5);
+        expect(instance.frozenRight.columnsCount).toEqual(1);
         instance.frozenColumns = 6;
-        expect(instance.headerLeft.columnsCount).toEqual(6);
-        expect(instance.headerRight.columnsCount).toEqual(0);
+        expect(instance.frozenLeft.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(0);
         instance.frozenColumns = 7;
         expect(instance.frozenColumns).toEqual(6);
         instance.frozenColumns = -1;
@@ -127,6 +130,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.2', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         document.body.appendChild(instance.element);
 
         const service = new ColumnNode();
@@ -155,27 +159,27 @@ describe('Grid Api', () => {
         instance.addColumnNode(service);
         instance.addColumnNode(semantic);
 
-        expect(instance.headerRight.columnsCount).toEqual(instance.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(0);
-        expect(instance.headerRight.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(0);
+        expect(instance.frozenRight.columnsCount).toEqual(6);
         instance.frozenColumns = 1;
-        expect(instance.headerLeft.columnsCount).toEqual(1);
-        expect(instance.headerRight.columnsCount).toEqual(5);
+        expect(instance.frozenLeft.columnsCount).toEqual(1);
+        expect(instance.frozenRight.columnsCount).toEqual(5);
         instance.frozenColumns = 2;
-        expect(instance.headerLeft.columnsCount).toEqual(2);
-        expect(instance.headerRight.columnsCount).toEqual(4);
+        expect(instance.frozenLeft.columnsCount).toEqual(2);
+        expect(instance.frozenRight.columnsCount).toEqual(4);
         instance.frozenColumns = 3;
-        expect(instance.headerLeft.columnsCount).toEqual(3);
-        expect(instance.headerRight.columnsCount).toEqual(3);
+        expect(instance.frozenLeft.columnsCount).toEqual(3);
+        expect(instance.frozenRight.columnsCount).toEqual(3);
         instance.frozenColumns = 4;
-        expect(instance.headerLeft.columnsCount).toEqual(4);
-        expect(instance.headerRight.columnsCount).toEqual(2);
+        expect(instance.frozenLeft.columnsCount).toEqual(4);
+        expect(instance.frozenRight.columnsCount).toEqual(2);
         instance.frozenColumns = 5;
-        expect(instance.headerLeft.columnsCount).toEqual(5);
-        expect(instance.headerRight.columnsCount).toEqual(1);
+        expect(instance.frozenLeft.columnsCount).toEqual(5);
+        expect(instance.frozenRight.columnsCount).toEqual(1);
         instance.frozenColumns = 6;
-        expect(instance.headerLeft.columnsCount).toEqual(6);
-        expect(instance.headerRight.columnsCount).toEqual(0);
+        expect(instance.frozenLeft.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(0);
         instance.frozenColumns = 7;
         expect(instance.frozenColumns).toEqual(6);
         instance.frozenColumns = -1;
@@ -184,6 +188,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.3', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         document.body.appendChild(instance.element);
 
         const marker = new MarkerColumnNode();
@@ -208,27 +213,27 @@ describe('Grid Api', () => {
 
         instance.addColumnNode(semantic);
 
-        expect(instance.headerRight.columnsCount).toEqual(instance.columnsCount);
-        expect(instance.headerLeft.columnsCount).toEqual(0);
-        expect(instance.headerRight.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(instance.columnsCount);
+        expect(instance.frozenLeft.columnsCount).toEqual(0);
+        expect(instance.frozenRight.columnsCount).toEqual(6);
         instance.frozenColumns = 1;
-        expect(instance.headerLeft.columnsCount).toEqual(1);
-        expect(instance.headerRight.columnsCount).toEqual(5);
+        expect(instance.frozenLeft.columnsCount).toEqual(1);
+        expect(instance.frozenRight.columnsCount).toEqual(5);
         instance.frozenColumns = 2;
-        expect(instance.headerLeft.columnsCount).toEqual(2);
-        expect(instance.headerRight.columnsCount).toEqual(4);
+        expect(instance.frozenLeft.columnsCount).toEqual(2);
+        expect(instance.frozenRight.columnsCount).toEqual(4);
         instance.frozenColumns = 3;
-        expect(instance.headerLeft.columnsCount).toEqual(3);
-        expect(instance.headerRight.columnsCount).toEqual(3);
+        expect(instance.frozenLeft.columnsCount).toEqual(3);
+        expect(instance.frozenRight.columnsCount).toEqual(3);
         instance.frozenColumns = 4;
-        expect(instance.headerLeft.columnsCount).toEqual(4);
-        expect(instance.headerRight.columnsCount).toEqual(2);
+        expect(instance.frozenLeft.columnsCount).toEqual(4);
+        expect(instance.frozenRight.columnsCount).toEqual(2);
         instance.frozenColumns = 5;
-        expect(instance.headerLeft.columnsCount).toEqual(5);
-        expect(instance.headerRight.columnsCount).toEqual(1);
+        expect(instance.frozenLeft.columnsCount).toEqual(5);
+        expect(instance.frozenRight.columnsCount).toEqual(1);
         instance.frozenColumns = 6;
-        expect(instance.headerLeft.columnsCount).toEqual(6);
-        expect(instance.headerRight.columnsCount).toEqual(0);
+        expect(instance.frozenLeft.columnsCount).toEqual(6);
+        expect(instance.frozenRight.columnsCount).toEqual(0);
         instance.frozenColumns = 7;
         expect(instance.frozenColumns).toEqual(6);
         instance.frozenColumns = -1;
@@ -248,6 +253,7 @@ describe('Grid Api', () => {
                 radio: false,
                 name: `title${plainSamples.length}`,
                 birth: new Date(moment.valueOf() + plainSamples.length * 10),
+                amount: plainSamples.length,
                 payed: true
             });
         }
@@ -257,6 +263,7 @@ describe('Grid Api', () => {
         const instance = new Grid();
         instance.width = instance.height = 250;
         instance.frozenRows = 2;
+        instance.renderingPadding = 1;
         document.body.appendChild(instance.element);
 
         const marker = new MarkerColumnNode();
@@ -291,8 +298,8 @@ describe('Grid Api', () => {
 
         expect(instance.frozenLeft.rowsCount).toEqual(2);
         expect(instance.frozenRight.rowsCount).toEqual(2);
-        expect(instance.bodyLeft.rowsCount).toEqual(5);// 5 instead of 8 because of virtual nature of grid
-        expect(instance.bodyRight.rowsCount).toEqual(5);
+        expect(instance.bodyLeft.rowsCount).toEqual(8);// 8 out of 8 because of virtual nature of grid and because of renderingPadding
+        expect(instance.bodyRight.rowsCount).toEqual(8);
 
         expect(instance.frozenLeft.columnsCount).toEqual(4);
         expect(instance.bodyLeft.columnsCount).toEqual(4);
@@ -303,6 +310,7 @@ describe('Grid Api', () => {
     });
     it('Rows.Sorting', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         instance.width = instance.height = 250;
         instance.frozenRows = 2;
         document.body.appendChild(instance.element);
@@ -361,6 +369,7 @@ describe('Grid Api', () => {
     });
     it('Rows.Dragging', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         instance.width = instance.height = 300;
         instance.frozenRows = 2;
         document.body.appendChild(instance.element);
@@ -446,7 +455,8 @@ describe('Grid Api', () => {
                         radio: false,
                         name: `${parent.name}:${c}`,
                         birth: new Date(moment.valueOf() + plainSamples.length * 10),
-                        payed: true
+                        payed: true,
+                        amount: deepness
                     };
                     child.parent = parent;
                     parent.children.push(child);
@@ -466,7 +476,8 @@ describe('Grid Api', () => {
                 radio: false,
                 name: `title ${r}`,
                 birth: new Date(moment.valueOf() + treeSamples.length * 10),
-                payed: true
+                payed: true,
+                amount: r
             };
             treeSamples.push(sample);
             if (r === 4) {
@@ -478,6 +489,7 @@ describe('Grid Api', () => {
     })());
     it('Rows.Tree after columns', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         instance.width = instance.height = 240;
         instance.frozenRows = 2;
         document.body.appendChild(instance.element);
@@ -537,6 +549,7 @@ describe('Grid Api', () => {
     });
     it('Rows.Tree before columns', () => {
         const instance = new Grid();
+        instance.renderingPadding = 0;
         instance.width = instance.height = 240;
         instance.frozenRows = 2;
         
@@ -601,6 +614,7 @@ describe('Grid Api', () => {
     it('Editing.Inline', () => {
         const instance = new Grid();
         instance.width = instance.height = 300;
+        instance.renderingPadding = 0;
         instance.frozenRows = 2;
         document.body.appendChild(instance.element);
 
@@ -632,6 +646,11 @@ describe('Grid Api', () => {
 
         instance.addColumnNode(semantic);
 
+        const amount = new ColumnNode();
+        amount.field = amount.title = 'amount';
+        amount.editor = new NumberField();
+        instance.addColumnNode(amount);
+
         instance.frozenColumns = 4;
 
         instance.data = treeSamples;
@@ -652,8 +671,8 @@ describe('Grid Api', () => {
 
         expect(instance.frozenLeft.columnsCount).toEqual(4);
         expect(instance.bodyLeft.columnsCount).toEqual(4);
-        expect(instance.frozenRight.columnsCount).toEqual(3);
-        expect(instance.bodyRight.columnsCount).toEqual(3);
+        expect(instance.frozenRight.columnsCount).toEqual(4);
+        expect(instance.bodyRight.columnsCount).toEqual(4);
 
         document.body.removeChild(instance.element);
     });

@@ -18,6 +18,7 @@
 }
 
 .p-grid-columns-chevron {
+    z-index: 300;
     display: inline-block;
     position: absolute;
     box-sizing: border-box;
@@ -116,6 +117,10 @@
     margin-left: 5px;
 }
 
+.p-grid-section {
+    background-color: white;
+}
+
 .p-grid-selected-row {
     background: lightblue;
 }
@@ -140,4 +145,12 @@
 
 .p-grid-row-drop-after {
     border-bottom: solid #c17819 2px;
+}
+
+.p-grid-column-checker {
+    margin: 0px;
+}
+
+.p-grid-cell > input[type="checkbox"] {
+    margin: 0px;
 }

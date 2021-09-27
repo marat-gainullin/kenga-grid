@@ -1,82 +1,91 @@
 @import 'kenga/layout.css';
 
 .p-grid-shell {
-    display: inline-flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    overflow: hidden;
+    display: inline-block;
+    overflow: auto;
+    line-height: 0px;
 }
 
 .p-holy-grail-column > .p-grid-shell,
 .p-holy-grail-row > .p-grid-shell {
-    display: inline-flex;
+    display: inline-block;
 }
 
-.p-grid-section-header,
 .p-grid-section-frozen,
 .p-grid-section-body,
 .p-grid-section-footer {
-    position: relative;
-    white-space: nowrap;
-    line-height: 0px;
-
+    position: sticky;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    white-space: nowrap;
+    line-height: 0px;
 }
 
-.p-grid-section-header,
 .p-grid-section-frozen,
+.p-grid-section-body {
+    top: 0px;
+}
+
 .p-grid-section-footer {
-    flex: none;
+    bottom: 0px;
 }
 
 .p-grid-section-body {
-    flex: 1 1;
     min-height: 0px;
-    overflow: hidden;
+    z-index: 100;
 }
 
-.p-grid-section-header-left,
-.p-grid-section-header-right,
+.p-grid-section-frozen,
+.p-grid-section-footer {
+    z-index: 200;
+}
+
 .p-grid-section-frozen-left,
-.p-grid-section-frozen-right,
 .p-grid-section-body-left,
+.p-grid-section-footer-left {
+    z-index: 100;
+    flex: none;
+}
+
+.p-grid-section-frozen-right,
 .p-grid-section-body-right,
+.p-grid-section-footer-right {
+    z-index: 200;
+    flex: 1 1;
+}
+
+.p-grid-section-frozen-left,
+.p-grid-section-body-left,
 .p-grid-section-footer-left,
+.p-grid-section-frozen-right,
+.p-grid-section-body-right,
 .p-grid-section-footer-right {
     display: inline-block;
 }
 
 .p-grid-section-body-left,
+.p-grid-section-frozen-left {
+    position: sticky;
+    left: 0px;
+}
+
+.p-grid-section-body-left,
 .p-grid-section-body-right {
     height: 100%;
+    vertical-align: top;
 }
 
-.p-grid-section-header-left,
-.p-grid-section-frozen-left,
-.p-grid-section-body-left,
-.p-grid-section-footer-left {
-    flex: none;
-}
-
-.p-grid-section-header-right,
 .p-grid-section-frozen-right,
 .p-grid-section-body-right,
 .p-grid-section-footer-right {
-    flex: 1 1;
     min-height: 0px;
 }
 
-.p-grid-section-header-right,
 .p-grid-section-frozen-right,
 .p-grid-section-footer-right,
 .p-grid-section-body-left {
     overflow: hidden;
-}
-
-.p-grid-section-body-right {
-    overflow: auto;
 }
 
 .p-grid-section {

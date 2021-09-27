@@ -1,0 +1,10 @@
++updateSectionsWidth vs. Flex ?
++headerRowsHeight ?
++headerVisible ?
++headerCellsStyleElement ?
++view rows <-> data row conversion vs. sticky frozen rows ?
++Columns chevron ?
++Correction of the width of the tree indicator column when its width is null (auto) ?
++select with keyboard across frozen rows boundaries ?
++check/radio/marker columns' cells vs selection ?
++focusCell vs scrollIntoView() ?

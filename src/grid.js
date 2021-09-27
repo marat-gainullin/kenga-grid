@@ -1,6 +1,4 @@
 /* global Infinity */
-import Id from 'septima-utils/id';
-import Invoke from 'septima-utils/invoke';
 import Ui from 'kenga/utils';
 import Bound from 'kenga/bound';
 import Widget from 'kenga/widget';
@@ -12,6 +10,7 @@ import FocusEvent from 'kenga/events/focus-event';
 import Menu from 'kenga-menu/menu';
 import CheckBoxMenuItem from 'kenga-menu/check-box-menu-item';
 import SortEvent from './events/sort-event';
+import Id from './id';
 import Section from './section';
 import HeaderAnalyzer from './header/analyzer';
 import HeaderSplitter from './header/splitter';
@@ -40,34 +39,12 @@ class Grid extends Widget {
         const dynamicOddRowsClassName = `p-grid-odd-row-${Id.next()}`;
         const dynamicEvenRowsClassName = `p-grid-even-row-${Id.next()}`;
 
-        const headerContainer = document.createElement('div');
-        const headerLeftContainer = document.createElement('div');
-        const headerRightContainer = document.createElement('div');
-
-        const headerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
-        Object.defineProperty(this, 'headerLeft', {
-            get: function () {
-                return headerLeft;
-            }
-        });
-        headerLeftContainer.appendChild(headerLeft.element);
-        const headerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
-        Object.defineProperty(this, 'headerRight', {
-            get: function () {
-                return headerRight;
-            }
-        });
-        headerRightContainer.appendChild(headerRight.element);
-
         const columnsChevron = document.createElement('div');
-
-        headerContainer.appendChild(headerLeftContainer);
-        headerContainer.appendChild(headerRightContainer);
-        headerContainer.appendChild(columnsChevron);
 
         const frozenContainer = document.createElement('div');
         const frozenLeftContainer = document.createElement('div');
         const frozenRightContainer = document.createElement('div');
+        frozenContainer.appendChild(columnsChevron);
 
         const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'frozenLeft', {
@@ -90,6 +67,7 @@ class Grid extends Widget {
         const bodyLeftContainer = document.createElement('div');
         const bodyRightContainer = document.createElement('div');
         const bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        bodyLeft.virtual = true;
         Object.defineProperty(this, 'bodyLeft', {
             get: function () {
                 return bodyLeft;
@@ -97,6 +75,7 @@ class Grid extends Widget {
         });
         bodyLeftContainer.appendChild(bodyLeft.element);
         const bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        bodyRight.virtual = true;
         Object.defineProperty(this, 'bodyRight', {
             get: function () {
                 return bodyRight;
@@ -105,15 +84,6 @@ class Grid extends Widget {
         bodyRightContainer.appendChild(bodyRight.element);
         bodyContainer.appendChild(bodyLeftContainer);
         bodyContainer.appendChild(bodyRightContainer);
-        Ui.on(bodyRightContainer, Ui.Events.SCROLL, evt => {
-            [
-                headerRight,
-                frozenRight,
-                footerRight
-            ].forEach(section => {
-                section.element.style.marginLeft = `${-bodyRightContainer.scrollLeft}px`;
-            });
-        });
 
         const footerContainer = document.createElement('div');
         const footerLeftContainer = document.createElement('div');
@@ -125,7 +95,7 @@ class Grid extends Widget {
             }
         });
         footerLeftContainer.appendChild(footerLeft.element);
-        var footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
         Object.defineProperty(this, 'footerRight', {
             get: function () {
                 return footerRight;
@@ -147,8 +117,8 @@ class Grid extends Widget {
         let sortedColumns = [];
         let headerRowsHeight = 30;
         let rowsHeight = 30;
-        let renderingThrottle = 0; // No throttling
-        let renderingPadding = 0; // No padding
+        let renderingThrottle = 0;
+        let renderingPadding = 1;
         let showHorizontalLines = true;
         let showVerticalLines = true;
         let showOddRowsInOtherColor = true;
@@ -192,11 +162,8 @@ class Grid extends Widget {
         let draggableRows = false;
         let treeIndicatorColumn;
 
-        shell.className = 'p-widget p-grid-shell p-scroll p-vertical-scroll-filler p-horizontal-scroll-filler';
+        shell.className = 'p-widget p-grid-shell p-scroll p-vertical-scroll-filler p-horizontal-scroll-filler p-grid-empty';
 
-        headerContainer.className = 'p-grid-section-header';
-        headerLeftContainer.className = 'p-grid-section-header-left';
-        headerRightContainer.className = 'p-grid-section-header-right';
         frozenContainer.className = 'p-grid-section-frozen';
         frozenLeftContainer.className = 'p-grid-section-frozen-left';
         frozenRightContainer.className = 'p-grid-section-frozen-right';
@@ -209,15 +176,14 @@ class Grid extends Widget {
 
         columnsChevron.className = 'p-grid-columns-chevron';
 
-        shell.appendChild(cellsStyleElement);
-        shell.appendChild(rowsStyleElement);
         shell.appendChild(headerCellsStyleElement);
         shell.appendChild(headerRowsStyleElement);
+        shell.appendChild(cellsStyleElement);
+        shell.appendChild(rowsStyleElement);
 
         shell.appendChild(oddRowsStyleElement);
         shell.appendChild(evenRowsStyleElement);
 
-        shell.appendChild(headerContainer);
         shell.appendChild(frozenContainer);
         shell.appendChild(bodyContainer);
         shell.appendChild(footerContainer);
@@ -251,8 +217,8 @@ class Grid extends Widget {
 
             function showColumnsMenu(event) {
                 columnsMenu = new Menu();
-                fillColumnsMenu(headerLeft, columnsMenu);
-                fillColumnsMenu(headerRight, columnsMenu);
+                fillColumnsMenu(frozenLeft, columnsMenu);
+                fillColumnsMenu(frozenRight, columnsMenu);
                 Ui.startMenuSession(columnsMenu);
                 const pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
                 const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
@@ -433,6 +399,8 @@ class Grid extends Widget {
                 }
             } else if (event.keyCode === KeyCodes.KEY_ESCAPE) {
                 abortEditing();
+            } else if (event.keyCode === KeyCodes.KEY_ENTER) {
+                completeEditing();
             } else if (!event.ctrlKey && !event.metaKey &&
                 (event.keyCode >= KeyCodes.KEY_A && event.keyCode <= KeyCodes.KEY_Z ||
                     event.keyCode >= KeyCodes.KEY_ZERO && event.keyCode <= KeyCodes.KEY_NINE ||
@@ -467,7 +435,7 @@ class Grid extends Widget {
             }
         });
 
-        function insert(instance){
+        function insert(instance) {
             var rows = discoverRows();
             let insertAt = -1;
             const lead = selectionLead;
@@ -624,8 +592,8 @@ class Grid extends Widget {
             });
             setCursorOn(selectionLead, false);
             if (needRedraw) {
-                redrawFrozen();
-                redrawBody();
+                redrawFrozen(true);
+                redrawBody(true);
             }
         }
 
@@ -669,8 +637,8 @@ class Grid extends Widget {
             });
             fireSelected(null);
             if (needRedraw) {
-                redrawFrozen();
-                redrawBody();
+                redrawFrozen(true);
+                redrawBody(true);
             }
             return res;
         }
@@ -690,8 +658,8 @@ class Grid extends Widget {
             }
             fireSelected(null);
             if (needRedraw) {
-                redrawFrozen();
-                redrawBody();
+                redrawFrozen(true);
+                redrawBody(true);
             }
         }
 
@@ -803,8 +771,12 @@ class Grid extends Widget {
                 if (rowsHeight !== aValue) {
                     rowsHeight = aValue;
                     regenerateDynamicRowsStyles();
+                    frozenLeft.rowsHeight = rowsHeight;
+                    frozenRight.rowsHeight = rowsHeight;
                     bodyLeft.rowsHeight = rowsHeight;
                     bodyRight.rowsHeight = rowsHeight;
+                    footerLeft.rowsHeight = rowsHeight;
+                    footerRight.rowsHeight = rowsHeight;
                 }
             }
         });
@@ -843,7 +815,7 @@ class Grid extends Widget {
         }
 
         function regenerateDynamicHeaderRowsStyles() {
-            headerCellsStyleElement.innerHTML =
+            headerRowsStyleElement.innerHTML =
                 `.${dynamicHeaderRowsClassName}{ height: ${headerRowsHeight}px;}`;
         }
 
@@ -861,14 +833,11 @@ class Grid extends Widget {
 
         Object.defineProperty(this, 'headerVisible', {
             get: function () {
-                return 'none' !== headerContainer.style.display;
+                return frozenRight.headerVisible;
             },
             set: function (aValue) {
-                if (aValue) {
-                    headerContainer.style.display = '';
-                } else {
-                    headerContainer.style.display = 'none';
-                }
+                frozenLeft.headerVisible = aValue;
+                frozenRight.headerVisible = aValue;
             }
         });
 
@@ -1203,8 +1172,14 @@ class Grid extends Widget {
             const rows = discoverRows();
             boundToElements = Bound.observeElements(rows, {
                 change: anEvent => {
-                    redrawFrozen();
-                    redrawBody();
+                    // TODO: May be it is worth to check a ore precise condition here
+                    // TODO: but it is not clear yet.
+                    // TODO: The goal of this condition id to avoid an unexpected removing of
+                    // TODO: editing widget from a cell of the grid.
+                    if (!focusedCell.editor) {
+                        redrawFrozen();
+                        redrawBody();
+                    }
                 }
             });
             boundToElementsComposition = Bound.listen(rows, {
@@ -1213,6 +1188,9 @@ class Grid extends Widget {
                     itemsRemoved(removed)
                 }
             });
+            if (rows.length === 0) {
+                shell.classList.add('p-grid-empty');
+            }
         }
 
         function unbindElements() {
@@ -1242,6 +1220,7 @@ class Grid extends Widget {
             unbindCursor();
             rowsToViewRows(false);
             setupRanges(true);
+            shell.classList.remove('p-grid-empty');
         }
 
         function bindCursor() {
@@ -1346,52 +1325,52 @@ class Grid extends Widget {
         function setupRanges(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
-            frozenContainer.style.display = frozenRows > 0 ? '' : 'none';
             const frozenRangeEnd = viewRows.length >= frozenRows ? frozenRows : viewRows.length;
             frozenLeft.setDataRange(0, frozenRangeEnd, needRedraw);
             frozenRight.setDataRange(0, frozenRangeEnd, needRedraw);
 
-            bodyContainer.style.display = viewRows.length - frozenRows > 0 ? '' : 'none';
             bodyLeft.setDataRange(frozenRows, viewRows.length, needRedraw);
             bodyRight.setDataRange(frozenRows, viewRows.length, needRedraw);
-
-            bodyRight.onDrawBody = () => {
-                bodyLeft.viewportBias = bodyRightContainer.offsetHeight - bodyRightContainer.clientHeight;
-                bodyLeftContainer.scrollTop = bodyRightContainer.scrollTop;
-                // bodyLeft.redrawBody();
-            };
         }
 
         function updateSectionsWidth() {
             let leftColumnsWidth = 0;
-            for (let c = 0; c < headerLeft.columnsCount; c++) {
-                const lcolumn = headerLeft.getColumn(c);
+            for (let c = 0; c < frozenLeft.columnsCount; c++) {
+                const lcolumn = frozenLeft.getColumn(c);
                 if (lcolumn.visible) {
-                    leftColumnsWidth += lcolumn.width + lcolumn.padding;
+                    if ((typeof lcolumn.width === 'string' && (lcolumn.width.endsWith('%') || lcolumn.width === '')) || lcolumn.width == null) {
+                        leftColumnsWidth = null;
+                        break;
+                    } else {
+                        leftColumnsWidth += parseFloat(lcolumn.width) + lcolumn.padding;
+                    }
                 }
             }
             [
-                headerLeft,
                 frozenLeft,
                 bodyLeft,
                 footerLeft
             ].forEach(section => {
-                section.element.style.width = `${leftColumnsWidth}px`;
+                section.element.style.width = leftColumnsWidth != null ? `${leftColumnsWidth}px` : '';
             });
             let rightColumnsWidth = 0;
-            for (var c = 0; c < headerRight.columnsCount; c++) {
-                const rcolumn = headerRight.getColumn(c);
+            for (let c = 0; c < frozenRight.columnsCount; c++) {
+                const rcolumn = frozenRight.getColumn(c);
                 if (rcolumn.visible) {
-                    rightColumnsWidth += rcolumn.width + rcolumn.padding;
+                    if ((typeof rcolumn.width === 'string' && (rcolumn.width.endsWith('%') || rcolumn.width === '')) || rcolumn.width == null) {
+                        rightColumnsWidth = null;
+                        break;
+                    } else {
+                        rightColumnsWidth += parseFloat(rcolumn.width) + rcolumn.padding;
+                    }
                 }
             }
             [
-                headerRight,
                 frozenRight,
                 bodyRight,
                 footerRight
             ].forEach(section => {
-                section.element.style.width = `${rightColumnsWidth}px`;
+                section.element.style.width = rightColumnsWidth != null ? `${rightColumnsWidth}px` : '100%';
             });
         }
 
@@ -1455,8 +1434,6 @@ class Grid extends Widget {
                 }
                 column.headers.splice(0, column.headers.length);
             }
-            headerLeft.clearColumnsAndHeader(needRedraw);
-            headerRight.clearColumnsAndHeader(needRedraw);
             frozenLeft.clearColumnsAndHeader(needRedraw);
             frozenRight.clearColumnsAndHeader(needRedraw);
             bodyLeft.clearColumnsAndHeader(needRedraw);
@@ -1488,11 +1465,11 @@ class Grid extends Widget {
             const leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
             injectHeaders(leftHeader);
             HeaderAnalyzer.analyzeLeaves(leftHeader);
-            headerLeft.setHeaderNodes(leftHeader, maxDepth, false);
+            frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
             const rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
             injectHeaders(rightHeader);
             HeaderAnalyzer.analyzeLeaves(rightHeader);
-            headerRight.setHeaderNodes(rightHeader, maxDepth, false);
+            frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
 
             const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
             const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
@@ -1503,7 +1480,6 @@ class Grid extends Widget {
                 addColumnToSections(leaf.column);
             });
             [
-                headerLeftContainer,
                 frozenLeftContainer,
                 bodyLeftContainer,
                 footerLeftContainer
@@ -1660,13 +1636,11 @@ class Grid extends Widget {
 
         function addColumnToSections(column) {
             columnsFacade.push(column);
-            if (headerLeft.columnsCount < frozenColumns) {
-                headerLeft.addColumn(column, false);
+            if (frozenLeft.columnsCount < frozenColumns) {
                 frozenLeft.addColumn(column, false);
                 bodyLeft.addColumn(column, false);
                 footerLeft.addColumn(column, false);
             } else {
-                headerRight.addColumn(column, false);
                 frozenRight.addColumn(column, false);
                 bodyRight.addColumn(column, false);
                 footerRight.addColumn(column, false);
@@ -1674,8 +1648,6 @@ class Grid extends Widget {
         }
 
         function redraw() {
-            headerLeft.redraw();
-            headerRight.redraw();
             frozenLeft.redraw();
             frozenRight.redraw();
             bodyLeft.redraw();
@@ -1690,9 +1662,9 @@ class Grid extends Widget {
             }
         });
 
-        function redrawFrozen() {
-            frozenLeft.redraw();
-            frozenRight.redraw();
+        function redrawFrozen(light) {
+            frozenLeft.redraw(light);
+            frozenRight.redraw(light);
         }
 
         Object.defineProperty(this, 'redrawFrozen', {
@@ -1701,9 +1673,9 @@ class Grid extends Widget {
             }
         });
 
-        function redrawBody() {
-            bodyLeft.redraw();
-            bodyRight.redraw();
+        function redrawBody(light) {
+            bodyLeft.redraw(light);
+            bodyRight.redraw(light);
         }
 
         Object.defineProperty(this, 'redrawBody', {
@@ -1713,8 +1685,8 @@ class Grid extends Widget {
         });
 
         function redrawHeaders() {
-            headerLeft.redrawHeaders();
-            headerRight.redrawHeaders();
+            frozenLeft.redrawHeaders();
+            frozenRight.redrawHeaders();
         }
 
         Object.defineProperty(this, 'redrawHeaders', {
@@ -1735,7 +1707,7 @@ class Grid extends Widget {
         });
 
         function getColumnsCount() {
-            return (headerLeft ? headerLeft.columnsCount : 0) + (headerRight ? headerRight.columnsCount : 0);
+            return (frozenLeft ? frozenLeft.columnsCount : 0) + (frozenRight ? frozenRight.columnsCount : 0);
         }
 
         Object.defineProperty(this, 'columnsCount', {
@@ -1746,7 +1718,7 @@ class Grid extends Widget {
 
         function getColumn(aIndex) {
             if (aIndex >= 0 && aIndex < getColumnsCount()) {
-                return aIndex >= 0 && aIndex < headerLeft.columnsCount ? headerLeft.getColumn(aIndex) : headerRight.getColumn(aIndex - headerLeft.columnsCount);
+                return aIndex >= 0 && aIndex < frozenLeft.columnsCount ? frozenLeft.getColumn(aIndex) : frozenRight.getColumn(aIndex - frozenLeft.columnsCount);
             } else {
                 return null;
             }
@@ -1782,14 +1754,14 @@ class Grid extends Widget {
             }
         });
 
-        var focusedCell = {
-            row: 0,
-            column: 0
+        let focusedCell = {
+            row: -1,
+            column: -1,
+            cell: null
         };
 
-        function focusCell(row, column, needRedraw) {
-            if (arguments.length < 3)
-                needRedraw = true;
+        function focusCell(row, column) {
+            Section.unFocusCell(focusedCell.cell);
             if (row >= 0 && row < viewRows.length ||
                 column >= 0 && column < columnsFacade.length) {
                 if (row >= 0 && row < viewRows.length) {
@@ -1802,36 +1774,33 @@ class Grid extends Widget {
                     focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
                     let cell = frozenLeft.getViewCell(row, column);
                     if (cell) {
-                        cell.scrollIntoView();
+                        focusedCell.cell = cell;
+                        Section.focusCell(focusedCell.cell);
+                        cell.parentElement.scrollIntoView();
                     } else {
                         cell = frozenRight.getViewCell(row, column);
                         if (cell) {
-                            const bodyCell = bodyRight.getViewCell(frozenRows, column);
-                            if (bodyCell)
-                                bodyCell.scrollIntoView();
-                            else
-                                cell.scrollIntoView();
+                            focusedCell.cell = cell;
+                            Section.focusCell(focusedCell.cell);
+                            cell.parentElement.scrollIntoView();
                         } else {
-                            if (row >= frozenRows && rowsHeight != null) {
-                                const rowCenter = (row - frozenRows) * rowsHeight + rowsHeight / 2;
-                                if (bodyRightContainer.scrollTop > rowCenter || rowCenter > bodyRightContainer.scrollTop + bodyRightContainer.clientHeight) {
-                                    const scrollTop = (row - frozenRows) * rowsHeight - bodyRightContainer.clientHeight / 2 + rowsHeight / 2;
-                                    bodyRightContainer.scrollTop = scrollTop;
-                                    if (bodyRightContainer.scrollTop !== scrollTop) {
-                                        redrawFrozen();
-                                        redrawBody();
-                                        bodyRightContainer.scrollTop = scrollTop;
-                                    }
+                            cell = bodyLeft.getViewCell(row, column);
+                            if (cell) {
+                                focusedCell.cell = cell;
+                                Section.focusCell(focusedCell.cell);
+                                cell.parentElement.scrollIntoView();
+                            } else {
+                                cell = bodyRight.getViewCell(row, column);
+                                if (cell) {
+                                    focusedCell.cell = cell;
+                                    Section.focusCell(focusedCell.cell);
+                                    cell.parentElement.scrollIntoView();
                                 }
                             }
                         }
                     }
                     if (focusedCell.row >= 0 && focusedCell.row < viewRows.length) {
                         setCursorOn(viewRows[focusedCell.row], false);
-                    }
-                    if (needRedraw) {
-                        redrawFrozen();
-                        redrawBody();
                     }
                     return true;
                 }
@@ -1862,6 +1831,17 @@ class Grid extends Widget {
                 if (aValue >= 0 && aValue < columnsFacade.length && aValue !== focusedCell.column) {
                     focusCell(focusedCell.row, aValue);
                 }
+            }
+        });
+
+        Object.defineProperty(this, 'focusedCell', {
+            get: function () {
+                return focusedCell.cell;
+            },
+            set: function (aValue) {
+                Section.unFocusCell(focusedCell.cell);
+                focusedCell.cell = aValue;
+                Section.focusCell(focusedCell.cell);
             }
         });
 
@@ -2120,7 +2100,7 @@ class Grid extends Widget {
         function fireExpanded(anElement) {
             const event = new ItemEvent(self, anElement);
             expandListeners.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2170,7 +2150,7 @@ class Grid extends Widget {
         function fireCollapsed(anElement) {
             const event = new ItemEvent(self, anElement);
             collapseHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2229,7 +2209,7 @@ class Grid extends Widget {
         function fireRowsSort() {
             const event = new SortEvent(self);
             sortHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2279,7 +2259,7 @@ class Grid extends Widget {
         function fireSelected(item) {
             const event = new ItemEvent(self, item);
             selectHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2307,7 +2287,7 @@ class Grid extends Widget {
         function fireFocus() {
             const event = new FocusEvent(self);
             focusHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2335,7 +2315,7 @@ class Grid extends Widget {
         function fireFocusLost() {
             const event = new BlurEvent(self);
             focusLostHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2363,7 +2343,7 @@ class Grid extends Widget {
         function fireKeyRelease(nevent) {
             const event = new KeyEvent(self, nevent);
             keyReleaseHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2391,7 +2371,7 @@ class Grid extends Widget {
         function fireKeyPress(nevent) {
             const event = new KeyEvent(self, nevent);
             keyPressHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -2419,7 +2399,7 @@ class Grid extends Widget {
         function fireKeyType(nevent) {
             const event = new KeyEvent(self, nevent);
             keyTypeHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
