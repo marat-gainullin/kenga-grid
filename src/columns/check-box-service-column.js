@@ -39,10 +39,10 @@ class CheckBoxServiceColumn extends ServiceColumn {
         });
         Object.defineProperty(this, 'checked', {
             get: function () {
-                return self.grid != null ? self.grid.hasSelected : false;
+                return self.grid && self.grid.data ? self.grid.hasSelected && self.grid.data.length === self.grid.selectedCount : false;
             },
             set: function (value) {
-                if (self.grid != null && self.grid.hasSelected !== value) {
+                if (self.grid != null) {
                     if (value) {
                         self.grid.selectAll()
                     } else {

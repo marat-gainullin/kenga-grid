@@ -31,8 +31,45 @@ class CheckServiceColumnNode extends ColumnNode {
             return copied;
         }
 
+        function readThValue() {
+            if (self.column.grid) {
+                if (self.column.grid.data) {
+                    const dataSize = self.column.grid.data.length;
+                    const selectedSize = self.column.grid.selectedCount;
+                    if (selectedSize === dataSize && dataSize > 0) {
+                        thChecker.indeterminate = false;
+                        thChecker.checked = true;
+                    } else {
+                        if (selectedSize === 0) {
+                            thChecker.indeterminate = false;
+                            thChecker.checked = false;
+                        } else {
+                            thChecker.indeterminate = true;
+                            thChecker.checked = null;
+                        }
+                    }
+                } else {
+                    thChecker.indeterminate = false;
+                    thChecker.checked = false;
+                }
+            } else {
+                thChecker.indeterminate = false;
+                thChecker.checked = false;
+            }
+        }
+
+        let selectReg = null;
         this.gridChanged = () => {
-            thChecker.checked = self.column.checked;
+            if (selectReg != null) {
+                selectReg.removeHandler();
+                selectReg = null;
+            }
+            readThValue();
+            if (self.column.grid) {
+                selectReg = self.column.grid.addSelectHandler(() => {
+                    readThValue();
+                });
+            }
         };
 
         Object.defineProperty(this, 'copy', {

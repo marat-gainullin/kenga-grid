@@ -17,8 +17,6 @@ class ColumnNode {
 
         column.renderer = new TextField();
         column.editor = new TextField();
-        this.gridChanged = () => {
-        };
 
         function copy() {
             const copied = new ColumnNode();

@@ -107,6 +107,8 @@ class Grid extends Widget {
         footerContainer.style.display = 'none';
 
         let columnNodes = [];
+        let leftHeader = [];
+        let rightHeader = [];
 
         let columnsFacade = [];
         Object.defineProperty(this, 'columns', {
@@ -136,6 +138,11 @@ class Grid extends Widget {
         Object.defineProperty(this, 'hasSelected', {
             get: function () {
                 return selectedRows.size > 0;
+            }
+        });
+        Object.defineProperty(this, 'selectedCount', {
+            get: function () {
+                return selectedRows.size;
             }
         });
 
@@ -185,7 +192,9 @@ class Grid extends Widget {
         shell.appendChild(evenRowsStyleElement);
 
         shell.appendChild(frozenContainer);
+        shell.appendChild(document.createElement('br'))
         shell.appendChild(bodyContainer);
+        shell.appendChild(document.createElement('br'))
         shell.appendChild(footerContainer);
 
         Ui.on(shell, Ui.Events.DRAGSTART, event => {
@@ -511,9 +520,12 @@ class Grid extends Widget {
             items.forEach(item => {
                 expandedRows.delete(item);
             });
+            unselectAll(false);
             rebindElements();
             rowsToViewRows(false);
+            const wasScrollTop = shell.scrollTop;
             setupRanges(true);
+            shell.scrollTop = wasScrollTop;
         }
 
         Object.defineProperty(this, 'removed', {
@@ -528,7 +540,9 @@ class Grid extends Widget {
                 items = [items];
             rebindElements();
             rowsToViewRows(false);
+            const wasScrollTop = shell.scrollTop;
             setupRanges(true);
+            shell.scrollTop = wasScrollTop;
         }
 
         Object.defineProperty(this, 'added', {
@@ -541,8 +555,10 @@ class Grid extends Widget {
             abortEditing();
             if (!Array.isArray(items))
                 items = [items];
+            const wasScrollTop = shell.scrollTop;
             redrawFrozen();
             redrawBody();
+            shell.scrollTop = wasScrollTop;
         }
 
         Object.defineProperty(this, 'changed', {
@@ -836,6 +852,7 @@ class Grid extends Widget {
                 return frozenRight.headerVisible;
             },
             set: function (aValue) {
+                columnsChevron.style.display = aValue ? '' : 'none';
                 frozenLeft.headerVisible = aValue;
                 frozenRight.headerVisible = aValue;
             }
@@ -986,7 +1003,9 @@ class Grid extends Widget {
                     if (children && children.length > 0) {
                         expandedRows.add(anElement);
                         rowsToViewRows(false);
+                        const wasScrollTop = shell.scrollTop;
                         setupRanges(true);
+                        shell.scrollTop = wasScrollTop;
                         fireExpanded(anElement);
                     }
                 }
@@ -1004,7 +1023,9 @@ class Grid extends Widget {
                 if (expandedRows.has(anElement)) {
                     expandedRows.delete(anElement);
                     rowsToViewRows(false);
+                    const wasScrollTop = shell.scrollTop;
                     setupRanges(true);
+                    shell.scrollTop = wasScrollTop;
                     fireCollapsed(anElement);
                 }
             }
@@ -1124,13 +1145,13 @@ class Grid extends Widget {
                 lookupDataColumn();
                 generateViewRows();
                 sortViewRows();
-                setupRanges(false);
+                setupRanges();
             }
             const index = viewRows.indexOf(anItem);
             if (index !== -1) {
                 if (aNeedToSelect) {
                     unselectAll(false);
-                    select(anItem, false);
+                    select(anItem);
                 }
                 focusCell(index, focusedCell.column !== -1 ? focusedCell.column : 0);
                 return true;
@@ -1163,6 +1184,8 @@ class Grid extends Widget {
                 }
                 bindElements();
                 bindCursor();
+            } else {
+                shell.classList.add('p-grid-empty');
             }
             rowsToViewRows(false);
             setupRanges(true);
@@ -1188,7 +1211,7 @@ class Grid extends Widget {
                     itemsRemoved(removed)
                 }
             });
-            if (rows.length === 0) {
+            if (!rows || rows.length === 0) {
                 shell.classList.add('p-grid-empty');
             }
         }
@@ -1218,6 +1241,7 @@ class Grid extends Widget {
             }
             unbindElements();
             unbindCursor();
+            unselectAll(false);
             rowsToViewRows(false);
             setupRanges(true);
             shell.classList.remove('p-grid-empty');
@@ -1412,17 +1436,25 @@ class Grid extends Widget {
             }
         });
 
-
         function clearColumnsNodes(needRedraw = true) {
             function clearHeaders(forest) {
                 forest.forEach(node => {
                     node.column.grid = null;
                     node.column.headers.splice(0, node.column.headers.length);
+                    if (node.gridChanged) {
+                        node.gridChanged();
+                    }
                     clearHeaders(node.children);
                 });
             }
 
             clearHeaders(columnNodes);
+            if (leftHeader != null) {
+                clearHeaders(leftHeader);
+            }
+            if (rightHeader != null) {
+                clearHeaders(rightHeader);
+            }
             columnsFacade = [];
             sortedColumns = [];
             for (let i = getColumnsCount() - 1; i >= 0; i--) {
@@ -1456,17 +1488,19 @@ class Grid extends Widget {
                 forest.forEach(node => {
                     node.column.grid = self;
                     node.column.headers.push(node.view);
-                    node.gridChanged();
+                    if (node.gridChanged) {
+                        node.gridChanged();
+                    }
                     injectHeaders(node.children);
                 });
             }
 
             const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
-            const leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
+            leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
             injectHeaders(leftHeader);
             HeaderAnalyzer.analyzeLeaves(leftHeader);
             frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
-            const rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
+            rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
             injectHeaders(rightHeader);
             HeaderAnalyzer.analyzeLeaves(rightHeader);
             frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
@@ -1760,6 +1794,29 @@ class Grid extends Widget {
             cell: null
         };
 
+        function verticalScrollIntoView(cell) {
+            const viewRow = cell.parentElement;
+            if (viewRow.offsetTop < shell.scrollTop) {
+                shell.scrollTop = viewRow.offsetTop;
+            }
+            const viewRowBottomInViewport = viewRow.offsetTop - shell.scrollTop + viewRow.offsetHeight;
+            const viewportHeight = shell.clientHeight - Math.max(frozenLeftContainer.offsetHeight, frozenRightContainer.offsetHeight);
+            if (viewRowBottomInViewport > viewportHeight) {
+                shell.scrollTop += viewRowBottomInViewport - viewportHeight;
+            }
+        }
+
+        function horizontalScrollIntoView(cell) {
+            if (cell.offsetLeft < shell.scrollLeft) {
+                shell.scrollLeft = cell.offsetLeft;
+            }
+            const viewCellRightInViewport = cell.offsetLeft - shell.scrollLeft + cell.offsetWidth;
+            const viewportWidth = shell.clientWidth - Math.max(frozenLeftContainer.offsetWidth, bodyLeftContainer.offsetWidth);
+            if (viewCellRightInViewport > viewportWidth) {
+                shell.scrollLeft += viewCellRightInViewport - viewportWidth;
+            }
+        }
+
         function focusCell(row, column) {
             Section.unFocusCell(focusedCell.cell);
             if (row >= 0 && row < viewRows.length ||
@@ -1776,25 +1833,25 @@ class Grid extends Widget {
                     if (cell) {
                         focusedCell.cell = cell;
                         Section.focusCell(focusedCell.cell);
-                        cell.parentElement.scrollIntoView();
                     } else {
                         cell = frozenRight.getViewCell(row, column);
                         if (cell) {
                             focusedCell.cell = cell;
                             Section.focusCell(focusedCell.cell);
-                            cell.parentElement.scrollIntoView();
+                            horizontalScrollIntoView(focusedCell.cell);
                         } else {
                             cell = bodyLeft.getViewCell(row, column);
                             if (cell) {
                                 focusedCell.cell = cell;
                                 Section.focusCell(focusedCell.cell);
-                                cell.parentElement.scrollIntoView();
+                                verticalScrollIntoView(focusedCell.cell);
                             } else {
                                 cell = bodyRight.getViewCell(row, column);
                                 if (cell) {
                                     focusedCell.cell = cell;
                                     Section.focusCell(focusedCell.cell);
-                                    cell.parentElement.scrollIntoView();
+                                    verticalScrollIntoView(focusedCell.cell);
+                                    horizontalScrollIntoView(focusedCell.cell);
                                 }
                             }
                         }
@@ -1854,8 +1911,16 @@ class Grid extends Widget {
                     const editor = column.editor;
                     const value = column.getValue(edited);
                     editor.value = replace || value === undefined ? null : value;
+                    if (column === treeIndicatorColumn && depths.has(edited)) {
+                        editor.element.style.paddingLeft = `${depths.get(edited) * indent}px`;
+                    } else {
+                        editor.element.style.paddingLeft = '';
+                    }
                     focusedCell.editor = editor;
                     focusedCell.commit = () => {
+                        if (editor.textChanged) {
+                            editor.textChanged();
+                        }
                         column.setValue(edited, editor.value);
                     };
                     let valueChangeReg = editor.addValueChangeHandler ?
@@ -1878,11 +1943,13 @@ class Grid extends Widget {
                         focusedCell.clean = null;
                     };
 
+                    const wasScrollTop = shell.scrollTop;
                     if (focusedCell.row < frozenRows) {
                         redrawFrozen();
                     } else {
                         redrawBody();
                     }
+                    shell.scrollTop = wasScrollTop;
                     return true;
                 }
             }
@@ -1907,12 +1974,16 @@ class Grid extends Widget {
                 focusedCell.clean = null;
             }
             if (focusedCell.editor) {
-                if (focusedCell.editor.element.parentElement)
-                    focusedCell.editor.element.parentElement.removeChild(focusedCell.editor.element);
+                const wasEditor = focusedCell.editor;
+
+                if (wasEditor.element.parentElement)
+                    wasEditor.element.parentElement.removeChild(wasEditor.element);
                 focusedCell.editor = null;
                 focusedCell.commit = null;
+                const wasScrollTop = shell.scrollTop;
                 redrawFrozen();
                 redrawBody();
+                shell.scrollTop = wasScrollTop;
                 self.focus();
             }
         }

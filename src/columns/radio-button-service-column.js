@@ -18,7 +18,7 @@ class RadioButtonServiceColumn extends ServiceColumn {
             radio.checked = self.grid.isSelected(dataRow);
             radio.onchange = event => {
                 if (radio.checked) {
-                    self.grid.unselectAll();
+                    self.grid.unselectAll(false);
                     self.grid.select(dataRow);
                 }
                 self.grid.focus();

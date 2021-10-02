@@ -154,3 +154,7 @@
 .p-grid-cell > input[type="checkbox"] {
     margin: 0px;
 }
+
+.p-grid-cell > input[type="radio"] {
+    margin: 0px;
+}

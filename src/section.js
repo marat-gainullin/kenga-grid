@@ -32,6 +32,7 @@ class Section {
         let renderingPadding = 1;
         let viewportBias = 0;
         let virtual = false;
+        let headerVisible = true;
 
         let thead;
         recreateHead();
@@ -246,9 +247,10 @@ class Section {
 
         Object.defineProperty(this, 'headerVisible', {
             get: function () {
-                return thead.style.display !== 'none';
+                return headerVisible;
             },
             set: function (aValue) {
+                headerVisible = aValue;
                 thead.style.display = aValue ? '' : 'none';
             }
         });
@@ -302,6 +304,7 @@ class Section {
             if (colgroup && colgroup.parentElement)
                 table.removeChild(colgroup);
             thead = document.createElement('thead');
+            thead.style.display = headerVisible ? '' : 'none';
             table.insertBefore(thead, tbody);
             table.insertBefore(colgroup, thead);
         }
@@ -362,7 +365,7 @@ class Section {
             const viewportElement = table.parentElement.parentElement.parentElement
             if (virtual && rowsHeight != null) {
                 const contentBeginsAtY = table.parentElement.parentElement.offsetTop + table.parentElement.offsetTop;
-                let viewportHeight = viewportElement.clientHeight - contentBeginsAtY;
+                let viewportHeight = viewportElement.clientHeight != 0 ? viewportElement.clientHeight - contentBeginsAtY : document.body.clientHeight;
 
                 const rangeRowsCount = dataRangeEnd - dataRangeStart;
                 const contentHeight = rangeRowsCount * rowsHeight;

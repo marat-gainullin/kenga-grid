@@ -14,7 +14,7 @@ class OrderNumServiceColumn extends ServiceColumn {
             viewCell.innerText = `${viewRowIndex + 1}`;
             Ui.on(viewCell, Ui.Events.CLICK, event => {
                 self.grid.unselectAll(false);
-                self.grid.select(dataRow, true);
+                self.grid.select(dataRow);
                 self.grid.focusCell(viewRowIndex, viewColumnIndex);
             });
             viewCell.classList.add('p-grid-cell-service');

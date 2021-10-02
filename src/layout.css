@@ -44,14 +44,14 @@
 .p-grid-section-frozen-left,
 .p-grid-section-body-left,
 .p-grid-section-footer-left {
-    z-index: 100;
+    z-index: 200;
     flex: none;
 }
 
 .p-grid-section-frozen-right,
 .p-grid-section-body-right,
 .p-grid-section-footer-right {
-    z-index: 200;
+    z-index: 100;
     flex: 1 1;
 }
 
@@ -148,6 +148,7 @@
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
+    vertical-align: middle;
 }
 
 .p-grid-body-filler {

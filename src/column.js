@@ -291,7 +291,7 @@ class Column {
                 if (!event.ctrlKey && !event.metaKey) {
                     grid.unselectAll(false);
                 }
-                grid.select(dataRow, true);
+                grid.select(dataRow);
 
                 const onlySelectedAfter = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
                 if (onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex) {
@@ -315,7 +315,6 @@ class Column {
                             if (checkbox && !readonly) {
                                 setValue(dataRow, !getValue(dataRow));
                             }
-                            grid.focusCell(viewRowIndex, viewColumnIndex);
                             grid.toggle(dataRow);
                         } else {
                             handleSelection(event);
