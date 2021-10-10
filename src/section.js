@@ -365,7 +365,7 @@ class Section {
             const viewportElement = table.parentElement.parentElement.parentElement
             if (virtual && rowsHeight != null) {
                 const contentBeginsAtY = table.parentElement.parentElement.offsetTop + table.parentElement.offsetTop;
-                let viewportHeight = viewportElement.clientHeight != 0 ? viewportElement.clientHeight - contentBeginsAtY : document.body.clientHeight;
+                let viewportHeight = viewportElement.clientHeight !== 0 ? viewportElement.clientHeight - contentBeginsAtY : document.body.clientHeight;
 
                 const rangeRowsCount = dataRangeEnd - dataRangeStart;
                 const contentHeight = rangeRowsCount * rowsHeight;
@@ -391,13 +391,15 @@ class Section {
                 endY = Math.min(endY, contentHeight - 1);
                 let endRenderedRow = Math.min(Math.ceil(endY / rowsHeight), rangeRowsCount);
 
-                const renderedRowsCount = endRenderedRow - startRenderedRow;
-                const unRenderedRowsCount = rangeRowsCount - renderedRowsCount
-                const fillerHeight = rowsHeight * unRenderedRowsCount;
+                const fillerHeight = rowsHeight * rangeRowsCount;
 
                 const dataRangeVisibleStart = dataRangeStart + startVisibleRow;
                 const dataRangeVisibleEnd = dataRangeStart + endVisibleRow;
-                if (renderedRangeStart === -1 || renderedRangeEnd === -1 || dataRangeVisibleStart < renderedRangeStart || dataRangeVisibleEnd > renderedRangeEnd) {
+                if (
+                    renderedRangeStart === -1 || renderedRangeEnd === -1 ||
+                    dataRangeVisibleStart < renderedRangeStart || dataRangeVisibleStart < renderedRangeStart + 2 ||
+                    dataRangeVisibleEnd > renderedRangeEnd || dataRangeVisibleEnd > renderedRangeEnd - 2
+                ) {
                     bodyFiller.style.height = `${fillerHeight}px`;
                     bodyFiller.style.display = fillerHeight === 0 ? 'none' : '';
                     table.style.top = `${startRenderedRow * rowsHeight}px`;
@@ -642,7 +644,16 @@ class Section {
                 table.parentElement.appendChild(bodyFiller);
                 const viewportElement = table.parentElement.parentElement.parentElement
                 Ui.on(viewportElement, Ui.Events.SCROLL, event => {
-                    drawBody();
+                    if (grid.renderingThrottle === 0) {
+                        drawBody();
+                    } else {
+                        const wasScrollTop = viewportElement.scrollTop
+                        Ui.delayed(grid.renderingThrottle, () => {
+                            if (wasScrollTop === viewportElement.scrollTop) {
+                                drawBody();
+                            }
+                        });
+                    }
                 });
             }
             dataRangeStart = start;

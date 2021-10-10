@@ -1796,10 +1796,11 @@ class Grid extends Widget {
 
         function verticalScrollIntoView(cell) {
             const viewRow = cell.parentElement;
-            if (viewRow.offsetTop < shell.scrollTop) {
-                shell.scrollTop = viewRow.offsetTop;
+            const viewTable = viewRow.offsetParent;
+            if (viewRow.offsetTop + viewTable.offsetTop < shell.scrollTop) {
+                shell.scrollTop = viewTable.offsetTop + viewRow.offsetTop;
             }
-            const viewRowBottomInViewport = viewRow.offsetTop - shell.scrollTop + viewRow.offsetHeight;
+            const viewRowBottomInViewport = viewTable.offsetTop + viewRow.offsetTop + viewRow.offsetHeight - shell.scrollTop;
             const viewportHeight = shell.clientHeight - Math.max(frozenLeftContainer.offsetHeight, frozenRightContainer.offsetHeight);
             if (viewRowBottomInViewport > viewportHeight) {
                 shell.scrollTop += viewRowBottomInViewport - viewportHeight;
@@ -1817,49 +1818,51 @@ class Grid extends Widget {
             }
         }
 
+        function changeFocusCell(row, column, cell) {
+            Section.unFocusCell(focusedCell.cell);
+            focusedCell.row = row;
+            focusedCell.column = column;
+            focusedCell.cell = cell;
+            Section.focusCell(focusedCell.cell);
+        }
+
         function focusCell(row, column) {
             Section.unFocusCell(focusedCell.cell);
             if (row >= 0 && row < viewRows.length ||
                 column >= 0 && column < columnsFacade.length) {
-                if (row >= 0 && row < viewRows.length) {
-                    focusedCell.row = row;
-                }
-                if (column >= 0 && column < columnsFacade.length) {
-                    focusedCell.column = column;
-                }
-                if (focusedCell.row >= 0 && focusedCell.row < viewRows.length &&
-                    focusedCell.column >= 0 && focusedCell.column < columnsFacade.length) {
+                if (row >= 0 && row < viewRows.length &&
+                    column >= 0 && column < columnsFacade.length) {
                     let cell = frozenLeft.getViewCell(row, column);
                     if (cell) {
-                        focusedCell.cell = cell;
-                        Section.focusCell(focusedCell.cell);
+                        changeFocusCell(row, column, cell)
+                        setCursorOn(viewRows[focusedCell.row], false);
+                        return true;
                     } else {
                         cell = frozenRight.getViewCell(row, column);
                         if (cell) {
-                            focusedCell.cell = cell;
-                            Section.focusCell(focusedCell.cell);
+                            changeFocusCell(row, column, cell)
                             horizontalScrollIntoView(focusedCell.cell);
+                            setCursorOn(viewRows[focusedCell.row], false);
+                            return true;
                         } else {
                             cell = bodyLeft.getViewCell(row, column);
                             if (cell) {
-                                focusedCell.cell = cell;
-                                Section.focusCell(focusedCell.cell);
+                                changeFocusCell(row, column, cell)
                                 verticalScrollIntoView(focusedCell.cell);
+                                setCursorOn(viewRows[focusedCell.row], false);
+                                return true;
                             } else {
                                 cell = bodyRight.getViewCell(row, column);
                                 if (cell) {
-                                    focusedCell.cell = cell;
-                                    Section.focusCell(focusedCell.cell);
+                                    changeFocusCell(row, column, cell)
                                     verticalScrollIntoView(focusedCell.cell);
                                     horizontalScrollIntoView(focusedCell.cell);
+                                    setCursorOn(viewRows[focusedCell.row], false);
+                                    return true;
                                 }
                             }
                         }
                     }
-                    if (focusedCell.row >= 0 && focusedCell.row < viewRows.length) {
-                        setCursorOn(viewRows[focusedCell.row], false);
-                    }
-                    return true;
                 }
             }
             return false;
