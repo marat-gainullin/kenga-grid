@@ -130,6 +130,12 @@ class Grid extends Widget {
 
         let selectedRows = new Set();
         let selectionLead = null;
+
+        Object.defineProperty(this, 'selectionLead', {
+            get: function () {
+                return selectionLead;
+            }
+        });
         Object.defineProperty(this, 'selected', {
             get: function () {
                 return Array.from(selectedRows);
@@ -445,10 +451,8 @@ class Grid extends Widget {
         });
 
         function insert(instance) {
-            var rows = discoverRows();
-            let insertAt = -1;
-            const lead = selectionLead;
-            insertAt = rows.indexOf(lead);
+            const rows = discoverRows();
+            let insertAt = rows.indexOf(selectionLead);
             insertAt++;
             const inserted = instance ? instance : rows.elementClass ? new rows.elementClass() : {};
             rows.splice(insertAt, 0, inserted);
@@ -668,10 +672,8 @@ class Grid extends Widget {
         function unselectAll(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
+            selectionLead = null;
             selectedRows.clear();
-            if (selectedRows.has(selectionLead)) {
-                selectionLead = null;
-            }
             fireSelected(null);
             if (needRedraw) {
                 redrawFrozen(true);
@@ -1796,7 +1798,7 @@ class Grid extends Widget {
 
         function verticalScrollIntoView(cell) {
             const viewRow = cell.parentElement;
-            const viewTable = viewRow.offsetParent;
+            const viewTable = viewRow.parentElement.parentElement;
             if (viewRow.offsetTop + viewTable.offsetTop < shell.scrollTop) {
                 shell.scrollTop = viewTable.offsetTop + viewRow.offsetTop;
             }

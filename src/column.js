@@ -334,7 +334,7 @@ class Column {
             Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                 if (event.button === 0) {
                     handleSelection(event);
-                    if (grid.editable && !readonly) {
+                    if (grid.editable && !readonly && !checkbox) {
                         grid.startEditing();
                     }
                 }
