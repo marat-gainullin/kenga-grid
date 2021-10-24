@@ -344,9 +344,13 @@ class Section {
                 if (node.column.comparator) {
                     node.view.element.className = node.column.comparator.ascending ? 'p-grid-header-sorted-asc ' : 'p-grid-header-sorted-desc ';
                 } else {
-                    node.view.element.className = '';
+                    if (node.column.sortable) {
+                        node.view.element.className = 'p-grid-header-unsorted ';
+                    } else {
+                        node.view.element.className = '';
+                    }
                 }
-                node.view.element.className += `p-grid-header-cell ${dynamicHeaderCellsClassName}`; // reassign classes
+                node.view.element.className += ` p-grid-header-cell ${dynamicHeaderCellsClassName}`; // reassign classes
                 node.view.element.classList.add(node.column.styleName);
                 Array.prototype.push.apply(children, node.children);
             });

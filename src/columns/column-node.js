@@ -255,21 +255,21 @@ class ColumnNode {
             }
         });
 
+        Object.defineProperty(this, 'width', {
+            get: function () {
+                return column.width;
+            },
+            set: function (aValue) {
+                column.width = aValue;
+            }
+        });
+
         Object.defineProperty(this, 'maxWidth', {
             get: function () {
                 return column.maxWidth;
             },
             set: function (aValue) {
                 column.maxWidth = aValue;
-            }
-        });
-
-        Object.defineProperty(this, 'preferredWidth', {
-            get: function () {
-                return column.designedWidth;
-            },
-            set: function (aValue) {
-                column.designedWidth = aValue;
             }
         });
 
@@ -330,15 +330,6 @@ class ColumnNode {
             },
             set: function (aValue) {
                 column.visible = aValue;
-            }
-        });
-
-        Object.defineProperty(this, 'width', {
-            get: function () {
-                return column.width;
-            },
-            set: function (aValue) {
-                column.width = aValue;
             }
         });
 

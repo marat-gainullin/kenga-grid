@@ -16,6 +16,11 @@ class MarkerServiceColumn extends ServiceColumn {
             if (self.grid.cursorProperty && self.grid.rows && self.grid.rows[self.grid.cursorProperty] === dataRow) {
                 viewCell.classList.add('p-grid-cell-cursor');
             }
+            Ui.on(viewCell, Ui.Events.CLICK, event => {
+                self.grid.unselectAll(false);
+                self.grid.select(dataRow);
+                self.grid.focusCell(viewRowIndex, viewColumnIndex);
+            });
             /*
              if (value.inserted)
              content.className = 'grid-marker-inserted';

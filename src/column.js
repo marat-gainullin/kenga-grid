@@ -191,21 +191,6 @@ class Column {
             }
         });
 
-        Object.defineProperty(this, 'width', {
-            get: function () {
-                return width;
-            },
-            set: function (aValue) {
-                if (width !== aValue) {
-                    width = aValue;
-                    regenerateColStyle();
-                    if (grid) {
-                        grid.updateSectionsWidth();
-                    }
-                }
-            }
-        });
-
         Object.defineProperty(this, 'padding', {
             get: function () {
                 return padding;
@@ -230,6 +215,21 @@ class Column {
                 if (minWidth !== aValue) {
                     minWidth = aValue;
                     regenerateColStyle();
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'width', {
+            get: function () {
+                return width;
+            },
+            set: function (aValue) {
+                if (width !== aValue) {
+                    width = aValue;
+                    regenerateColStyle();
+                    if (grid) {
+                        grid.updateSectionsWidth();
+                    }
                 }
             }
         });

@@ -1809,6 +1809,19 @@ class Grid extends Widget {
             }
         }
 
+        function verticalScrollIntoVirtualView(rowIndex, row) {
+            if (rowsHeight != null && rowIndex >= frozenRows) {
+                const headerHeight = Math.max(frozenLeftContainer.offsetHeight, frozenRightContainer.offsetHeight)
+                const viewportHeight = shell.clientHeight - headerHeight;
+                const rowTopInViewport = rowIndex * rowsHeight - viewportHeight
+                const scrollPadding = viewportHeight / 2
+                shell.scrollTop = Math.max(0, rowTopInViewport - scrollPadding);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function horizontalScrollIntoView(cell) {
             if (cell.offsetLeft < shell.scrollLeft) {
                 shell.scrollLeft = cell.offsetLeft;
@@ -1861,6 +1874,14 @@ class Grid extends Widget {
                                     horizontalScrollIntoView(focusedCell.cell);
                                     setCursorOn(viewRows[focusedCell.row], false);
                                     return true;
+                                } else {
+                                    // Warning! Don't change 'row' to 'focusedCell.row' !
+                                    if (verticalScrollIntoVirtualView(row, viewRows[row])) {
+                                        changeFocusCell(row, column, null)
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
                                 }
                             }
                         }
