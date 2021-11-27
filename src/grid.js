@@ -231,6 +231,9 @@ class Grid extends Widget {
             }
 
             function showColumnsMenu(event) {
+                if (columnsMenu) {
+                    closeColumnMenu();
+                }
                 columnsMenu = new Menu();
                 fillColumnsMenu(frozenLeft, columnsMenu);
                 fillColumnsMenu(frozenRight, columnsMenu);
@@ -240,17 +243,7 @@ class Grid extends Widget {
                 columnsMenu.showAt(pageX, pageY);
             }
 
-            Ui.on(columnsChevron, Ui.Events.CLICK, event => {
-                if (columnsMenu) {
-                    columnsMenu.close();
-                    columnsMenu = null;
-                } else {
-                    showColumnsMenu(event);
-                }
-            });
-            Ui.on(columnsChevron, Ui.Events.CONTEXTMENU, event => {
-                event.preventDefault();
-                event.stopPropagation();
+            Ui.on(columnsChevron, Ui.Events.MOUSEDOWN, event => {
                 showColumnsMenu(event);
             });
         })());
