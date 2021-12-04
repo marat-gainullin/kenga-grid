@@ -341,18 +341,15 @@ class Section {
             tr.className = `p-grid-header-row ${dynamicHeaderRowsClassName}`;
             layer.forEach(node => {
                 tr.appendChild(node.view.element);
-                if (node.column.comparator) {
-                    node.view.element.className = node.column.comparator.ascending ? 'p-grid-header-sorted-asc ' : 'p-grid-header-sorted-desc ';
-                } else {
-                    if (node.column.sortable) {
-                        node.view.element.className = 'p-grid-header-unsorted ';
-                    } else {
-                        node.view.element.className = '';
-                    }
-                }
+                node.view.sortable = node.column.sortable;
                 node.view.element.className += ` p-grid-header-cell ${dynamicHeaderCellsClassName}`; // reassign classes
                 node.view.element.classList.add(node.column.styleName);
                 Array.prototype.push.apply(children, node.children);
+                // User's rendering for all values, including null
+                if (node.column.onHeaderRender) {
+                    const handler = node.column.onHeaderRender;
+                    handler.call(node.column, node.view, node.view.element);
+                }
             });
             thead.appendChild(tr);
             return children;

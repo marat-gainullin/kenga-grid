@@ -1,6 +1,5 @@
 import ColumnNode from '../column-node';
 import RadioServiceColumn from '../radio-button-service-column';
-import NodeView from '../../header/node-view';
 
 class RadioServiceColumnNode extends ColumnNode {
     constructor() {

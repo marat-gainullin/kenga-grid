@@ -26,11 +26,13 @@ class Column {
         let readonly = false;
         let visible = true;
         let sortable = true;
+        let switchable = true;
         let comparator; // PathComparator
         const headers = []; // multiple instances of NodeView
-        let onRender;
-        let onSelect;
-        let grid;
+        let onRender = null;
+        let onHeaderRender = null;
+        let onSelect = null;
+        let grid = null;
 
         function paddedWidthToStyle() {
             return width == null || width === '' || width === Infinity ? '' : `width: ${typeof width == 'number' || (typeof width == 'string' && width.endsWith('px')) ? `${parseFloat(width) + padding}px` : width};`;
@@ -405,6 +407,15 @@ class Column {
             }
         });
 
+        Object.defineProperty(this, 'switchable', {
+            get: function () {
+                return switchable;
+            },
+            set: function (aValue) {
+                switchable = aValue;
+            }
+        });
+
         Object.defineProperty(this, 'onRender', {
             get: function () {
                 return onRender;
@@ -412,6 +423,17 @@ class Column {
             set: function (aValue) {
                 if (onRender !== aValue) {
                     onRender = aValue;
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'onHeaderRender', {
+            get: function () {
+                return onHeaderRender;
+            },
+            set: function (aValue) {
+                if (onHeaderRender !== aValue) {
+                    onHeaderRender = aValue;
                 }
             }
         });

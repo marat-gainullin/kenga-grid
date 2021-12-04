@@ -347,7 +347,22 @@ class ColumnNode {
                 return column.sortable;
             },
             set: function (aValue) {
-                column.sortable = aValue;
+                if (column.sortable !== aValue) {
+                    column.sortable = aValue;
+                    nodeView.sortable = aValue;
+                    column.headers.forEach(nv => {
+                        nv.sortable = aValue;
+                    });
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'switchable', {
+            get: function () {
+                return column.switchable;
+            },
+            set: function (aValue) {
+                column.switchable = aValue;
             }
         });
 
@@ -366,6 +381,15 @@ class ColumnNode {
             },
             set: function (aValue) {
                 column.onRender = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'onHeaderRender', {
+            get: function () {
+                return column.onHeaderRender;
+            },
+            set: function (aValue) {
+                column.onHeaderRender = aValue;
             }
         });
 

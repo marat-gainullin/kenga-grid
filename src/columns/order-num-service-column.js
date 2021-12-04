@@ -18,6 +18,11 @@ class OrderNumServiceColumn extends ServiceColumn {
                 self.grid.focusCell(viewRowIndex, viewColumnIndex);
             });
             viewCell.classList.add('p-grid-cell-service');
+            // User's rendering for all values, including null
+            if (self.onRender || self.grid.onRender) {
+                const handler = self.onRender ? self.onRender : self.grid.onRender;
+                handler.call(self, dataRow, viewCell, viewRowIndex, null);
+            }
         }
         Object.defineProperty(this, 'render', {
             get: function() {

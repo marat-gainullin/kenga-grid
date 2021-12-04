@@ -7,6 +7,7 @@ class ServiceColumn extends Column {
 
         this.width = 22;
         this.readonly = true;
+        this.sortable = false;
 
         Object.defineProperty(this, 'minWidth', {
             get: function() {

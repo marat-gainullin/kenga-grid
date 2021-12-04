@@ -26,6 +26,11 @@ class RadioButtonServiceColumn extends ServiceColumn {
             viewCell.appendChild(radio);
             viewCell.classList.add('p-grid-cell-service');
             viewCell.classList.add('p-grid-cell-check-box');
+            // User's rendering for all values, including null
+            if (self.onRender || self.grid.onRender) {
+                const handler = self.onRender ? self.onRender : self.grid.onRender;
+                handler.call(self, dataRow, viewCell, viewRowIndex, null);
+            }
         }
         Object.defineProperty(this, 'render', {
             get: function() {

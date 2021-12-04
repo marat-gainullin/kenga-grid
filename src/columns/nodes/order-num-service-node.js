@@ -1,12 +1,11 @@
 import ColumnNode from '../column-node';
 import OrderNumServiceColumn from '../order-num-service-column';
-import NodeView from '../../header/node-view';
 
 class OrderNumServiceColumnNode extends ColumnNode {
     constructor() {
         super(OrderNumServiceColumn);
         this.view.text = '\\';
-        
+
         const self = this;
 
         function copy() {

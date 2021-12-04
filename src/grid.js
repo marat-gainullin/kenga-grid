@@ -222,11 +222,13 @@ class Grid extends Widget {
             function fillColumnsMenu(section, target) {
                 for (let i = 0; i < section.columnsCount; i++) {
                     const column = section.getColumn(i);
-                    const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
-                    miCheck.addValueChangeHandler(event => {
-                        column.visible = !!event.newValue;
-                    });
-                    target.add(miCheck);
+                    if (column.switchable) {
+                        const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
+                        miCheck.addValueChangeHandler(event => {
+                            column.visible = !!event.newValue;
+                        });
+                        target.add(miCheck);
+                    }
                 }
             }
 

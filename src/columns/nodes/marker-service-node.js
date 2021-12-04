@@ -1,6 +1,5 @@
 import ColumnNode from '../column-node';
 import MarkerServiceColumn from '../marker-service-column';
-import NodeView from '../../header/node-view';
 
 class MarkerServiceColumnNode extends ColumnNode {
     constructor() {

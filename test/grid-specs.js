@@ -674,7 +674,7 @@ describe('Grid Api', () => {
         expect(instance.frozenRight.columnsCount).toEqual(4);
         expect(instance.bodyRight.columnsCount).toEqual(4);
 
-        document.body.removeChild(instance.element);
+        //document.body.removeChild(instance.element);
     });
     xit('Editing.Popup', () => {
         const instance = new Grid();

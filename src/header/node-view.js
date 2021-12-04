@@ -16,6 +16,7 @@ class NodeView {
         let background = null;
         let foreground = null;
         let font = null;
+        let sortable = true;
         let moveable = true;
         let resizable = true;
         thMover.draggable = moveable;
@@ -33,11 +34,13 @@ class NodeView {
         Ui.on(th, Ui.Events.CLICK, event => {
             function checkOthers() {
                 if (!event.ctrlKey && !event.metaKey) {
+                    const column = viewColumnNode.column;
                     column.grid.unsort(false);
                 }
             }
+
             if (event.button === 0) {
-                var column = viewColumnNode.column;
+                const column = viewColumnNode.column;
                 if (viewColumnNode.leaf && column.sortable) {
                     if (!column.comparator) {
                         checkOthers();
@@ -160,6 +163,7 @@ class NodeView {
                 event.dataTransfer.dropEffect = 'none';
             }
         }
+
         Ui.on(th, Ui.Events.DRAGOVER, onDragOver);
 
         function inThRect(event) {
@@ -204,6 +208,7 @@ class NodeView {
                 event.dataTransfer.dropEffect = 'none';
             }
         }
+
         Ui.on(th, Ui.Events.DRAGENTER, onDragEnter);
 
         function onDragLeave(event) {
@@ -216,6 +221,7 @@ class NodeView {
                 }
             }
         }
+
         Ui.on(th, Ui.Events.DRAGLEAVE, onDragLeave);
 
         function onDrop(event) {
@@ -238,79 +244,98 @@ class NodeView {
                 }
             }
         }
+
         Ui.on(th, Ui.Events.DROP, onDrop);
 
+        function applySortable() {
+            th.classList.remove('p-grid-header-sorted-asc', 'p-grid-header-sorted-desc', 'p-grid-header-unsorted')
+            if (sortable) {
+                const column = viewColumnNode.column;
+                if (column.comparator) {
+                    th.classList.add(column.comparator.ascending ? 'p-grid-header-sorted-asc' : 'p-grid-header-sorted-desc');
+                } else {
+                    th.classList.add('p-grid-header-unsorted')
+                }
+            }
+        }
+
         Object.defineProperty(this, 'element', {
-            get: function() {
+            get: function () {
                 return th;
             }
         });
 
         Object.defineProperty(this, 'title', {
-            get: function() {
+            get: function () {
                 return thTitle;
             }
         });
 
         Object.defineProperty(this, 'mover', {
-            get: function() {
+            get: function () {
                 return thMover;
             }
         });
 
+        Object.defineProperty(this, 'resizer', {
+            get: function () {
+                return thResizer;
+            }
+        });
+
         Object.defineProperty(this, 'text', {
-            get: function() {
+            get: function () {
                 return thTitle.innerText;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 thTitle.innerText = aValue;
             }
         });
 
         Object.defineProperty(this, 'column', {
-            get: function() {
+            get: function () {
                 return findRightMostLeafColumn();
             }
         });
 
         Object.defineProperty(this, 'columnNode', {
-            get: function() {
+            get: function () {
                 return viewColumnNode;
             }
         });
 
         Object.defineProperty(this, 'background', {
-            get: function() {
+            get: function () {
                 return background;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 background = aValue;
             }
         });
 
         Object.defineProperty(this, 'foreground', {
-            get: function() {
+            get: function () {
                 return foreground;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 foreground = aValue;
             }
         });
 
         Object.defineProperty(this, 'font', {
-            get: function() {
+            get: function () {
                 return font;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 font = aValue;
             }
         });
 
         Object.defineProperty(this, 'resizable', {
-            get: function() {
+            get: function () {
                 return resizable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (resizable !== aValue) {
                     resizable = aValue;
                     if (resizable) {
@@ -325,14 +350,25 @@ class NodeView {
         });
 
         Object.defineProperty(this, 'moveable', {
-            get: function() {
+            get: function () {
                 return moveable;
             },
-            set: function(aValue) {
+            set: function (aValue) {
                 if (moveable !== aValue) {
                     moveable = aValue;
                     thMover.draggable = moveable;
                 }
+            }
+        });
+
+        Object.defineProperty(this, 'sortable', {
+            get: function () {
+                return sortable;
+            },
+            set: function (aValue) {
+                // Warning! don't insert equals check. See the section.js#drawHeader code
+                sortable = aValue;
+                applySortable()
             }
         });
 
@@ -347,7 +383,7 @@ class NodeView {
 }
 
 Object.defineProperty(NodeView, 'HEADER_VIEW', {
-    get: function() {
+    get: function () {
         return HEADER_VIEW;
     }
 });
