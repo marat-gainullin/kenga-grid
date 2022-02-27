@@ -28,16 +28,10 @@ class Grid extends Widget {
         const headerCellsStyleElement = document.createElement('style');
         const headerRowsStyleElement = document.createElement('style');
 
-        const oddRowsStyleElement = document.createElement('style');
-        const evenRowsStyleElement = document.createElement('style');
-
         const dynamicCellsClassName = `p-grid-cell-${Id.next()}`;
         const dynamicRowsClassName = `p-grid-row-${Id.next()}`;
         const dynamicHeaderCellsClassName = `p-grid-header-cell-${Id.next()}`;
         const dynamicHeaderRowsClassName = `p-grid-header-row-${Id.next()}`;
-
-        const dynamicOddRowsClassName = `p-grid-odd-row-${Id.next()}`;
-        const dynamicEvenRowsClassName = `p-grid-even-row-${Id.next()}`;
 
         const columnsChevron = document.createElement('div');
 
@@ -46,14 +40,14 @@ class Grid extends Widget {
         const frozenRightContainer = document.createElement('div');
         frozenContainer.appendChild(columnsChevron);
 
-        const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         Object.defineProperty(this, 'frozenLeft', {
             get: function () {
                 return frozenLeft;
             }
         });
         frozenLeftContainer.appendChild(frozenLeft.element);
-        const frozenRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const frozenRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         Object.defineProperty(this, 'frozenRight', {
             get: function () {
                 return frozenRight;
@@ -66,7 +60,7 @@ class Grid extends Widget {
         const bodyContainer = document.createElement('div');
         const bodyLeftContainer = document.createElement('div');
         const bodyRightContainer = document.createElement('div');
-        const bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const bodyLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         bodyLeft.virtual = true;
         Object.defineProperty(this, 'bodyLeft', {
             get: function () {
@@ -74,7 +68,7 @@ class Grid extends Widget {
             }
         });
         bodyLeftContainer.appendChild(bodyLeft.element);
-        const bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const bodyRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         bodyRight.virtual = true;
         Object.defineProperty(this, 'bodyRight', {
             get: function () {
@@ -88,14 +82,14 @@ class Grid extends Widget {
         const footerContainer = document.createElement('div');
         const footerLeftContainer = document.createElement('div');
         const footerRightContainer = document.createElement('div');
-        const footerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const footerLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         Object.defineProperty(this, 'footerLeft', {
             get: function () {
                 return footerLeft;
             }
         });
         footerLeftContainer.appendChild(footerLeft.element);
-        const footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName, dynamicOddRowsClassName, dynamicEvenRowsClassName);
+        const footerRight = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         Object.defineProperty(this, 'footerRight', {
             get: function () {
                 return footerRight;
@@ -123,10 +117,7 @@ class Grid extends Widget {
         let renderingPadding = 1;
         let showHorizontalLines = true;
         let showVerticalLines = true;
-        let showOddRowsInOtherColor = true;
         let linesColor = null;
-        let oddRowsColor = null;
-        let evenRowsColor = '#f6f6f6';
 
         let selectedRows = new Set();
         let selectionLead = null;
@@ -194,9 +185,6 @@ class Grid extends Widget {
         shell.appendChild(cellsStyleElement);
         shell.appendChild(rowsStyleElement);
 
-        shell.appendChild(oddRowsStyleElement);
-        shell.appendChild(evenRowsStyleElement);
-
         shell.appendChild(frozenContainer);
         shell.appendChild(document.createElement('br'))
         shell.appendChild(bodyContainer);
@@ -254,9 +242,6 @@ class Grid extends Widget {
         regenerateDynamicHeaderRowsStyles();
         regenerateDynamicCellsStyles();
         regenerateDynamicRowsStyles();
-
-        regenerateDynamicOddRowsStyles();
-        regenerateDynamicEvenRowsStyles();
 
         Ui.on(shell, Ui.Events.KEYDOWN, event => {
             if (event.keyCode === KeyCodes.KEY_UP) {
@@ -729,48 +714,6 @@ class Grid extends Widget {
             }
         });
 
-        function regenerateDynamicOddRowsStyles() {
-            if (showOddRowsInOtherColor && oddRowsColor) {
-                oddRowsStyleElement.innerHTML =
-                    `.${dynamicOddRowsClassName}{${oddRowsColor ? `background-color: ${oddRowsColor.toStyled ? oddRowsColor.toStyled() : oddRowsColor};` : ''}}`;
-            } else {
-                oddRowsStyleElement.innerHTML = '';
-            }
-        }
-
-        Object.defineProperty(this, 'oddRowsColor', {
-            get: function () {
-                return oddRowsColor;
-            },
-            set: function (aValue) {
-                if (oddRowsColor !== aValue) {
-                    oddRowsColor = aValue;
-                    regenerateDynamicOddRowsStyles();
-                }
-            }
-        });
-
-        function regenerateDynamicEvenRowsStyles() {
-            if (showOddRowsInOtherColor && evenRowsColor) {
-                evenRowsStyleElement.innerHTML =
-                    `.${dynamicEvenRowsClassName}{${evenRowsColor ? `background-color: ${evenRowsColor.toStyled ? evenRowsColor.toStyled() : evenRowsColor};` : ''}}`;
-            } else {
-                evenRowsStyleElement.innerHTML = '';
-            }
-        }
-
-        Object.defineProperty(this, 'evenRowsColor', {
-            get: function () {
-                return evenRowsColor;
-            },
-            set: function (aValue) {
-                if (evenRowsColor !== aValue) {
-                    evenRowsColor = aValue;
-                    regenerateDynamicEvenRowsStyles();
-                }
-            }
-        });
-
         function regenerateDynamicRowsStyles() {
             rowsStyleElement.innerHTML =
                 `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
@@ -875,19 +818,6 @@ class Grid extends Widget {
                 if (aValue >= 0 && frozenRows !== aValue) {
                     frozenRows = aValue;
                     setupRanges();
-                }
-            }
-        });
-
-        Object.defineProperty(this, 'showOddRowsInOtherColor', {
-            get: function () {
-                return showOddRowsInOtherColor;
-            },
-            set: function (aValue) {
-                if (showOddRowsInOtherColor !== aValue) {
-                    showOddRowsInOtherColor = aValue;
-                    regenerateDynamicOddRowsStyles();
-                    regenerateDynamicEvenRowsStyles();
                 }
             }
         });

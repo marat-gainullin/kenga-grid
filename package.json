@@ -1,6 +1,6 @@
 {
   "name": "kenga-grid",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "Kenga interactive virtual grid. Frozen rows and columns, tree-grid, hierarchical header, etc.",
   "repository": "https://github.com/marat-gainullin/kenga-grid.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "kenga": "0.0.48",
-    "kenga-fields": "0.0.30",
+    "kenga-fields": "0.0.31",
     "kenga-menu": "0.0.31"
   },
   "devDependencies": {

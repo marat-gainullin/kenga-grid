@@ -348,6 +348,11 @@ class Column {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = !!value;
+                if (readonly) {
+                  checkbox.onchange = () => {
+                    checkbox.checked = !!value;
+                  }
+                }
                 viewCell.appendChild(checkbox);
                 viewCell.classList.add('p-grid-cell-check-box');
             } else {

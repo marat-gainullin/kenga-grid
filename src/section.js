@@ -9,9 +9,7 @@ class Section {
         dynamicCellsClassName,
         dynamicRowsClassName,
         dynamicHeaderCellsClassName,
-        dynamicHeaderRowsClassName,
-        dynamicOddRowsClassName,
-        dynamicEvenRowsClassName
+        dynamicHeaderRowsClassName
     ) {
         const self = this;
 
@@ -527,9 +525,9 @@ class Section {
                     }
                     viewRow.className = `p-grid-row ${dynamicRowsClassName}`;
                     if ((i + 1) % 2 === 0) {
-                        viewRow.classList.add(dynamicEvenRowsClassName);
+                        viewRow.classList.add(`p-grid-even-row`);
                     } else {
-                        viewRow.classList.add(dynamicOddRowsClassName);
+                        viewRow.classList.add(`p-grid-odd-row`);
                     }
                     if (grid.isSelected(dataRow))
                         viewRow.classList.add('p-grid-selected-row');
