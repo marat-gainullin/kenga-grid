@@ -76,7 +76,7 @@ class NodeView {
                     };
                     columnToResize = findRightMostLeafColumn();
                     mouseDownAtX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                    mouseDownWidth = parseFloat(viewColumnNode.width);
+                    mouseDownWidth = columnToResize.width == null ? columnToResize.header.element.offsetWidth : parseFloat(columnToResize.width);
                     if (!onMouseUp) {
                         onMouseUp = Ui.on(document, Ui.Events.MOUSEUP, event => {
                             event.stopPropagation();
