@@ -1740,7 +1740,7 @@ class Grid extends Widget {
                 const viewportHeight = shell.clientHeight - headerHeight;
                 const rowTopInViewport = rowIndex * rowsHeight - viewportHeight
                 const scrollPadding = viewportHeight / 2
-                shell.scrollTop = Math.max(0, rowTopInViewport - scrollPadding);
+                shell.scrollTop = Math.max(0, rowTopInViewport + scrollPadding);
                 return true;
             } else {
                 return false;
