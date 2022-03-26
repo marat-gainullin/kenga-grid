@@ -38,7 +38,6 @@ class Grid extends Widget {
         const frozenContainer = document.createElement('div');
         const frozenLeftContainer = document.createElement('div');
         const frozenRightContainer = document.createElement('div');
-        frozenContainer.appendChild(columnsChevron);
 
         const frozenLeft = new Section(self, dynamicCellsClassName, dynamicRowsClassName, dynamicHeaderCellsClassName, dynamicHeaderRowsClassName);
         Object.defineProperty(this, 'frozenLeft', {
@@ -179,18 +178,24 @@ class Grid extends Widget {
         footerRightContainer.className = 'p-grid-section-footer-right';
 
         columnsChevron.className = 'p-grid-columns-chevron';
+        columnsChevron.style.height = `${headerRowsHeight}px`
 
         shell.appendChild(headerCellsStyleElement);
         shell.appendChild(headerRowsStyleElement);
         shell.appendChild(cellsStyleElement);
         shell.appendChild(rowsStyleElement);
 
+        shell.appendChild(columnsChevron);
         shell.appendChild(frozenContainer);
         shell.appendChild(document.createElement('br'))
         shell.appendChild(bodyContainer);
         shell.appendChild(document.createElement('br'))
         shell.appendChild(footerContainer);
 
+        Ui.on(shell, Ui.Events.SCROLL, event => {
+            columnsChevron.style.right = `${-shell.scrollLeft}px`
+            columnsChevron.style.top = `${shell.scrollTop}px`
+        })
         Ui.on(shell, Ui.Events.DRAGSTART, event => {
             if (draggableRows) {
                 const targetElement = event.target;
@@ -206,37 +211,34 @@ class Grid extends Widget {
         });
 
         let columnsMenu = null;
-        ((() => {
-            function fillColumnsMenu(section, target) {
-                for (let i = 0; i < section.columnsCount; i++) {
-                    const column = section.getColumn(i);
-                    if (column.switchable) {
-                        const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
-                        miCheck.addValueChangeHandler(event => {
-                            column.visible = !!event.newValue;
-                        });
-                        target.add(miCheck);
-                    }
+
+        function showColumnsMenu(atElement, horizontal) {
+            if (columnsMenu) {
+                closeColumnMenu();
+            }
+            columnsMenu = new Menu();
+            fillColumnsMenu(frozenLeft, columnsMenu);
+            fillColumnsMenu(frozenRight, columnsMenu);
+            Ui.startMenuSession(columnsMenu);
+            columnsMenu.showRelativeTo(arguments.length > 0 ? atElement : columnsChevron, arguments.length > 1 ? horizontal : true)
+        }
+
+        function fillColumnsMenu(section, target) {
+            for (let i = 0; i < section.columnsCount; i++) {
+                const column = section.getColumn(i);
+                if (column.switchable) {
+                    const miCheck = new CheckBoxMenuItem(column.header.text, column.visible);
+                    miCheck.addValueChangeHandler(event => {
+                        column.visible = !!event.newValue;
+                    });
+                    target.add(miCheck);
                 }
             }
+        }
 
-            function showColumnsMenu(event) {
-                if (columnsMenu) {
-                    closeColumnMenu();
-                }
-                columnsMenu = new Menu();
-                fillColumnsMenu(frozenLeft, columnsMenu);
-                fillColumnsMenu(frozenRight, columnsMenu);
-                Ui.startMenuSession(columnsMenu);
-                const pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-                columnsMenu.showAt(pageX, pageY);
-            }
-
-            Ui.on(columnsChevron, Ui.Events.MOUSEDOWN, event => {
-                showColumnsMenu(event);
-            });
-        })());
+        Ui.on(columnsChevron, Ui.Events.MOUSEDOWN, event => {
+            showColumnsMenu(columnsChevron, true);
+        });
 
         regenerateDynamicHeaderCellsStyles();
         regenerateDynamicHeaderRowsStyles();
@@ -782,6 +784,7 @@ class Grid extends Widget {
             set: function (aValue) {
                 if (headerRowsHeight !== aValue) {
                     headerRowsHeight = aValue;
+                    columnsChevron.style.height = `${headerRowsHeight}px`
                     regenerateDynamicHeaderRowsStyles();
                 }
             }
@@ -795,6 +798,12 @@ class Grid extends Widget {
                 columnsChevron.style.display = aValue ? '' : 'none';
                 frozenLeft.headerVisible = aValue;
                 frozenRight.headerVisible = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'columnsChevron', {
+            get: function () {
+                return columnsChevron;
             }
         });
 
@@ -1467,6 +1476,12 @@ class Grid extends Widget {
         Object.defineProperty(this, 'applyColumnsNodes', {
             get: function () {
                 return applyColumnsNodes;
+            }
+        });
+
+        Object.defineProperty(this, 'showColumnsMenuRelativeTo', {
+            get: function () {
+                return showColumnsMenu;
             }
         });
 

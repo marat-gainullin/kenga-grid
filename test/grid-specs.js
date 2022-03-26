@@ -3,6 +3,8 @@
 
 import '../src/layout.css';
 import '../src/theme.css';
+import 'kenga-menu/layout.css';
+import 'kenga-menu/theme.css';
 
 import Logger from 'septima-utils/logger';
 import Grid from '../src/grid';
