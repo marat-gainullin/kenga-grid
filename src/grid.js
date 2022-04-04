@@ -1120,8 +1120,6 @@ class Grid extends Widget {
                 }
                 bindElements();
                 bindCursor();
-            } else {
-                shell.classList.add('p-grid-empty');
             }
             rowsToViewRows(false);
             setupRanges(true);
@@ -1147,9 +1145,6 @@ class Grid extends Widget {
                     itemsRemoved(removed)
                 }
             });
-            if (!rows || rows.length === 0) {
-                shell.classList.add('p-grid-empty');
-            }
         }
 
         function unbindElements() {
@@ -1180,7 +1175,6 @@ class Grid extends Widget {
             unselectAll(false);
             rowsToViewRows(false);
             setupRanges(true);
-            shell.classList.remove('p-grid-empty');
         }
 
         function bindCursor() {
@@ -1285,6 +1279,11 @@ class Grid extends Widget {
         function setupRanges(needRedraw) {
             if (arguments.length < 1)
                 needRedraw = true;
+            if (!viewRows || viewRows.length === 0) {
+                shell.classList.add('p-grid-empty');
+            } else {
+                shell.classList.remove('p-grid-empty');
+            }
             const frozenRangeEnd = viewRows.length >= frozenRows ? frozenRows : viewRows.length;
             frozenLeft.setDataRange(0, frozenRangeEnd, needRedraw);
             frozenRight.setDataRange(0, frozenRangeEnd, needRedraw);
@@ -2044,7 +2043,7 @@ class Grid extends Widget {
                 Array.prototype.unshift.apply(stack, roots);
                 while (stack.length > 0) {
                     const item = stack.shift();
-                    if (parents[parents.length - 1] !== getParentOf(item)) {
+                    while (parents[parents.length - 1] !== getParentOf(item)) {
                         parents.pop();
                     }
                     depths.set(item, parents.length);
