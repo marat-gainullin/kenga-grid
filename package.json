@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "kenga": "0.0.48",
-    "kenga-fields": "0.0.31",
+    "kenga-fields": "0.0.32",
     "kenga-menu": "0.0.31"
   },
   "devDependencies": {
