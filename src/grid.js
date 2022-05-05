@@ -33,7 +33,9 @@ class Grid extends Widget {
         const dynamicHeaderCellsClassName = `p-grid-header-cell-${Id.next()}`;
         const dynamicHeaderRowsClassName = `p-grid-header-row-${Id.next()}`;
 
+        const columnsChevronContainer = document.createElement('div');
         const columnsChevron = document.createElement('div');
+        columnsChevronContainer.appendChild(columnsChevron)
 
         const frozenContainer = document.createElement('div');
         const frozenLeftContainer = document.createElement('div');
@@ -167,6 +169,7 @@ class Grid extends Widget {
 
         shell.className = 'p-widget p-grid-shell p-scroll p-vertical-scroll-filler p-horizontal-scroll-filler p-grid-empty';
 
+        columnsChevronContainer.className = 'p-grid-section-tools';
         frozenContainer.className = 'p-grid-section-frozen';
         frozenLeftContainer.className = 'p-grid-section-frozen-left';
         frozenRightContainer.className = 'p-grid-section-frozen-right';
@@ -185,17 +188,20 @@ class Grid extends Widget {
         shell.appendChild(cellsStyleElement);
         shell.appendChild(rowsStyleElement);
 
-        shell.appendChild(columnsChevron);
+        shell.appendChild(columnsChevronContainer);
+        shell.appendChild(document.createElement('br'))
         shell.appendChild(frozenContainer);
         shell.appendChild(document.createElement('br'))
         shell.appendChild(bodyContainer);
         shell.appendChild(document.createElement('br'))
         shell.appendChild(footerContainer);
 
+        /*
         Ui.on(shell, Ui.Events.SCROLL, event => {
             columnsChevron.style.right = `${-shell.scrollLeft}px`
             columnsChevron.style.top = `${shell.scrollTop}px`
         })
+        */
         Ui.on(shell, Ui.Events.DRAGSTART, event => {
             if (draggableRows) {
                 const targetElement = event.target;
@@ -1886,7 +1892,9 @@ class Grid extends Widget {
                         if (editor.textChanged) {
                             editor.textChanged();
                         }
-                        column.setValue(edited, editor.value);
+                        if (!editor.addValueChangeHandler) { // To avoid duplicated attempts to change a value
+                            column.setValue(edited, editor.value);
+                        }
                     };
                     let valueChangeReg = editor.addValueChangeHandler ?
                         editor.addValueChangeHandler(event => {

@@ -11,6 +11,24 @@
     display: inline-block;
 }
 
+.p-grid-section-tools {
+    position: sticky;
+    height: 0px;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    z-index: 300;
+}
+
+.p-grid-columns-chevron {
+    display: inline-block;
+    position: absolute;
+    box-sizing: border-box;
+    right: 0px;
+    top: 0px;
+    width: 10px;
+}
+
 .p-grid-section-frozen,
 .p-grid-section-body,
 .p-grid-section-footer {
