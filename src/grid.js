@@ -960,6 +960,31 @@ class Grid extends Widget {
             }
         });
 
+        function expandAll() {
+            if (isTreeConfigured()) {
+              const rows = discoverRows();
+              rows.forEach(anElement => {
+                  if (!expandedRows.has(anElement)) {
+                      const children = getChildrenOf(anElement);
+                      if (children && children.length > 0) {
+                          expandedRows.add(anElement);
+                          fireExpanded(anElement);
+                      }
+                  }
+              })
+              rowsToViewRows(false);
+              const wasScrollTop = shell.scrollTop;
+              setupRanges(true);
+              shell.scrollTop = wasScrollTop;
+            }
+        }
+
+        Object.defineProperty(this, 'expandAll', {
+            get: function () {
+                return expandAll;
+            }
+        });
+
         function collapse(anElement) {
             if (isTreeConfigured()) {
                 if (expandedRows.has(anElement)) {
@@ -976,6 +1001,27 @@ class Grid extends Widget {
         Object.defineProperty(this, 'collapse', {
             get: function () {
                 return collapse;
+            }
+        });
+
+        function collapseAll() {
+            if (isTreeConfigured()) {
+                expandedRows.forEach(anElement => {
+                  fireCollapsed(anElement);
+                });
+                if (expandedRows.size > 0) {
+                    expandedRows.clear();
+                    rowsToViewRows(false);
+                    const wasScrollTop = shell.scrollTop;
+                    setupRanges(true);
+                    shell.scrollTop = wasScrollTop;
+                }
+            }
+        }
+
+        Object.defineProperty(this, 'collapseAll', {
+            get: function () {
+                return collapseAll;
             }
         });
 
