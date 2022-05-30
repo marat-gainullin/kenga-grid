@@ -938,18 +938,30 @@ class Grid extends Widget {
             }
         });
 
-        function expand(anElement) {
+        function expand(aElements) {
             if (isTreeConfigured()) {
-                if (!expandedRows.has(anElement)) {
-                    const children = getChildrenOf(anElement);
-                    if (children && children.length > 0) {
-                        expandedRows.add(anElement);
-                        rowsToViewRows(false);
-                        const wasScrollTop = shell.scrollTop;
-                        setupRanges(true);
-                        shell.scrollTop = wasScrollTop;
-                        fireExpanded(anElement);
+                const elements = Array.isArray(aElements) ? aElements : [aElements]
+                const toExpand = elements.filter((anElement) => {
+                    if (!expandedRows.has(anElement)) {
+                        const children = getChildrenOf(anElement);
+                        if (children && children.length > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
                     }
+                })
+                toExpand.forEach((anElement) => {
+                    expandedRows.add(anElement);
+                    fireExpanded(anElement);
+                });
+                if (toExpand.length > 0) {
+                    rowsToViewRows(false);
+                    const wasScrollTop = shell.scrollTop;
+                    setupRanges(true);
+                    shell.scrollTop = wasScrollTop;
                 }
             }
         }
@@ -960,40 +972,19 @@ class Grid extends Widget {
             }
         });
 
-        function expandAll() {
+        function collapse(aElements) {
             if (isTreeConfigured()) {
-              const rows = discoverRows();
-              rows.forEach(anElement => {
-                  if (!expandedRows.has(anElement)) {
-                      const children = getChildrenOf(anElement);
-                      if (children && children.length > 0) {
-                          expandedRows.add(anElement);
-                          fireExpanded(anElement);
-                      }
-                  }
-              })
-              rowsToViewRows(false);
-              const wasScrollTop = shell.scrollTop;
-              setupRanges(true);
-              shell.scrollTop = wasScrollTop;
-            }
-        }
-
-        Object.defineProperty(this, 'expandAll', {
-            get: function () {
-                return expandAll;
-            }
-        });
-
-        function collapse(anElement) {
-            if (isTreeConfigured()) {
-                if (expandedRows.has(anElement)) {
+                const elements = Array.isArray(aElements) ? aElements : [aElements]
+                const toCollapse = elements.filter((anElement) => expandedRows.has(anElement))
+                toCollapse.forEach((anElement) => {
                     expandedRows.delete(anElement);
+                    fireCollapsed(anElement);
+                });
+                if (toCollapse.length > 0) {
                     rowsToViewRows(false);
                     const wasScrollTop = shell.scrollTop;
                     setupRanges(true);
                     shell.scrollTop = wasScrollTop;
-                    fireCollapsed(anElement);
                 }
             }
         }
@@ -1004,33 +995,26 @@ class Grid extends Widget {
             }
         });
 
-        function collapseAll() {
+        function toggle(aElements) {
             if (isTreeConfigured()) {
-                expandedRows.forEach(anElement => {
-                  fireCollapsed(anElement);
+                const elements = Array.isArray(aElements) ? aElements : [aElements]
+                elements.forEach((anElement) => {
+                    if (isExpanded(anElement)) {
+                        expandedRows.delete(anElement);
+                        fireCollapsed(anElement);
+                    } else {
+                        const children = getChildrenOf(anElement);
+                        if (children && children.length > 0) {
+                            expandedRows.add(anElement);
+                            fireExpanded(anElement);
+                        }
+                    }
                 });
-                if (expandedRows.size > 0) {
-                    expandedRows.clear();
+                if (elements.length > 0) {
                     rowsToViewRows(false);
                     const wasScrollTop = shell.scrollTop;
                     setupRanges(true);
                     shell.scrollTop = wasScrollTop;
-                }
-            }
-        }
-
-        Object.defineProperty(this, 'collapseAll', {
-            get: function () {
-                return collapseAll;
-            }
-        });
-
-        function toggle(anElement) {
-            if (isTreeConfigured()) {
-                if (isExpanded(anElement)) {
-                    collapse(anElement);
-                } else {
-                    expand(anElement);
                 }
             }
         }
