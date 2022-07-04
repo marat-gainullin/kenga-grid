@@ -565,6 +565,9 @@ class Section {
                             }
                         }
                     }
+                    if (grid.onRowRender) {
+                        grid.onRowRender.call(self, dataRow, viewRow, i);
+                    }
                     if (draggableRows) {
                         Ui.on(viewRow, Ui.Events.DRAGSTART, event => {
                             event.stopPropagation();

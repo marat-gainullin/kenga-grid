@@ -304,34 +304,21 @@ class Column {
             if (grid.treeIndicatorColumn === self) {
                 const padding = grid.indent * grid.depthOf(dataRow);
                 viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
+                viewCell.classList.add('p-grid-cell-node')
                 if (!grid.isLeaf(dataRow)) {
                     viewCell.classList.add(grid.expanded(dataRow) ? 'p-grid-cell-expanded' : 'p-grid-cell-collapsed');
                 }
-
-                const onClick = (event) => {
-                    if (event.button === 0) {
-                        const rect = viewCell.getBoundingClientRect();
-                        if (event.clientX > rect.left + padding - grid.indent &&
-                            event.clientX <= rect.left + padding) {
-                            event.stopPropagation();
-                            if (checkbox && !readonly) {
-                                setValue(dataRow, !getValue(dataRow));
-                            }
-                            grid.toggle(dataRow);
-                        } else {
-                            handleSelection(event);
-                        }
-                    }
-                };
-                Ui.on(viewCell, Ui.Events.CLICK, onClick);
-                if (checkbox) {
-                    Ui.on(checkbox, Ui.Events.CLICK, onClick);
-                }
-            } else {
-                Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
-                if (checkbox) {
-                    Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
-                }
+                const viewcellTreeHandler = document.createElement('div')
+                viewcellTreeHandler.classList.add('p-grid-cell-node-handler')
+                viewCell.appendChild(viewcellTreeHandler);
+                Ui.on(viewcellTreeHandler, Ui.Events.CLICK, (event) => {
+                  event.stopPropagation();
+                  grid.toggle(dataRow);
+                });
+            }
+            Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
+            if (checkbox) {
+                Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
             }
             Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                 if (event.button === 0) {
@@ -343,7 +330,8 @@ class Column {
             });
             const value = getValue(dataRow);
             if (value == null) { // null == undefined, null !== undefined
-                viewCell.innerTHML = ''; // No native rendering for null values
+                // No native rendering for null values
+                text = null
             } else if (typeof (value) === 'boolean') {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
@@ -355,6 +343,7 @@ class Column {
                 }
                 viewCell.appendChild(checkbox);
                 viewCell.classList.add('p-grid-cell-check-box');
+                text = `${value}`;
             } else {
                 if (renderer) {
                     renderer.value = value;
@@ -364,12 +353,13 @@ class Column {
                 } else {
                     text = `${value}`;
                 }
-                viewCell.innerText = text;
             }
             // User's rendering for all values, including null
             if (onRender || grid.onRender) {
                 const handler = onRender ? onRender : grid.onRender;
                 handler.call(self, dataRow, viewCell, viewRowIndex, text);
+            } else {
+                viewCell.innerText = text;
             }
         }
 

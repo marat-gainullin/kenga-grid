@@ -161,6 +161,7 @@ class Grid extends Widget {
         let boundToCursor = null;
         let cursorProperty = 'cursor';
         let onRender = null;
+        let onRowRender = null;
         let editable = true;
         let deletable = true;
         let insertable = true;
@@ -865,6 +866,15 @@ class Grid extends Widget {
             },
             set: function (aValue) {
                 onRender = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'onRowRender', {
+            get: function () {
+                return onRowRender;
+            },
+            set: function (aValue) {
+                onRowRender = aValue;
             }
         });
 

@@ -1,6 +1,6 @@
 {
   "name": "kenga-grid",
-  "version": "0.0.57",
+  "version": "0.0.58",
   "description": "Kenga interactive virtual grid. Frozen rows and columns, tree-grid, hierarchical header, etc.",
   "repository": "https://github.com/marat-gainullin/kenga-grid.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -8,6 +8,7 @@
   "private": false,
   "scripts": {
     "clean": "rimraf ./build",
+    "build": "rollup -c rollup.lib.config.js",
     "test": "rimraf ./build && rollup -c rollup.test.config.js",
     "lib": "rimraf ./build && rollup -c rollup.lib.config.js",
     "upload": "rimraf ./build && rollup -c rollup.lib.config.js && npm publish ./build/lib"
