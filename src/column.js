@@ -302,7 +302,7 @@ class Column {
             }
 
             if (grid.treeIndicatorColumn === self) {
-                const padding = grid.indent * grid.depthOf(dataRow);
+                const padding = grid.indent * (grid.depthOf(dataRow) - 1);
                 viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
                 viewCell.classList.add('p-grid-cell-node')
                 if (!grid.isLeaf(dataRow)) {
@@ -359,7 +359,10 @@ class Column {
                 const handler = onRender ? onRender : grid.onRender;
                 handler.call(self, dataRow, viewCell, viewRowIndex, text);
             } else {
-                viewCell.innerText = text;
+                const content = document.createElement('div')
+                content.classList.add('p-grid-cell-plain')
+                content.innerText = text;
+                viewCell.appendChild(content);
             }
         }
 
