@@ -952,6 +952,8 @@ class Grid extends Widget {
             if (isTreeConfigured()) {
                 const elements = Array.isArray(aElements) ? aElements : [aElements]
                 const toExpand = elements.filter((anElement) => {
+                    return !expandedRows.has(anElement)
+                    /*
                     if (!expandedRows.has(anElement)) {
                         const children = getChildrenOf(anElement);
                         if (children && children.length > 0) {
@@ -962,6 +964,7 @@ class Grid extends Widget {
                     } else {
                         return false;
                     }
+                    */
                 })
                 toExpand.forEach((anElement) => {
                     expandedRows.add(anElement);
@@ -979,6 +982,21 @@ class Grid extends Widget {
         Object.defineProperty(this, 'expand', {
             get: function () {
                 return expand;
+            }
+        });
+
+        function expandedChanged() {
+            if (isTreeConfigured()) {
+                rowsToViewRows(false);
+                const wasScrollTop = shell.scrollTop;
+                setupRanges(true);
+                shell.scrollTop = wasScrollTop;
+            }
+        }
+
+        Object.defineProperty(this, 'expandedChanged', {
+            get: function () {
+                return expandedChanged;
             }
         });
 
