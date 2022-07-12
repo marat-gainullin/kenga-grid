@@ -1,8 +1,6 @@
 /* global Infinity */
 import Ui from 'kenga/utils';
 import Bound from 'kenga/bound';
-import WidgetEvent from 'kenga/events/widget-event';
-import ValueChangeEvent from 'kenga/events/widget-event';
 import Id from './id';
 
 class Column {
@@ -240,7 +238,7 @@ class Column {
                     }
                     Ui.later(() => {
                         if (onResize) {
-                          onResize.call(self, new ValueChangeEvent(self, oldWidth, width))
+                          onResize.call(self, self, oldWidth, width)
                         }
                     })
                 }
@@ -397,13 +395,13 @@ class Column {
                     if (visible) {
                       Ui.later(() => {
                         if (onShow) {
-                          onShow.call(self, new WidgetEvent(self))
+                          onShow.call(self, self)
                         }
                       })
                     } else {
                       Ui.later(() => {
                         if (onHide) {
-                          onHide.call(self, new WidgetEvent(self))
+                          onHide.call(self, self)
                         }
                       })
                     }

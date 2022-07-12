@@ -1533,9 +1533,11 @@ class Grid extends Widget {
             lookupDataColumn(treeWidthPadding);
             updateSectionsWidth();
             redraw();
-            if (onHeaderChanged) {
-              onHeaderChanged.call(self, new WidgetEvent(self))
-            }
+            Ui.later(() => {
+              if (onHeaderChanged) {              
+                onHeaderChanged.call(self, new WidgetEvent(self))
+              }
+            });
         }
 
         Object.defineProperty(this, 'header', {
