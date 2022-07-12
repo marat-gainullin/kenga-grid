@@ -6,6 +6,7 @@ import KeyCodes from 'kenga/key-codes';
 import KeyEvent from 'kenga/events/key-event';
 import BlurEvent from 'kenga/events/blur-event';
 import ItemEvent from 'kenga/events/item-event';
+import WidgetEvent from 'kenga/events/widget-event';
 import FocusEvent from 'kenga/events/focus-event';
 import Menu from 'kenga-menu/menu';
 import CheckBoxMenuItem from 'kenga-menu/check-box-menu-item';
@@ -160,6 +161,7 @@ class Grid extends Widget {
         let boundToElementsComposition = null;
         let boundToCursor = null;
         let cursorProperty = 'cursor';
+        let onHeaderChanged = null;
         let onRender = null;
         let onRowRender = null;
         let editable = true;
@@ -860,6 +862,15 @@ class Grid extends Widget {
             }
         });
 
+        Object.defineProperty(this, 'onHeaderChanged', {
+            get: function () {
+                return onHeaderChanged;
+            },
+            set: function (aValue) {
+                onHeaderChanged = aValue;
+            }
+        });
+
         Object.defineProperty(this, 'onRender', {
             get: function () {
                 return onRender;
@@ -1522,6 +1533,9 @@ class Grid extends Widget {
             lookupDataColumn(treeWidthPadding);
             updateSectionsWidth();
             redraw();
+            if (onHeaderChanged) {
+              onHeaderChanged.call(self, new WidgetEvent(self))
+            }
         }
 
         Object.defineProperty(this, 'header', {

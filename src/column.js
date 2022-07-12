@@ -1,6 +1,8 @@
 /* global Infinity */
 import Ui from 'kenga/utils';
 import Bound from 'kenga/bound';
+import WidgetEvent from 'kenga/events/widget-event';
+import ValueChangeEvent from 'kenga/events/widget-event';
 import Id from './id';
 
 class Column {
@@ -29,6 +31,9 @@ class Column {
         let switchable = true;
         let comparator; // PathComparator
         const headers = []; // multiple instances of NodeView
+        let onShow = null;
+        let onHide = null;
+        let onResize = null;
         let onRender = null;
         let onHeaderRender = null;
         let onSelect = null;
@@ -227,11 +232,17 @@ class Column {
             },
             set: function (aValue) {
                 if (width !== aValue) {
+                    const oldWidth = width
                     width = aValue;
                     regenerateColStyle();
                     if (grid) {
                         grid.updateSectionsWidth();
                     }
+                    Ui.later(() => {
+                        if (onResize) {
+                          onResize.call(self, new ValueChangeEvent(self, oldWidth, width))
+                        }
+                    })
                 }
             }
         });
@@ -383,6 +394,19 @@ class Column {
                     if (grid) {
                         grid.applyColumnsNodes();
                     }
+                    if (visible) {
+                      Ui.later(() => {
+                        if (onShow) {
+                          onShow.call(self, new WidgetEvent(self))
+                        }
+                      })
+                    } else {
+                      Ui.later(() => {
+                        if (onHide) {
+                          onHide.call(self, new WidgetEvent(self))
+                        }
+                      })
+                    }
                 }
             }
         });
@@ -411,6 +435,39 @@ class Column {
             },
             set: function (aValue) {
                 switchable = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'onShow', {
+            get: function () {
+                return onShow;
+            },
+            set: function (aValue) {
+                if (onShow !== aValue) {
+                    onShow = aValue;
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'onHide', {
+            get: function () {
+                return onHide;
+            },
+            set: function (aValue) {
+                if (onHide !== aValue) {
+                    onHide = aValue;
+                }
+            }
+        });
+
+        Object.defineProperty(this, 'onResize', {
+            get: function () {
+                return onResize;
+            },
+            set: function (aValue) {
+                if (onResize !== aValue) {
+                    onResize = aValue;
+                }
             }
         });
 
