@@ -375,6 +375,33 @@ class ColumnNode {
             }
         });
 
+        Object.defineProperty(this, 'onResize', {
+            get: function () {
+                return column.onResize;
+            },
+            set: function (aValue) {
+                column.onResize = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'onShow', {
+            get: function () {
+                return column.onShow;
+            },
+            set: function (aValue) {
+                column.onShow = aValue;
+            }
+        });
+
+        Object.defineProperty(this, 'onHide', {
+            get: function () {
+                return column.onHide;
+            },
+            set: function (aValue) {
+                column.onHide = aValue;
+            }
+        });
+
         Object.defineProperty(this, 'onRender', {
             get: function () {
                 return column.onRender;
