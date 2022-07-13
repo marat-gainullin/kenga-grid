@@ -236,11 +236,13 @@ class Column {
                     if (grid) {
                         grid.updateSectionsWidth();
                     }
-                    Ui.later(() => {
-                        if (onResize) {
-                          onResize.call(self, self, oldWidth, width)
-                        }
-                    })
+                    if (onResize) {
+                      Ui.later(() => {
+                          if (onResize) {
+                            onResize.call(self, self, oldWidth, width)
+                          }
+                      })
+                    }
                 }
             }
         });
@@ -393,17 +395,21 @@ class Column {
                         grid.applyColumnsNodes();
                     }
                     if (visible) {
-                      Ui.later(() => {
-                        if (onShow) {
-                          onShow.call(self, self)
-                        }
-                      })
+                      if (onShow) {
+                        Ui.later(() => {
+                          if (onShow) {
+                            onShow.call(self, self)
+                          }
+                        })
+                      }
                     } else {
-                      Ui.later(() => {
-                        if (onHide) {
-                          onHide.call(self, self)
-                        }
-                      })
+                      if (onHide) {
+                        Ui.later(() => {
+                          if (onHide) {
+                            onHide.call(self, self)
+                          }
+                        })
+                      }
                     }
                 }
             }
