@@ -20,6 +20,7 @@ export default class Grid extends Widget {
   readonly columnsCount: number
   showHorizontalLines: boolean
   showVerticalLines: boolean
+  showOddRowsInOtherColor: boolean
   rowsHeight: number
   linesColor: string
   renderingThrottle: number

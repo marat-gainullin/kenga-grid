@@ -11,9 +11,9 @@ export default class ColumnNode {
   readonly chlidren: ColumnNode[]
   copy(): ColumnNode
   view: NodeView
-  width: number
-  minWidth: number
-  maxWidth: number
+  width: number | string
+  minWidth: number | string
+  maxWidth: number | string
   field: string
   sortField: string
   title: string
