@@ -42,15 +42,15 @@ class NodeView {
             if (event.button === 0) {
                 const column = viewColumnNode.column;
                 if (viewColumnNode.leaf && column.sortable) {
-                    if (!column.comparator) {
+                    if (column.sortedDescending) {
                         checkOthers();
-                        column.sort();
-                    } else if (column.comparator.ascending) {
+                        column.unsort();
+                    } else if (column.sortedAscending) {
                         checkOthers();
                         column.sortDesc();
                     } else {
                         checkOthers();
-                        column.unsort();
+                        column.sort();
                     }
                 }
             }
