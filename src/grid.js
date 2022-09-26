@@ -2178,10 +2178,11 @@ class Grid extends Widget {
                     while (res === 0 && index < sortedColumns.length) {
                         const column = sortedColumns[index++];
                         if (column.comparator) {
+                            let comparator = column.comparator;
                             if(column.sortedAscending) {
-                              res = column.comparator.compare(o1, o2);
+                              res = comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2);
                             } else if (column.sortedDescending) {
-                              res = -column.comparator.compare(o1, o2);
+                              res = -(comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2));
                             } else {
                               res = 0;
                             }
