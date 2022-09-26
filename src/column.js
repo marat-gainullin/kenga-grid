@@ -181,6 +181,8 @@ class Column {
         function unsort(fireEvent) {
             if (arguments.length < 1)
                 fireEvent = true;
+            sortedAscending = false
+            sortedDescending = false
             if (fireEvent) {
                 grid.removeSortedColumn(self);
             }
