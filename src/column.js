@@ -122,6 +122,9 @@ class Column {
 
         Object.defineProperty(this, 'comparator', {
             get: function () {
+                if (!comparator) {
+                  comparator = new Bound.PathComparator(sortField ? sortField : field, true);
+                }
                 return comparator;
             },
             set: function (aValue) {
@@ -132,7 +135,6 @@ class Column {
         function sort(fireEvent) {
             if (arguments.length < 1)
                 fireEvent = true;
-            comparator = new Bound.PathComparator(sortField ? sortField : field, true);
             if (fireEvent) {
                 grid.addSortedColumn(self);
             }
@@ -181,6 +183,7 @@ class Column {
             set: function (aValue) {
                 if (field !== aValue) {
                     field = aValue;
+                    comparator = new Bound.PathComparator(sortField ? sortField : field, true);
                 }
             }
         });
@@ -192,6 +195,7 @@ class Column {
             set: function (aValue) {
                 if (sortField !== aValue) {
                     sortField = aValue;
+                    comparator = new Bound.PathComparator(sortField ? sortField : field, true);
                 }
             }
         });
