@@ -27,6 +27,8 @@ class Column {
         let visible = true;
         let sortable = true;
         let switchable = true;
+        let sortedAscending = false
+        let sortedDescending = false
         let comparator; // PathComparator
         const headers = []; // multiple instances of NodeView
         let onShow = null;
@@ -120,6 +122,18 @@ class Column {
             }
         });
 
+        Object.defineProperty(this, 'sortedAscending', {
+            get: function () {
+                return sortedAscending;
+            }
+        });
+
+        Object.defineProperty(this, 'sortedDescending', {
+            get: function () {
+                return sortedDescending;
+            }
+        });
+
         Object.defineProperty(this, 'comparator', {
             get: function () {
                 if (!comparator) {
@@ -135,6 +149,8 @@ class Column {
         function sort(fireEvent) {
             if (arguments.length < 1)
                 fireEvent = true;
+            sortedAscending = true
+            sortedDescending = false
             if (fireEvent) {
                 grid.addSortedColumn(self);
             }
@@ -149,7 +165,8 @@ class Column {
         function sortDesc(fireEvent) {
             if (arguments.length < 1)
                 fireEvent = true;
-            comparator = new Bound.PathComparator(sortField ? sortField : field, false);
+            sortedAscending = false
+            sortedDescending = true
             if (fireEvent) {
                 grid.addSortedColumn(self);
             }
@@ -164,7 +181,6 @@ class Column {
         function unsort(fireEvent) {
             if (arguments.length < 1)
                 fireEvent = true;
-            comparator = null;
             if (fireEvent) {
                 grid.removeSortedColumn(self);
             }

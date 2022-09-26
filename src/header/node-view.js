@@ -251,8 +251,10 @@ class NodeView {
             th.classList.remove('p-grid-header-sorted-asc', 'p-grid-header-sorted-desc', 'p-grid-header-unsorted')
             if (sortable) {
                 const column = viewColumnNode.column;
-                if (column.comparator) {
-                    th.classList.add(column.comparator.ascending ? 'p-grid-header-sorted-asc' : 'p-grid-header-sorted-desc');
+                if (column.sortedAscending) {
+                    th.classList.add('p-grid-header-sorted-asc');
+                } else if(column.sortedDescending) {
+                    th.classList.add('p-grid-header-sorted-desc');
                 } else {
                     th.classList.add('p-grid-header-unsorted')
                 }

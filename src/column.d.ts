@@ -23,6 +23,7 @@ export default class Column {
   sort(): void
   sortDesc(): void
   unsort(): void
+  comparator: (dataRow1: any, dataRow2: any) => void
   getValue(aItem: any): any
   setValue(aItem: any, value: any)
 

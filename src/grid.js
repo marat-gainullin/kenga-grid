@@ -2178,7 +2178,13 @@ class Grid extends Widget {
                     while (res === 0 && index < sortedColumns.length) {
                         const column = sortedColumns[index++];
                         if (column.comparator) {
-                            res = column.comparator.compare(o1, o2);
+                            if(column.sortedAscending) {
+                              res = column.comparator.compare(o1, o2);
+                            } else if (column.sortedDescending) {
+                              res = -column.comparator.compare(o1, o2);
+                            } else {
+                              res = 0;
+                            }
                         }
                     }
                     return res;
