@@ -99,9 +99,7 @@ class NodeView {
                             const newPageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
                             const dx = newPageX - mouseDownAtX;
                             const newWidth = mouseDownWidth + dx;
-                            if (columnToResize.minWidth <= newWidth && newWidth <= columnToResize.maxWidth) {
-                                columnToResize.width = newWidth;
-                            }
+                            columnToResize.width = newWidth;
                         });
                     }
                 }
