@@ -13,6 +13,7 @@ export default class Grid extends Widget {
   readonly selectionLead: any
   readonly selected: any[]
   readonly selectedCount: number
+  stickySelection: boolean
   readonly rows: any[]
   readonly viewRows: any[]
   readonly treeIndicatorColumn: Column

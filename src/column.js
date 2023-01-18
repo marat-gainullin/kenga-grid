@@ -323,7 +323,7 @@ class Column {
                 const focusedViewColumnIndexBefore = grid.focusedColumn;
                 const onlySelectedBefore = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
 
-                if (!event.ctrlKey && !event.metaKey) {
+                if (!grid.stickySelection && !event.ctrlKey && !event.metaKey) {
                     grid.unselectAll(false);
                 }
                 grid.select(dataRow);

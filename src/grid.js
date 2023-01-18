@@ -123,6 +123,7 @@ class Grid extends Widget {
 
         let selectedRows = new Set();
         let selectionLead = null;
+        let stickySelection = false
 
         Object.defineProperty(this, 'selectionLead', {
             get: function () {
@@ -142,6 +143,14 @@ class Grid extends Widget {
         Object.defineProperty(this, 'selectedCount', {
             get: function () {
                 return selectedRows.size;
+            }
+        });
+        Object.defineProperty(this, 'stickySelection', {
+            get: function () {
+                return stickySelection;
+            },
+            set: function (value) {
+                stickySelection = !!value;
             }
         });
 

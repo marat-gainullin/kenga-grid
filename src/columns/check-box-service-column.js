@@ -5,6 +5,7 @@ class CheckBoxServiceColumn extends ServiceColumn {
     constructor(node) {
         super(node);
         const self = this;
+        this.sortable = true;
 
         function getValue(dataRow) {
             return self.grid.isSelected(dataRow);
@@ -56,6 +57,11 @@ class CheckBoxServiceColumn extends ServiceColumn {
                 }
             }
         });
+        this.comparator = (o1, o2) => {
+          const s1 = self.grid.isSelected(o1) ? 1 : 0
+          const s2 = self.grid.isSelected(o2) ? 1 : 0
+          return s1 - s2
+        }
     }
 }
 
