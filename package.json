@@ -16,7 +16,7 @@
   "dependencies": {
     "kenga": "0.0.50",
     "kenga-fields": "0.0.34",
-    "kenga-menu": "0.0.43"
+    "kenga-menu": "0.0.45"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",
