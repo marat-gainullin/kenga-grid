@@ -2136,7 +2136,7 @@ class Grid extends Widget {
                 Array.prototype.unshift.apply(stack, roots);
                 while (stack.length > 0) {
                     const item = stack.shift();
-                    while (parents[parents.length - 1] !== getParentOf(item)) {
+                    while (parents[parents.length - 1] != null && parents[parents.length - 1] !== getParentOf(item)) {
                         parents.pop();
                     }
                     depths.set(item, parents.length);
