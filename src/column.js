@@ -333,22 +333,6 @@ class Column {
                     grid.focusCell(viewRowIndex, viewColumnIndex, true);
                 }
             }
-
-            if (grid.treeIndicatorColumn === self) {
-                const padding = grid.indent * (grid.depthOf(dataRow) - 1);
-                viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
-                viewCell.classList.add('p-grid-cell-node')
-                if (!grid.isLeaf(dataRow)) {
-                    viewCell.classList.add(grid.expanded(dataRow) ? 'p-grid-cell-expanded' : 'p-grid-cell-collapsed');
-                }
-                const viewcellTreeHandler = document.createElement('div')
-                viewcellTreeHandler.classList.add('p-grid-cell-node-handler')
-                viewCell.appendChild(viewcellTreeHandler);
-                Ui.on(viewcellTreeHandler, Ui.Events.CLICK, (event) => {
-                  event.stopPropagation();
-                  grid.toggle(dataRow);
-                });
-            }
             Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
             if (checkbox) {
                 Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
@@ -392,10 +376,26 @@ class Column {
                 const handler = onRender ? onRender : grid.onRender;
                 handler.call(self, dataRow, viewCell, viewRowIndex, text);
             } else {
-                const content = document.createElement('div')
-                content.classList.add('p-grid-cell-plain')
-                content.innerText = text;
-                viewCell.appendChild(content);
+                viewCell.innerText = text;
+            }
+            if (grid.treeIndicatorColumn === self) {
+                const padding = grid.indent * (grid.depthOf(dataRow) - 1);
+                viewCell.style.paddingLeft = padding > 0 ? `${padding}px` : '';
+                viewCell.classList.add('p-grid-cell-node')
+                if (!grid.isLeaf(dataRow)) {
+                    viewCell.classList.add(grid.expanded(dataRow) ? 'p-grid-cell-expanded' : 'p-grid-cell-collapsed');
+                }
+                const viewcellTreeHandler = document.createElement('div')
+                viewcellTreeHandler.classList.add('p-grid-cell-node-handler')
+                Ui.on(viewcellTreeHandler, Ui.Events.CLICK, (event) => {
+                  event.stopPropagation();
+                  grid.toggle(dataRow);
+                });
+                if (viewCell.hasChildNodes()) {      
+                  viewCell.insertBefore(viewcellTreeHandler, viewCell.firstChild);
+                } else {
+                  viewCell.appendChild(viewcellTreeHandler);
+                }
             }
         }
 
