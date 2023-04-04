@@ -119,6 +119,7 @@ class Grid extends Widget {
         let renderingPadding = 1;
         let showHorizontalLines = true;
         let showVerticalLines = true;
+        let showOddRowsInOtherColor = true
         let linesColor = null;
 
         let selectedRows = new Set();
@@ -738,6 +739,19 @@ class Grid extends Widget {
             rowsStyleElement.innerHTML =
                 `.${dynamicRowsClassName}{ height: ${rowsHeight}px;}`;
         }
+
+        Object.defineProperty(this, 'showOddRowsInOtherColor', {
+            get: function () {
+                return showOddRowsInOtherColor;
+            },
+            set: function (aValue) {
+                if (showOddRowsInOtherColor !== aValue) {
+                    showOddRowsInOtherColor = !!aValue;
+                    redrawFrozen();
+                    redrawBody();
+                }
+            }
+        });
 
         Object.defineProperty(this, 'rowsHeight', {
             get: function () {

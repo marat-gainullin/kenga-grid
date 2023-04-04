@@ -524,13 +524,16 @@ class Section {
                         viewRow.draggable = draggableRows;
                     }
                     viewRow.className = `p-grid-row ${dynamicRowsClassName}`;
-                    if ((i + 1) % 2 === 0) {
-                        viewRow.classList.add(`p-grid-even-row`);
-                    } else {
-                        viewRow.classList.add(`p-grid-odd-row`);
+                    if (grid.showOddRowsInOtherColor) {
+                        if ((i + 1) % 2 === 0) {
+                            viewRow.classList.add(`p-grid-even-row`);
+                        } else {
+                            viewRow.classList.add(`p-grid-odd-row`);
+                        }
                     }
-                    if (grid.isSelected(dataRow))
+                    if (grid.isSelected(dataRow)) {
                         viewRow.classList.add('p-grid-selected-row');
+                    }
                     viewRow.style.scrollMarginTop = scrollMarginTop;
                     viewRow[JS_ROW_NAME] = dataRow;
                     if (i < renderedRangeStart) {
