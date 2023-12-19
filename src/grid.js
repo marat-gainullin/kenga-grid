@@ -1986,6 +1986,7 @@ class Grid extends Widget {
                     } else {
                         editor.element.style.paddingLeft = '';
                     }
+                    editor.validateOnInput = false
                     focusedCell.editor = editor;
                     focusedCell.commit = () => {
                         if (editor.textChanged) {
