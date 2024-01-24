@@ -137,7 +137,7 @@ class Column {
         Object.defineProperty(this, 'comparator', {
             get: function () {
                 if (!comparator) {
-                  comparator = new Bound.PathComparator(sortField ? sortField : field, true);
+                    comparator = new Bound.PathComparator(sortField ? sortField : field, true);
                 }
                 return comparator;
             },
@@ -259,11 +259,11 @@ class Column {
                         grid.updateSectionsWidth();
                     }
                     if (onResize) {
-                      Ui.later(() => {
-                          if (onResize) {
-                            onResize.call(self, self, oldWidth, width)
-                          }
-                      })
+                        Ui.later(() => {
+                            if (onResize) {
+                                onResize.call(self, self, oldWidth, width)
+                            }
+                        })
                     }
                 }
             }
@@ -334,9 +334,6 @@ class Column {
                 }
             }
             Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
-            if (checkbox) {
-                Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
-            }
             Ui.on(viewCell, Ui.Events.DBLCLICK, event => {
                 if (event.button === 0) {
                     handleSelection(event);
@@ -353,10 +350,11 @@ class Column {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = !!value;
+                Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
                 if (readonly) {
-                  checkbox.onchange = () => {
-                    checkbox.checked = !!value;
-                  }
+                    checkbox.onchange = () => {
+                        checkbox.checked = !!value;
+                    }
                 }
                 viewCell.appendChild(checkbox);
                 viewCell.classList.add('p-grid-cell-check-box');
@@ -375,7 +373,7 @@ class Column {
             if (onRender || grid.onRender) {
                 const handler = onRender ? onRender : grid.onRender;
                 handler.call(self, dataRow, viewCell, viewRowIndex, text);
-            } else {
+            } else if (!checkbox) {
                 viewCell.innerText = text;
             }
             if (grid.treeIndicatorColumn === self) {
@@ -388,13 +386,13 @@ class Column {
                 const viewcellTreeHandler = document.createElement('div')
                 viewcellTreeHandler.classList.add('p-grid-cell-node-handler')
                 Ui.on(viewcellTreeHandler, Ui.Events.CLICK, (event) => {
-                  event.stopPropagation();
-                  grid.toggle(dataRow);
+                    event.stopPropagation();
+                    grid.toggle(dataRow);
                 });
-                if (viewCell.hasChildNodes()) {      
-                  viewCell.insertBefore(viewcellTreeHandler, viewCell.firstChild);
+                if (viewCell.hasChildNodes()) {
+                    viewCell.insertBefore(viewcellTreeHandler, viewCell.firstChild);
                 } else {
-                  viewCell.appendChild(viewcellTreeHandler);
+                    viewCell.appendChild(viewcellTreeHandler);
                 }
             }
         }
@@ -417,21 +415,21 @@ class Column {
                         grid.applyColumnsNodes();
                     }
                     if (visible) {
-                      if (onShow) {
-                        Ui.later(() => {
-                          if (onShow) {
-                            onShow.call(self, self)
-                          }
-                        })
-                      }
+                        if (onShow) {
+                            Ui.later(() => {
+                                if (onShow) {
+                                    onShow.call(self, self)
+                                }
+                            })
+                        }
                     } else {
-                      if (onHide) {
-                        Ui.later(() => {
-                          if (onHide) {
-                            onHide.call(self, self)
-                          }
-                        })
-                      }
+                        if (onHide) {
+                            Ui.later(() => {
+                                if (onHide) {
+                                    onHide.call(self, self)
+                                }
+                            })
+                        }
                     }
                 }
             }
