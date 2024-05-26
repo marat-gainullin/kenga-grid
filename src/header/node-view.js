@@ -31,46 +31,41 @@ class NodeView {
         const moveHintRight = document.createElement('div');
         moveHintRight.className = 'p-grid-column-move-hint-right';
 
-        Ui.on(th, Ui.Events.CLICK, event => {
-            function checkOthers() {
-                if (!event.ctrlKey && !event.metaKey) {
-                    const column = viewColumnNode.column;
-                    column.grid.unsort(false);
-                }
-            }
-
-            if (event.button === 0) {
-                const column = viewColumnNode.column;
-                if (viewColumnNode.leaf && column.sortable) {
-                    if (column.sortedDescending) {
-                        checkOthers();
-                        column.unsort();
-                    } else if (column.sortedAscending) {
-                        checkOthers();
-                        column.sortDesc();
-                    } else {
-                        checkOthers();
-                        column.sort();
-                    }
-                }
-            }
-        });
-
         ((() => {
-            Ui.on(thResizer, Ui.Events.CLICK, event => {
-                if (resizable && event.button === 0) {
-                    event.stopPropagation();
-                }
-            });
             let mouseDownAtX = null;
             let mouseDownWidth = null;
             let onMouseUp = null;
             let onMouseMove = null;
             let columnToResize = null;
+
+            Ui.on(thMover, Ui.Events.CLICK, event => {
+                if (!columnToResize && !columnDrag) {
+                    function checkOthers() {
+                        if (!event.ctrlKey && !event.metaKey) {
+                            const column = viewColumnNode.column;
+                            column.grid.unsort(false);
+                        }
+                    }
+
+                    if (event.button === 0) {
+                        const column = viewColumnNode.column;
+                        if (viewColumnNode.leaf && column.sortable) {
+                            if (column.sortedDescending) {
+                                checkOthers();
+                                column.unsort();
+                            } else if (column.sortedAscending) {
+                                checkOthers();
+                                column.sortDesc();
+                            } else {
+                                checkOthers();
+                                column.sort();
+                            }
+                        }
+                    }
+                }
+            });
             Ui.on(thResizer, Ui.Events.MOUSEDOWN, event => {
                 if (resizable && event.button === 0) {
-                    event.preventDefault();
-                    event.stopPropagation();
                     columnDrag = {
                         resize: true
                     };

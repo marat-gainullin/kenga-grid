@@ -318,7 +318,7 @@ class Grid extends Widget {
                                     self.focusedColumn--;
                                 }
                             } while ((self.focusedColumn > 0 || self.focusedRow > 0) &&
-                            !columnsFacade[self.focusedColumn].visible);
+                                !columnsFacade[self.focusedColumn].visible);
                         }
                     };
                     if (isTreeConfigured() &&
@@ -358,7 +358,7 @@ class Grid extends Widget {
                                     self.focusedColumn++;
                                 }
                             } while ((self.focusedColumn < columnsFacade.length - 1 || self.focusedRow < viewRows.length - 1) &&
-                            !columnsFacade[self.focusedColumn].visible);
+                                !columnsFacade[self.focusedColumn].visible);
                         }
                     }
                 }
@@ -1513,56 +1513,68 @@ class Grid extends Widget {
             }
         });
 
+        let columnsNodesVersion = 0
+
         function applyColumnsNodes() {
-            const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
-            clearColumnsNodes(false);
+            if (columnsNodesVersion == Number.MAX_SAFE_INTEGER) {
+                columnsNodesVersion = 0
+            } else {
+                columnsNodesVersion++
+            }
+            const wasColumnsNodesVersion = columnsNodesVersion
+            Ui.later(() => {
+                if (wasColumnsNodesVersion == columnsNodesVersion) {
+                    const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
+                    clearColumnsNodes(false);
 
-            function injectHeaders(forest) {
-                forest.forEach(node => {
-                    node.column.grid = self;
-                    node.column.headers.push(node.view);
-                    if (node.gridChanged) {
-                        node.gridChanged();
+                    function injectHeaders(forest) {
+                        forest.forEach(node => {
+                            node.column.grid = self;
+                            node.column.headers.push(node.view);
+                            if (node.gridChanged) {
+                                node.gridChanged();
+                            }
+                            injectHeaders(node.children);
+                        });
                     }
-                    injectHeaders(node.children);
-                });
-            }
 
-            const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
-            leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
-            injectHeaders(leftHeader);
-            HeaderAnalyzer.analyzeLeaves(leftHeader);
-            frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
-            rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
-            injectHeaders(rightHeader);
-            HeaderAnalyzer.analyzeLeaves(rightHeader);
-            frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
+                    const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
+                    leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
+                    injectHeaders(leftHeader);
+                    HeaderAnalyzer.analyzeLeaves(leftHeader);
+                    frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
+                    rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
+                    injectHeaders(rightHeader);
+                    HeaderAnalyzer.analyzeLeaves(rightHeader);
+                    frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
 
-            const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
-            const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
-            leftLeaves.forEach(leaf => { // linear list of column header nodes
-                addColumnToSections(leaf.column);
-            });
-            rightLeaves.forEach(leaf => { // linear list of column header nodes
-                addColumnToSections(leaf.column);
-            });
-            [
-                frozenLeftContainer,
-                bodyLeftContainer,
-                footerLeftContainer
-            ].forEach(section => {
-                section.style.display = frozenColumns > 0 ? '' : 'none';
-            });
-            lookupDataColumn(treeWidthPadding);
-            updateSectionsWidth();
-            redraw();
-            if (onHeaderChanged) {
-              Ui.later(() => {
-                if (onHeaderChanged) {
-                  onHeaderChanged.call(self, new WidgetEvent(self))
+                    const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
+                    const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
+                    leftLeaves.forEach(leaf => { // linear list of column header nodes
+                        addColumnToSections(leaf.column);
+                    });
+                    rightLeaves.forEach(leaf => { // linear list of column header nodes
+                        addColumnToSections(leaf.column);
+                    });
+                    [
+                        frozenLeftContainer,
+                        bodyLeftContainer,
+                        footerLeftContainer
+                    ].forEach(section => {
+                        section.style.display = frozenColumns > 0 ? '' : 'none';
+                    });
+                    lookupDataColumn(treeWidthPadding);
+                    updateSectionsWidth();
+                    redraw();
+                    if (onHeaderChanged) {
+                        Ui.later(() => {
+                            if (onHeaderChanged) {
+                                onHeaderChanged.call(self, new WidgetEvent(self))
+                            }
+                        });
+                    }
                 }
-              });
-            }
+            })
         }
 
         Object.defineProperty(this, 'header', {
@@ -2203,12 +2215,12 @@ class Grid extends Widget {
                         const column = sortedColumns[index++];
                         if (column.comparator) {
                             let comparator = column.comparator;
-                            if(column.sortedAscending) {
-                              res = comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2);
+                            if (column.sortedAscending) {
+                                res = comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2);
                             } else if (column.sortedDescending) {
-                              res = -(comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2));
+                                res = -(comparator.compare ? comparator.compare(o1, o2) : comparator(o1, o2));
                             } else {
-                              res = 0;
+                                res = 0;
                             }
                         }
                     }
