@@ -152,7 +152,9 @@ class Column {
             sortedAscending = true
             sortedDescending = false
             if (fireEvent) {
-                grid.addSortedColumn(self);
+                Ui.later(()=>{
+                    grid.addSortedColumn(self);
+                })
             }
         }
 
@@ -168,7 +170,9 @@ class Column {
             sortedAscending = false
             sortedDescending = true
             if (fireEvent) {
-                grid.addSortedColumn(self);
+                Ui.later(()=>{
+                    grid.addSortedColumn(self);
+                })
             }
         }
 
@@ -184,7 +188,9 @@ class Column {
             sortedAscending = false
             sortedDescending = false
             if (fireEvent) {
-                grid.removeSortedColumn(self);
+                Ui.later(()=>{
+                    grid.removeSortedColumn(self);
+                })
             }
         }
 
