@@ -13,7 +13,7 @@ export default class Grid extends Widget {
   readonly selectionLead: any
   readonly selected: any[]
   readonly selectedCount: number
-  stickySelection: boolean
+  handleSelection: boolean
   readonly rows: any[]
   readonly viewRows: any[]
   readonly treeIndicatorColumn: Column
@@ -36,6 +36,7 @@ export default class Grid extends Widget {
   onHeaderChanged: (evt: WidgetEvent) => void
   onRender: (dataRow: any, viewCell: HTMLTableCellElement, viewRowIndex?: number, text?: string) => void
   onRowRender: (dataRow: any, viewRow: HTMLTableRowElement, viewRowIndex?: number) => void
+  onFilter: (dataRow: any) => boolean
   data: any[]
   field: string
   parentField: string
@@ -91,6 +92,7 @@ export default class Grid extends Widget {
   addSortedColumn(column: Column): void
   removeSortedColumn(column: Column): void
   unsort(): void
+  filter(): void
   addExpandHandler(handler: (evt: ItemEvent) => void): { removeHandler: () => void }
   onExpand: (evt: ItemEvent) => void
   addCollapseHandler(handler: (evt: ItemEvent) => void): { removeHandler: () => void }

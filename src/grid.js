@@ -124,7 +124,7 @@ class Grid extends Widget {
 
         let selectedRows = new Set();
         let selectionLead = null;
-        let stickySelection = false
+        let handleSelection = true
 
         Object.defineProperty(this, 'selectionLead', {
             get: function () {
@@ -146,12 +146,12 @@ class Grid extends Widget {
                 return selectedRows.size;
             }
         });
-        Object.defineProperty(this, 'stickySelection', {
+        Object.defineProperty(this, 'handleSelection', {
             get: function () {
-                return stickySelection;
+                return handleSelection;
             },
             set: function (value) {
-                stickySelection = !!value;
+                handleSelection = !!value;
             }
         });
 
@@ -166,6 +166,7 @@ class Grid extends Widget {
         const expandedRows = new Set();
         const depths = new Map();
         let field = null;
+        let onFilter = null
         let boundToData = null;
         let boundToElements = null;
         let boundToElementsComposition = null;
@@ -271,7 +272,7 @@ class Grid extends Widget {
                     if (self.focusedRow > 0) {
                         let wasFocused = self.focusedRow;
                         focusCell(focusedCell.row - 1, focusedCell.column, false);
-                        if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                        if (self.handleSelection && self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                             if (event.shiftKey) {
                                 if (isSelected(viewRows[self.focusedRow])) {
                                     unselect(viewRows[wasFocused]);
@@ -291,7 +292,7 @@ class Grid extends Widget {
                     if (self.focusedRow < viewRows.length - 1) {
                         let wasFocused = self.focusedRow;
                         focusCell(focusedCell.row + 1, focusedCell.column, false);
-                        if (self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
+                        if (self.handleSelection && self.focusedRow >= 0 && self.focusedRow < viewRows.length) {
                             if (event.shiftKey) {
                                 if (isSelected(viewRows[self.focusedRow])) {
                                     unselect(viewRows[wasFocused]);
@@ -516,6 +517,14 @@ class Grid extends Widget {
         function discoverRows() {
             const rows = data && field ? Bound.getPathData(data, field) : data;
             return rows ? rows : [];
+        }
+
+        function filterRows(rows) {
+            if (!!onFilter) {
+                return rows.filter(onFilter)
+            } else {
+                return rows;
+            }
         }
 
         function itemsRemoved(items) {
@@ -1295,6 +1304,17 @@ class Grid extends Widget {
                 boundToCursor = null;
             }
         }
+
+        Object.defineProperty(this, 'onFilter', {
+            get: function () {
+                return onFilter;
+            },
+            set: function (aValue) {
+                if (onFilter !== aValue) {
+                    onFilter = aValue;
+                }
+            }
+        });
 
         Object.defineProperty(this, 'data', {
             get: function () {
@@ -2151,9 +2171,25 @@ class Grid extends Widget {
             }
         });
 
+        function filter(apply) {
+            if (arguments.length < 1)
+                apply = true;
+            rebindElements();
+            rowsToViewRows(false);
+            const wasScrollTop = shell.scrollTop;
+            setupRanges(apply);
+            shell.scrollTop = wasScrollTop;
+        }
+
+        Object.defineProperty(this, 'filter', {
+            get: function () {
+                return filter;
+            }
+        });
+
         function generateViewRows() {
             depths.clear();
-            const rows = discoverRows();
+            const rows = filterRows(discoverRows());
             if (isTreeConfigured()) {
                 viewRows = [];
                 const roots = getChildrenOf(null);

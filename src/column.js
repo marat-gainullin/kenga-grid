@@ -152,7 +152,7 @@ class Column {
             sortedAscending = true
             sortedDescending = false
             if (fireEvent) {
-                Ui.later(()=>{
+                Ui.later(() => {
                     grid.addSortedColumn(self);
                 })
             }
@@ -170,7 +170,7 @@ class Column {
             sortedAscending = false
             sortedDescending = true
             if (fireEvent) {
-                Ui.later(()=>{
+                Ui.later(() => {
                     grid.addSortedColumn(self);
                 })
             }
@@ -188,7 +188,7 @@ class Column {
             sortedAscending = false
             sortedDescending = false
             if (fireEvent) {
-                Ui.later(()=>{
+                Ui.later(() => {
                     grid.removeSortedColumn(self);
                 })
             }
@@ -324,19 +324,20 @@ class Column {
                 if (checkbox && !readonly) {
                     setValue(dataRow, !getValue(dataRow));
                 }
+                if (grid.handleSelection) {
+                    const focusedViewRowIndexBefore = grid.focusedRow;
+                    const focusedViewColumnIndexBefore = grid.focusedColumn;
+                    const onlySelectedBefore = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
 
-                const focusedViewRowIndexBefore = grid.focusedRow;
-                const focusedViewColumnIndexBefore = grid.focusedColumn;
-                const onlySelectedBefore = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
+                    if (!event.ctrlKey && !event.metaKey) {
+                        grid.unselectAll(false);
+                    }
+                    grid.select(dataRow);
 
-                if (!grid.stickySelection && !event.ctrlKey && !event.metaKey) {
-                    grid.unselectAll(false);
-                }
-                grid.select(dataRow);
-
-                const onlySelectedAfter = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
-                if (onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex) {
-                    grid.focusCell(viewRowIndex, viewColumnIndex, true);
+                    const onlySelectedAfter = grid.selected && grid.selected.length === 1 ? grid.selected[0] : null;
+                    if (onlySelectedBefore !== onlySelectedAfter || focusedViewRowIndexBefore !== viewRowIndex || focusedViewColumnIndexBefore !== viewColumnIndex) {
+                        grid.focusCell(viewRowIndex, viewColumnIndex, true);
+                    }
                 }
             }
             Ui.on(viewCell, Ui.Events.CLICK, handleSelection);
