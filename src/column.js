@@ -357,7 +357,6 @@ class Column {
                 checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = !!value;
-                Ui.on(checkbox, Ui.Events.CLICK, handleSelection);
                 if (readonly) {
                     checkbox.onchange = () => {
                         checkbox.checked = !!value;
