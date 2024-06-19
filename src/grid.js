@@ -1533,69 +1533,90 @@ class Grid extends Widget {
             }
         });
 
-        let columnsNodesVersion = 0
-
-        function applyColumnsNodes() {
-            if (columnsNodesVersion == Number.MAX_SAFE_INTEGER) {
-                columnsNodesVersion = 0
-            } else {
-                columnsNodesVersion++
+        
+        function doApplyColumnNodes() {
+            const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
+            clearColumnsNodes(false);
+            
+            function injectHeaders(forest) {
+                forest.forEach(node => {
+                    node.column.grid = self;
+                    node.column.headers.push(node.view);
+                    if (node.gridChanged) {
+                        node.gridChanged();
+                    }
+                    injectHeaders(node.children);
+                });
             }
-            const wasColumnsNodesVersion = columnsNodesVersion
-            Ui.later(() => {
-                if (wasColumnsNodesVersion == columnsNodesVersion) {
-                    const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
-                    clearColumnsNodes(false);
-
-                    function injectHeaders(forest) {
-                        forest.forEach(node => {
-                            node.column.grid = self;
-                            node.column.headers.push(node.view);
-                            if (node.gridChanged) {
-                                node.gridChanged();
-                            }
-                            injectHeaders(node.children);
-                        });
-                    }
-
-                    const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
-                    leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
-                    injectHeaders(leftHeader);
-                    HeaderAnalyzer.analyzeLeaves(leftHeader);
-                    frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
-                    rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
-                    injectHeaders(rightHeader);
-                    HeaderAnalyzer.analyzeLeaves(rightHeader);
-                    frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
-
-                    const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
-                    const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
-                    leftLeaves.forEach(leaf => { // linear list of column header nodes
-                        addColumnToSections(leaf.column);
-                    });
-                    rightLeaves.forEach(leaf => { // linear list of column header nodes
-                        addColumnToSections(leaf.column);
-                    });
-                    [
-                        frozenLeftContainer,
-                        bodyLeftContainer,
-                        footerLeftContainer
-                    ].forEach(section => {
-                        section.style.display = frozenColumns > 0 ? '' : 'none';
-                    });
-                    lookupDataColumn(treeWidthPadding);
-                    updateSectionsWidth();
-                    redraw();
+            
+            const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
+            leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
+            injectHeaders(leftHeader);
+            HeaderAnalyzer.analyzeLeaves(leftHeader);
+            frozenLeft.setHeaderNodes(leftHeader, maxDepth, false);
+            rightHeader = HeaderSplitter.split(columnNodes, frozenColumns, Infinity);
+            injectHeaders(rightHeader);
+            HeaderAnalyzer.analyzeLeaves(rightHeader);
+            frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
+            
+            const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
+            const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
+            leftLeaves.forEach(leaf => { // linear list of column header nodes
+                addColumnToSections(leaf.column);
+            });
+            rightLeaves.forEach(leaf => { // linear list of column header nodes
+                addColumnToSections(leaf.column);
+            });
+            [
+                frozenLeftContainer,
+                bodyLeftContainer,
+                footerLeftContainer
+            ].forEach(section => {
+                section.style.display = frozenColumns > 0 ? '' : 'none';
+            });
+            lookupDataColumn(treeWidthPadding);
+            updateSectionsWidth();
+            redraw();
+            if (onHeaderChanged) {
+                Ui.later(() => {
                     if (onHeaderChanged) {
-                        Ui.later(() => {
-                            if (onHeaderChanged) {
-                                onHeaderChanged.call(self, new WidgetEvent(self))
-                            }
-                        });
+                        onHeaderChanged.call(self, new WidgetEvent(self))
                     }
-                }
-            })
+                });
+            }
         }
+        
+        let columnsNodesDeferredApply = true
+        let columnsNodesVersion = 0
+        
+        function applyColumnsNodes() {
+            if (columnsNodesDeferredApply) {
+                if (columnsNodesVersion == Number.MAX_SAFE_INTEGER) {
+                    columnsNodesVersion = 0
+                } else {
+                    columnsNodesVersion++
+                }
+                const wasColumnsNodesVersion = columnsNodesVersion
+                Ui.later(() => {
+                    if (wasColumnsNodesVersion == columnsNodesVersion) {
+                        doApplyColumnNodes()
+                    }
+                })
+            } else {
+                doApplyColumnNodes()
+            }
+        }        
+
+        Object.defineProperty(this, 'columnsNodesDeferredApply', {
+            get: function () {
+                return columnsNodesDeferredApply;
+            },
+            set: function (aValue) {
+                if (columnsNodesDeferredApply !== aValue) {
+                    columnsNodesDeferredApply = aValue;
+                }
+            }
+        });
 
         Object.defineProperty(this, 'header', {
             get: function () {

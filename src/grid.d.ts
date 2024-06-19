@@ -49,6 +49,7 @@ export default class Grid extends Widget {
   focusedRow: number
   focusedColumn: number
   hasSelected: boolean
+  columnsNodesDeferredApply: boolean
   insert(item: any): void
   deleteSelected(): void
   removed(items: any[]): void
