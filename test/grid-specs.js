@@ -28,6 +28,7 @@ describe('Grid Api', () => {
 
     it('Header.Split.Plain', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         const marker = new MarkerColumnNode();
         const check = new CheckBoxColumnNode();
@@ -75,6 +76,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.1', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         const marker = new MarkerColumnNode();
         const marker1 = new MarkerColumnNode();
@@ -132,6 +134,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.2', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         document.body.appendChild(instance.element);
 
@@ -190,6 +193,7 @@ describe('Grid Api', () => {
     });
     it('Header.Split.TwoLayers.3', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         document.body.appendChild(instance.element);
 
@@ -263,6 +267,7 @@ describe('Grid Api', () => {
 
     it('Rows.Frozen Columns.Frozen', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.width = instance.height = 250;
         instance.frozenRows = 2;
         instance.renderingPadding = 1;
@@ -312,6 +317,7 @@ describe('Grid Api', () => {
     });
     it('Rows.Sorting', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         instance.width = instance.height = 250;
         instance.frozenRows = 2;
@@ -368,9 +374,11 @@ describe('Grid Api', () => {
     });
     xit('Rows.Rendering', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
     });
     it('Rows.Dragging', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         instance.width = instance.height = 300;
         instance.frozenRows = 2;
@@ -491,6 +499,7 @@ describe('Grid Api', () => {
     })());
     it('Rows.Tree after columns', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         instance.width = instance.height = 240;
         instance.frozenRows = 2;
@@ -551,6 +560,7 @@ describe('Grid Api', () => {
     });
     it('Rows.Tree before columns', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.renderingPadding = 0;
         instance.width = instance.height = 240;
         instance.frozenRows = 2;
@@ -612,9 +622,11 @@ describe('Grid Api', () => {
     });
     xit('Columns.Performance', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
     });
     it('Editing.Inline', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
         instance.width = instance.height = 300;
         instance.renderingPadding = 0;
         instance.frozenRows = 2;
@@ -680,8 +692,10 @@ describe('Grid Api', () => {
     });
     xit('Editing.Popup', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
     });
     xit('Events', () => {
         const instance = new Grid();
+        instance.columnsNodesDeferredApply = false
     });
 });
