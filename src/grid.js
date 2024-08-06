@@ -2210,10 +2210,9 @@ class Grid extends Widget {
 
         function generateViewRows() {
             depths.clear();
-            const rows = filterRows(discoverRows());
             if (isTreeConfigured()) {
                 viewRows = [];
-                const roots = getChildrenOf(null);
+                const roots = filterRows(getChildrenOf(null));
                 const stack = [];
                 const parents = [null];
                 let maxPathLength = 1;
@@ -2226,7 +2225,7 @@ class Grid extends Widget {
                     depths.set(item, parents.length);
                     viewRows.push(item);
                     if (expandedRows.has(item)) {
-                        const children = getChildrenOf(item);
+                        const children = filterRows(getChildrenOf(item));
                         if (children.length > 0) {
                             parents.push(item);
                             if (maxPathLength < parents.length) {
@@ -2240,6 +2239,7 @@ class Grid extends Widget {
                     treeIndicatorColumn.padding = maxPathLength * indent;
                 }
             } else {
+                const rows = filterRows(discoverRows());
                 viewRows = rows.slice(0, rows.length);
             }
         }
