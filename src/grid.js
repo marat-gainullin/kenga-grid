@@ -1236,9 +1236,9 @@ class Grid extends Widget {
             const rows = discoverRows();
             boundToElements = Bound.observeElements(rows, {
                 change: anEvent => {
-                    // TODO: May be it is worth to check a ore precise condition here
+                    // TODO: May be it is worth to check a more precise condition here
                     // TODO: but it is not clear yet.
-                    // TODO: The goal of this condition id to avoid an unexpected removing of
+                    // TODO: The goal of this condition is to avoid an unexpected removing of
                     // TODO: editing widget from a cell of the grid.
                     if (!focusedCell.editor) {
                         redrawFrozen();
@@ -1533,11 +1533,11 @@ class Grid extends Widget {
             }
         });
 
-        
+
         function doApplyColumnNodes() {
             const treeWidthPadding = treeIndicatorColumn ? treeIndicatorColumn.padding : 0;
             clearColumnsNodes(false);
-            
+
             function injectHeaders(forest) {
                 forest.forEach(node => {
                     node.column.grid = self;
@@ -1548,7 +1548,7 @@ class Grid extends Widget {
                     injectHeaders(node.children);
                 });
             }
-            
+
             const maxDepth = HeaderAnalyzer.analyzeDepth(columnNodes);
             leftHeader = HeaderSplitter.split(columnNodes, 0, frozenColumns - 1);
             injectHeaders(leftHeader);
@@ -1558,7 +1558,7 @@ class Grid extends Widget {
             injectHeaders(rightHeader);
             HeaderAnalyzer.analyzeLeaves(rightHeader);
             frozenRight.setHeaderNodes(rightHeader, maxDepth, false);
-            
+
             const leftLeaves = HeaderAnalyzer.toLeaves(leftHeader);
             const rightLeaves = HeaderAnalyzer.toLeaves(rightHeader);
             leftLeaves.forEach(leaf => { // linear list of column header nodes
@@ -1585,10 +1585,10 @@ class Grid extends Widget {
                 });
             }
         }
-        
+
         let columnsNodesDeferredApply = true
         let columnsNodesVersion = 0
-        
+
         function applyColumnsNodes() {
             if (columnsNodesDeferredApply) {
                 if (columnsNodesVersion == Number.MAX_SAFE_INTEGER) {
@@ -1605,7 +1605,7 @@ class Grid extends Widget {
             } else {
                 doApplyColumnNodes()
             }
-        }        
+        }
 
         Object.defineProperty(this, 'columnsNodesDeferredApply', {
             get: function () {
@@ -2055,7 +2055,11 @@ class Grid extends Widget {
                         }) : null;
                     let focusLostReg = editor.addFocusLostHandler ?
                         editor.addFocusLostHandler(event => {
-                            completeEditing();
+                            const relatedClearer = event.event != null && editor.clearer != null && event.event.relatedTarget == editor.clearer
+                            const relatedSelector = event.event != null && editor.selector != null && event.event.relatedTarget == editor.selector
+                            if (!relatedClearer && !relatedSelector) {
+                                completeEditing();
+                            }
                         }) : null;
                     focusedCell.clean = () => {
                         if (focusLostReg) {

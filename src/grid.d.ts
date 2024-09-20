@@ -1,12 +1,12 @@
-import Widget from 'kenga/widget'
-import KeyEvent from 'kenga/events/key-event'
-import FocusEvent from 'kenga/events/focus-event'
 import BlurEvent from 'kenga/events/blur-event'
+import FocusEvent from 'kenga/events/focus-event'
 import ItemEvent from 'kenga/events/item-event'
+import KeyEvent from 'kenga/events/key-event'
 import WidgetEvent from 'kenga/events/widget-event'
-import SortEvent from './events/sort-event'
+import Widget from 'kenga/widget'
 import Column from './column'
 import ColumnNode from './columns/column-node'
+import SortEvent from './events/sort-event'
 
 export default class Grid extends Widget {
   readonly columns: Column[]
@@ -50,6 +50,7 @@ export default class Grid extends Widget {
   focusedColumn: number
   hasSelected: boolean
   columnsNodesDeferredApply: boolean
+  activeEditor: Widget
   insert(item: any): void
   deleteSelected(): void
   removed(items: any[]): void
