@@ -1736,7 +1736,9 @@ class Grid extends Widget {
             if (subject && insertBefore && subject.parent === insertBefore.parent) {
                 const neighbours = subject.parent ? subject.parent.children : columnNodes;
                 const neighbourIndex = neighbours.indexOf(subject);
-                neighbours.splice(neighbourIndex, 1);
+                if (neighbourIndex != -1) {
+                    neighbours.splice(neighbourIndex, 1);
+                }
                 const insertAt = neighbours.indexOf(insertBefore);
                 neighbours.splice(insertAt, 0, subject);
                 applyColumnsNodes();
@@ -1754,7 +1756,9 @@ class Grid extends Widget {
             if (subject && insertAfter && subject.parent === insertAfter.parent) {
                 const neighbours = subject.parent ? subject.parent.children : columnNodes;
                 const neighbourIndex = neighbours.indexOf(subject);
-                neighbours.splice(neighbourIndex, 1);
+                if (neighbourIndex != -1) {
+                    neighbours.splice(neighbourIndex, 1);
+                }
                 const insertAt = neighbours.indexOf(insertAfter);
                 neighbours.splice(insertAt + 1, 0, subject);
                 applyColumnsNodes();

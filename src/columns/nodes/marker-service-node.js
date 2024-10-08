@@ -12,6 +12,12 @@ class MarkerServiceColumnNode extends ColumnNode {
             const copied = new MarkerServiceColumnNode();
             copied.column = self.column;
             copied.view.text = self.view.text;
+            copied.view.background = self.view.background;
+            copied.view.foreground = self.view.foreground;
+            copied.view.font = self.view.font;
+            copied.view.resizable = self.view.resizable;
+            copied.view.moveable = self.view.moveable;
+            copied.view.sortable = self.view.sortable;
             copied.leavesCount = self.leavesCount;
             copied.depthRemainder = self.depthRemainder;
             return copied;

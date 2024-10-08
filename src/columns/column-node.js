@@ -28,6 +28,12 @@ class ColumnNode {
             // So, we have to replicate header cell and copied.header = header assignment is not applicable.
             // Otherwise, spans will be reassigned by header nodes unpredictably.
             copied.view.text = nodeView.text;
+            copied.view.background = nodeView.background;
+            copied.view.foreground = nodeView.foreground;
+            copied.view.font = nodeView.font;
+            copied.view.resizable = nodeView.resizable;
+            copied.view.moveable = nodeView.moveable;
+            copied.view.sortable = nodeView.sortable;
             copied.leavesCount = leavesCount;
             copied.depthRemainder = depthRemainder;
             return copied;
