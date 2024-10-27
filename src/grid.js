@@ -115,7 +115,7 @@ class Grid extends Widget {
         let sortedColumns = [];
         let headerRowsHeight = 30;
         let rowsHeight = 30;
-        let renderingThrottle = 0;
+        let renderingThrottle = 100;
         let renderingPadding = 1;
         let showHorizontalLines = true;
         let showVerticalLines = true;

@@ -448,10 +448,10 @@ class Section {
         }
 
         Object.defineProperty(this, 'redrawBody', {
-                get: function () {
-                    return redrawBody;
-                }
+            get: function () {
+                return redrawBody;
             }
+        }
         );
 
         function inTrRect(viewRow, event) {
@@ -652,11 +652,8 @@ class Section {
                     if (grid.renderingThrottle === 0) {
                         drawBody();
                     } else {
-                        const wasScrollTop = viewportElement.scrollTop
-                        Ui.delayed(grid.renderingThrottle, () => {
-                            if (wasScrollTop === viewportElement.scrollTop) {
-                                drawBody();
-                            }
+                        Ui.throttle(grid.renderingThrottle, () => {
+                            drawBody();
                         });
                     }
                 });
