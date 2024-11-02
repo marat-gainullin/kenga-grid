@@ -239,7 +239,7 @@ class Grid extends Widget {
             columnsMenu = new Menu();
             fillColumnsMenu(frozenLeft, columnsMenu);
             fillColumnsMenu(frozenRight, columnsMenu);
-            Ui.startMenuSession(columnsMenu);
+            Ui.startPopupSession(columnsMenu);
             columnsMenu.showRelativeTo(arguments.length > 0 ? atElement : columnsChevron, arguments.length > 1 ? horizontal : true)
         }
 
