@@ -648,15 +648,18 @@ class Section {
             if (!bodyFiller.parentElement) {
                 table.parentElement.appendChild(bodyFiller);
                 const viewportElement = table.parentElement.parentElement.parentElement
-                Ui.on(viewportElement, Ui.Events.SCROLL, event => {
-                    if (grid.renderingThrottle === 0) {
+                if (grid.renderingThrottle === 0) {
+                    Ui.on(viewportElement, Ui.Events.SCROLL, event => {
                         drawBody();
-                    } else {
-                        Ui.throttle(grid.renderingThrottle, () => {
-                            drawBody();
-                        });
-                    }
-                });
+                    });
+                } else {
+                    const trottled = Ui.throttleOf(grid.renderingThrottle, () => {
+                        drawBody();
+                    });
+                    Ui.on(viewportElement, Ui.Events.SCROLL, event => {
+                        trottled();
+                    });
+                }
             }
             dataRangeStart = start;
             dataRangeEnd = end;
