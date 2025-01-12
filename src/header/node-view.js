@@ -64,17 +64,18 @@ class NodeView {
                     }
                 }
             });
-            Ui.on(thResizer, Ui.Events.MOUSEDOWN, event => {
-                if (resizable && event.button === 0) {
+            Ui.on(thResizer, 'pointerdown', downEvent => {
+                if (resizable && downEvent.button === 0) {
                     columnDrag = {
                         resize: true
                     };
                     columnToResize = findRightMostLeafColumn();
-                    mouseDownAtX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                    mouseDownAtX = 'pageX' in downEvent ? downEvent.pageX : downEvent.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
                     mouseDownWidth = columnToResize.width == null ? columnToResize.header.element.offsetWidth : parseFloat(columnToResize.width);
                     if (!onMouseUp) {
-                        onMouseUp = Ui.on(document, Ui.Events.MOUSEUP, event => {
-                            event.stopPropagation();
+                        onMouseUp = Ui.on(thResizer, 'pointerup', upEvent => {
+                            upEvent.stopPropagation();
+                            thResizer.releasePointerCapture(upEvent.pointerId)
                             columnDrag = null;
                             columnToResize = null;
                             if (onMouseUp) {
@@ -88,15 +89,19 @@ class NodeView {
                         });
                     }
                     if (!onMouseMove) {
-                        onMouseMove = Ui.on(document, Ui.Events.MOUSEMOVE, event => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const newPageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                        onMouseMove = Ui.on(document, Ui.Events.MOUSEMOVE, moveEvent => {
+                            moveEvent.preventDefault();
+                            moveEvent.stopPropagation();
+                            const newPageX = ('pageX' in moveEvent ? moveEvent.pageX : moveEvent.clientX) + document.body.scrollLeft + document.documentElement.scrollLeft;
                             const dx = newPageX - mouseDownAtX;
-                            const newWidth = mouseDownWidth + dx;
-                            columnToResize.width = newWidth;
+                            let newWidth = mouseDownWidth + dx;
+                            if (columnToResize.minWidth != null && ((typeof columnToResize.minWidth == 'number') || ((columnToResize.minWidth + '').endsWith('px')))) {
+                                newWidth = Math.max(parseFloat(columnToResize.minWidth), newWidth);
+                            }
+                            columnToResize.width = Math.max(1, newWidth);
                         });
                     }
+                    thResizer.setPointerCapture(downEvent.pointerId)
                 }
             });
         })());
